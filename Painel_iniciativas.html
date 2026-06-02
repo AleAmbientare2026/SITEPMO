@@ -1,0 +1,919 @@
+<!DOCTYPE html>
+<!-- saved from url=(0061)file:///C:/Users/tiny_/Downloads/Dashboard_Iniciativas_1.html -->
+<html lang="pt-BR"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Painel de Iniciativas — Evolução Digital</title>
+<link href="./Painel_iniciativas_files/css2" rel="stylesheet">
+<style>
+:root {
+  --bg: #f0f5f1;
+  --surface: #ffffff;
+  --surface2: #eaf2ec;
+  --border: #d0e4d4;
+  --border2: #b5d4bc;
+  --text: #112318;
+  --muted: #5a7862;
+  --faint: #a8c4ad;
+
+  --green: #1a7a45;
+  --green-light: #e6f4ec;
+  --green-mid: #4caf6f;
+  --green-border: #9dd5b2;
+
+  --blue: #1557a0;
+  --blue-light: #e3eef9;
+  --blue-mid: #4a90d9;
+  --blue-border: #9dc4e8;
+
+  --teal: #0e7490;
+  --teal-light: #e0f5f8;
+
+  --amber: #92600a;
+  --amber-light: #fef3c7;
+  --amber-border: #fcd34d;
+
+  --new: #7c3aed;
+  --new-light: #f3f0ff;
+  --new-border: #c4b5fd;
+
+  --red: #b91c1c;
+  --red-light: #fef2f2;
+
+  --radius: 12px;
+  --shadow: 0 1px 3px rgba(17,35,24,0.08), 0 1px 2px rgba(17,35,24,0.04);
+  --shadow-md: 0 4px 12px rgba(17,35,24,0.1);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+/* HEADER */
+.header {
+  background: linear-gradient(135deg, #0d3320 0%, #1a5c35 60%, #1557a0 100%);
+  padding: 0 32px;
+  display: flex; align-items: stretch; justify-content: space-between; gap: 16px; flex-wrap: wrap;
+}
+.header-left { padding: 24px 0 0; }
+.header-left .eyebrow { font-size: 11px; font-weight: 600; color: #7dd3a8; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 6px; display: flex; align-items: center; gap: 6px; }
+.header-left h1 { font-size: 24px; font-weight: 700; color: #ffffff; letter-spacing: -0.02em; line-height: 1.2; }
+.header-left p { font-size: 13px; color: #a8d5bb; margin-top: 4px; padding-bottom: 24px; }
+.leaf { display: inline-block; font-size: 16px; }
+.header-tabs { display: flex; gap: 0; align-items: flex-end; }
+.tab { padding: 12px 22px; font-size: 13px; font-weight: 500; color: rgba(255,255,255,0.6); cursor: pointer; border-bottom: 3px solid transparent; transition: all 0.15s; white-space: nowrap; }
+.tab.active { color: #ffffff; border-bottom-color: #4caf6f; }
+.tab:hover:not(.active) { color: rgba(255,255,255,0.9); }
+
+/* MAIN */
+.main { padding: 24px 32px; max-width: 1440px; }
+
+/* NEW ITEMS BANNER */
+.new-banner { background: var(--new-light); border: 1.5px solid var(--new-border); border-radius: var(--radius); padding: 14px 18px; margin-bottom: 22px; display: flex; align-items: flex-start; gap: 14px; }
+.new-banner-icon { width: 36px; height: 36px; background: var(--new); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
+.new-banner-text strong { font-size: 13px; font-weight: 600; color: #4c1d95; }
+.new-banner-text p { font-size: 12px; color: #6d28d9; margin-top: 2px; line-height: 1.5; }
+
+/* METRIC CARDS */
+.metrics { display: grid; grid-template-columns: repeat(auto-fit, minmax(148px,1fr)); gap: 12px; margin-bottom: 24px; }
+.metric { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px 18px; box-shadow: var(--shadow); position: relative; overflow: hidden; }
+.metric::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; }
+.metric.m-total::before { background: linear-gradient(90deg, #1a7a45, #1557a0); }
+.metric.m-green::before { background: #1a7a45; }
+.metric.m-blue::before { background: #1557a0; }
+.metric.m-amber::before { background: #d97706; }
+.metric.m-new::before { background: #7c3aed; }
+.metric.m-mar::before { background: #0e7490; }
+.metric .val { font-size: 34px; font-weight: 700; font-family: 'DM Mono', monospace; letter-spacing: -0.03em; line-height: 1; margin-top: 6px; }
+.metric.m-total .val { color: var(--green); }
+.metric.m-green .val { color: var(--green); }
+.metric.m-blue .val { color: var(--blue); }
+.metric.m-amber .val { color: var(--amber); }
+.metric.m-new .val { color: var(--new); }
+.metric.m-mar .val { color: var(--teal); }
+.metric .lbl { font-size: 11px; color: var(--muted); margin-top: 6px; font-weight: 500; }
+
+/* SECTION */
+.section-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); margin-bottom: 12px; }
+
+/* FILTER BAR */
+.filters { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 18px; align-items: center; }
+.filter-btn { padding: 5px 14px; font-size: 12px; font-weight: 500; font-family: 'Plus Jakarta Sans', sans-serif; background: var(--surface); border: 1px solid var(--border2); border-radius: 20px; color: var(--muted); cursor: pointer; transition: all 0.15s; }
+.filter-btn:hover { color: var(--green); border-color: var(--green-border); }
+.filter-btn.active { background: var(--green-light); border-color: var(--green); color: var(--green); font-weight: 600; }
+.filter-btn.active-blue { background: var(--blue-light); border-color: var(--blue); color: var(--blue); font-weight: 600; }
+.filter-sep { width: 1px; height: 22px; background: var(--border); margin: 0 4px; }
+.search-input { padding: 5px 14px; font-size: 12px; font-family: 'Plus Jakarta Sans', sans-serif; background: var(--surface); border: 1px solid var(--border2); border-radius: 20px; color: var(--text); outline: none; width: 210px; }
+.search-input:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(21,87,160,0.1); }
+
+/* TABLE */
+.table-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow); }
+table { width: 100%; border-collapse: collapse; }
+th { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); padding: 10px 14px; text-align: left; border-bottom: 1.5px solid var(--border); background: var(--surface2); cursor: pointer; white-space: nowrap; }
+th:hover { color: var(--green); }
+td { font-size: 13px; padding: 11px 14px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: #f6fbf7; }
+tr.row-new td { background: #faf8ff !important; }
+tr.row-new:hover td { background: #f3eeff !important; }
+tr.row-new td:first-child { border-left: 3px solid var(--new); }
+.new-tag { display: inline-flex; align-items: center; gap: 4px; background: var(--new-light); color: var(--new); border: 1px solid var(--new-border); border-radius: 20px; font-size: 10px; font-weight: 700; padding: 2px 8px; white-space: nowrap; }
+.td-id { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--faint); }
+.td-frente { font-size: 12px; font-weight: 600; }
+.td-iniciativa { font-weight: 600; font-size: 13px; max-width: 240px; }
+.td-update { font-size: 12px; color: var(--muted); max-width: 280px; line-height: 1.5; }
+.td-prazo { font-family: 'DM Mono', monospace; font-size: 11px; white-space: nowrap; }
+.td-resp { font-size: 12px; color: var(--muted); white-space: nowrap; }
+
+/* STATUS BADGES */
+.badge { display: inline-block; font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 20px; white-space: nowrap; }
+.badge-green { background: var(--green-light); color: var(--green); border: 1px solid var(--green-border); }
+.badge-blue  { background: var(--blue-light);  color: var(--blue);  border: 1px solid var(--blue-border); }
+.badge-amber { background: var(--amber-light); color: var(--amber); border: 1px solid var(--amber-border); }
+.badge-new   { background: var(--new-light);   color: var(--new);   border: 1px solid var(--new-border); }
+
+/* CAT DOT */
+.cat { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; color: var(--muted); }
+.cat-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+
+/* OVERVIEW */
+.overview-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; }
+.chart-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; box-shadow: var(--shadow); }
+.chart-title { font-size: 11px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 16px; }
+.bar-row { display: flex; align-items: center; gap: 10px; margin-bottom: 9px; }
+.bar-label { font-size: 12px; min-width: 168px; color: var(--text); font-weight: 500; }
+.bar-track { flex: 1; height: 8px; background: var(--surface2); border-radius: 4px; overflow: hidden; }
+.bar-fill { height: 100%; border-radius: 4px; }
+.bar-count { font-size: 12px; font-family: 'DM Mono', monospace; color: var(--muted); min-width: 18px; text-align: right; font-weight: 500; }
+
+/* GANTT */
+.gantt-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: auto; box-shadow: var(--shadow); }
+.gantt-header { display: grid; grid-template-columns: 240px repeat(7,1fr); border-bottom: 1.5px solid var(--border); background: var(--surface2); min-width: 700px; }
+.gantt-hcell { padding: 9px 10px; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); border-right: 1px solid var(--border); text-align: center; }
+.gantt-hcell:first-child { text-align: left; }
+.gantt-hcell.cur-month { color: var(--blue); background: var(--blue-light); }
+.gantt-row { display: grid; grid-template-columns: 240px repeat(7,1fr); border-bottom: 1px solid var(--border); align-items: center; min-height: 36px; min-width: 700px; }
+.gantt-row:last-child { border-bottom: none; }
+.gantt-row:hover .gantt-name, .gantt-row:hover .gantt-cell { background: #f6fbf7; }
+.gantt-row.row-new-g .gantt-name { border-left: 3px solid var(--new); }
+.gantt-name { padding: 6px 12px; font-size: 12px; font-weight: 600; border-right: 1px solid var(--border); color: var(--text); line-height: 1.3; }
+.gantt-sub { font-size: 10px; color: var(--muted); font-weight: 400; margin-top: 1px; }
+.gantt-cell { padding: 4px 6px; border-right: 1px solid var(--border); height: 100%; display: flex; align-items: center; justify-content: center; }
+.gantt-cell:last-child { border-right: none; }
+.gantt-bar { height: 10px; border-radius: 5px; width: 100%; }
+.gantt-dot { width: 10px; height: 10px; border-radius: 50%; }
+.gantt-group-row { background: var(--surface2); }
+.gantt-group { padding: 5px 12px; font-size: 10px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.07em; border-right: 1px solid var(--border); }
+.gantt-group-cell { border-right: 1px solid var(--border); background: var(--surface2); }
+.gantt-group-cell:last-child { border-right: none; }
+
+/* VIEWS */
+.view { display: none; }
+.view.active { display: block; }
+.empty { padding: 40px; text-align: center; color: var(--muted); font-size: 13px; }
+
+/* NEW SECTION in overview */
+.new-section { background: var(--new-light); border: 1.5px solid var(--new-border); border-radius: var(--radius); padding: 18px 20px; margin-bottom: 20px; }
+.new-section .new-title { font-size: 12px; font-weight: 700; color: #4c1d95; text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+.new-card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 10px; }
+.new-card { background: white; border: 1px solid var(--new-border); border-radius: 8px; padding: 12px 14px; }
+.new-card .nc-title { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+.new-card .nc-meta { font-size: 11px; color: #6d28d9; display: flex; gap: 8px; flex-wrap: wrap; }
+.nc-badge { display: inline-block; background: var(--new-light); color: var(--new); border-radius: 4px; padding: 1px 7px; font-size: 10px; font-weight: 600; }
+
+@media (max-width: 900px) {
+  .header, .main { padding: 16px; }
+  .overview-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-left">
+    <div class="eyebrow"><span class="leaf">🌿</span> Ambientare · Evolução Digital</div>
+    <h1>Painel de Iniciativas Estratégicas</h1>
+    <p>Monitoramento de melhorias tecnológicas, de processos e de procedimentos · mai/2026</p>
+  </div>
+  <div class="header-tabs">
+    <div class="tab" onclick="switchTab(&#39;overview&#39;,this)">Visão geral</div>
+    <div class="tab active" onclick="switchTab(&#39;table&#39;,this)">Tabela</div>
+    <div class="tab" onclick="switchTab(&#39;gantt&#39;,this)">Linha do tempo</div>
+  </div>
+</div>
+
+<div class="main">
+  <div class="metrics" id="metrics">
+    <div class="metric m-total"><div class="val">30</div><div class="lbl">Total de iniciativas</div></div>
+    <div class="metric m-green"><div class="val">2</div><div class="lbl">Concluídas</div></div>
+    <div class="metric m-blue"><div class="val">20</div><div class="lbl">Em andamento</div></div>
+    <div class="metric m-amber"><div class="val">3</div><div class="lbl">A iniciar</div></div>
+    <div class="metric m-new"><div class="val">5</div><div class="lbl">Novas (desde 25/05)</div></div>
+    <div class="metric m-mar"><div class="val">9</div><div class="lbl">Iniciadas em mar</div></div>
+  </div>
+
+  <!-- OVERVIEW -->
+  <div class="view" id="view-overview">
+    <div class="new-section">
+      <div class="new-title">🆕 Novas iniciativas — inseridas a partir de 25/05/2026 (pendentes de alocação)</div>
+      <div class="new-card-grid" id="new-cards">
+    <div class="new-card">
+      <div class="nc-title">Automação de Relatórios de Monitoramento Ambiental</div>
+      <div class="nc-meta">
+        <span class="nc-badge">Processo e Eficiência Técnica</span>
+        <span style="color:#6b7280;font-size:11px;">mai/26 · A definir</span>
+      </div>
+    </div>
+    <div class="new-card">
+      <div class="nc-title">Agente de IA para Triagem de Documentos IBAMA</div>
+      <div class="nc-meta">
+        <span class="nc-badge">POC</span>
+        <span style="color:#6b7280;font-size:11px;">mai/26 · A definir</span>
+      </div>
+    </div>
+    <div class="new-card">
+      <div class="nc-title">Padronização de Templates de Laudos Técnicos</div>
+      <div class="nc-meta">
+        <span class="nc-badge">Padronização e Qualidade</span>
+        <span style="color:#6b7280;font-size:11px;">mai/26 · A definir</span>
+      </div>
+    </div>
+    <div class="new-card">
+      <div class="nc-title">Pesquisa de Ferramentas de GeoIA para Mapeamento de Vegetação</div>
+      <div class="nc-meta">
+        <span class="nc-badge">P&amp;D</span>
+        <span style="color:#6b7280;font-size:11px;">mai/26 · A definir</span>
+      </div>
+    </div>
+    <div class="new-card">
+      <div class="nc-title">Capacitação em Uso de IA para Análise de Impacto Ambiental</div>
+      <div class="nc-meta">
+        <span class="nc-badge">Workshops e Treinamentos</span>
+        <span style="color:#6b7280;font-size:11px;">jun/26 · A definir</span>
+      </div>
+    </div></div>
+    </div>
+    <div class="overview-grid">
+      <div class="chart-card"><div class="chart-title">Iniciativas por frente</div><div id="chart-frente">
+    <div class="bar-row">
+      <div class="bar-label">Gestão de Projetos</div>
+      <div class="bar-track"><div class="bar-fill" style="width:100%;background:#7c3aed"></div></div>
+      <div class="bar-count">6</div>
+    </div>
+    <div class="bar-row">
+      <div class="bar-label">Fauna</div>
+      <div class="bar-track"><div class="bar-fill" style="width:83%;background:#1a7a45"></div></div>
+      <div class="bar-count">5</div>
+    </div>
+    <div class="bar-row">
+      <div class="bar-label">Transversal</div>
+      <div class="bar-track"><div class="bar-fill" style="width:83%;background:#92600a"></div></div>
+      <div class="bar-count">5</div>
+    </div>
+    <div class="bar-row">
+      <div class="bar-label">Socioeconomia</div>
+      <div class="bar-track"><div class="bar-fill" style="width:67%;background:#b91c1c"></div></div>
+      <div class="bar-count">4</div>
+    </div>
+    <div class="bar-row">
+      <div class="bar-label">Flora</div>
+      <div class="bar-track"><div class="bar-fill" style="width:33%;background:#2e9e60"></div></div>
+      <div class="bar-count">2</div>
+    </div>
+    <div class="bar-row">
+      <div class="bar-label">Meio Físico</div>
+      <div class="bar-track"><div class="bar-fill" style="width:17%;background:#1557a0"></div></div>
+      <div class="bar-count">1</div>
+    </div>
+    <div class="bar-row">
+      <div class="bar-label">Gestão Amb.</div>
+      <div class="bar-track"><div class="bar-fill" style="width:17%;background:#0e7490"></div></div>
+      <div class="bar-count">1</div>
+    </div>
+    <div class="bar-row">
+      <div class="bar-label">Eficiência</div>
+      <div class="bar-track"><div class="bar-fill" style="width:17%;background:#c2410c"></div></div>
+      <div class="bar-count">1</div>
+    </div></div></div>
+      <div class="chart-card"><div class="chart-title">Iniciativas por categoria</div><div id="chart-cat">
+    <div class="bar-row">
+      <div class="bar-label" style="font-size:12px;">Padronização e Qualidade</div>
+      <div class="bar-track"><div class="bar-fill" style="width:100%;background:#1a7a45"></div></div>
+      <div class="bar-count">13</div>
+    </div>
+    <div class="bar-row">
+      <div class="bar-label" style="font-size:12px;">Processo e Eficiência Técnica</div>
+      <div class="bar-track"><div class="bar-fill" style="width:38%;background:#1557a0"></div></div>
+      <div class="bar-count">5</div>
+    </div>
+    <div class="bar-row">
+      <div class="bar-label" style="font-size:12px;">POC</div>
+      <div class="bar-track"><div class="bar-fill" style="width:23%;background:#0e7490"></div></div>
+      <div class="bar-count">3</div>
+    </div>
+    <div class="bar-row">
+      <div class="bar-label" style="font-size:12px;">P&amp;D</div>
+      <div class="bar-track"><div class="bar-fill" style="width:15%;background:#7c3aed"></div></div>
+      <div class="bar-count">2</div>
+    </div>
+    <div class="bar-row">
+      <div class="bar-label" style="font-size:12px;">Workshops e Treinamentos</div>
+      <div class="bar-track"><div class="bar-fill" style="width:15%;background:#92600a"></div></div>
+      <div class="bar-count">2</div>
+    </div></div></div>
+    </div>
+    <div class="chart-card"><div class="chart-title">Status por frente</div><div id="chart-status-frente"><div class="bar-row">
+      <div class="bar-label" style="font-size:12px;">Fauna</div>
+      <div class="bar-track" style="height:10px;border-radius:5px;overflow:hidden;display:flex;"><div title="Em andamento: 5" style="width:100%;background:#1557a0;height:100%;"></div></div>
+      <div class="bar-count">5</div>
+    </div><div class="bar-row">
+      <div class="bar-label" style="font-size:12px;">Flora</div>
+      <div class="bar-track" style="height:10px;border-radius:5px;overflow:hidden;display:flex;"><div title="Em andamento: 2" style="width:100%;background:#1557a0;height:100%;"></div></div>
+      <div class="bar-count">2</div>
+    </div><div class="bar-row">
+      <div class="bar-label" style="font-size:12px;">Meio Físico</div>
+      <div class="bar-track" style="height:10px;border-radius:5px;overflow:hidden;display:flex;"><div title="Em andamento: 1" style="width:100%;background:#1557a0;height:100%;"></div></div>
+      <div class="bar-count">1</div>
+    </div><div class="bar-row">
+      <div class="bar-label" style="font-size:12px;">Socioeconomia</div>
+      <div class="bar-track" style="height:10px;border-radius:5px;overflow:hidden;display:flex;"><div title="Em andamento: 3" style="width:75%;background:#1557a0;height:100%;"></div><div title="A iniciar: 1" style="width:25%;background:#d97706;height:100%;"></div></div>
+      <div class="bar-count">4</div>
+    </div><div class="bar-row">
+      <div class="bar-label" style="font-size:12px;">Gestão de Projetos</div>
+      <div class="bar-track" style="height:10px;border-radius:5px;overflow:hidden;display:flex;"><div title="Concluída: 2" style="width:33%;background:#1a7a45;height:100%;"></div><div title="Em andamento: 3" style="width:50%;background:#1557a0;height:100%;"></div><div title="A iniciar: 1" style="width:17%;background:#d97706;height:100%;"></div></div>
+      <div class="bar-count">6</div>
+    </div><div class="bar-row">
+      <div class="bar-label" style="font-size:12px;">Transversal</div>
+      <div class="bar-track" style="height:10px;border-radius:5px;overflow:hidden;display:flex;"><div title="Em andamento: 5" style="width:100%;background:#1557a0;height:100%;"></div></div>
+      <div class="bar-count">5</div>
+    </div><div class="bar-row">
+      <div class="bar-label" style="font-size:12px;">Gestão Amb.</div>
+      <div class="bar-track" style="height:10px;border-radius:5px;overflow:hidden;display:flex;"><div title="A iniciar: 1" style="width:100%;background:#d97706;height:100%;"></div></div>
+      <div class="bar-count">1</div>
+    </div><div class="bar-row">
+      <div class="bar-label" style="font-size:12px;">Eficiência</div>
+      <div class="bar-track" style="height:10px;border-radius:5px;overflow:hidden;display:flex;"><div title="Em andamento: 1" style="width:100%;background:#1557a0;height:100%;"></div></div>
+      <div class="bar-count">1</div>
+    </div><div style="display:flex;gap:16px;margin-top:14px;"><span style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--muted)"><span style="width:8px;height:8px;border-radius:50%;background:#1a7a45;display:inline-block;"></span>Concluída</span><span style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--muted)"><span style="width:8px;height:8px;border-radius:50%;background:#1557a0;display:inline-block;"></span>Em andamento</span><span style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--muted)"><span style="width:8px;height:8px;border-radius:50%;background:#d97706;display:inline-block;"></span>A iniciar</span></div></div></div>
+  </div>
+
+  <!-- TABLE -->
+  <div class="view active" id="view-table">
+    <div class="filters" id="filters"><button class="filter-btn active" onclick="setFilter(&#39;frente&#39;,&#39;Todas&#39;)">Todas</button><button class="filter-btn" onclick="setFilter(&#39;frente&#39;,&#39;Fauna&#39;)">Fauna</button><button class="filter-btn" onclick="setFilter(&#39;frente&#39;,&#39;Flora&#39;)">Flora</button><button class="filter-btn" onclick="setFilter(&#39;frente&#39;,&#39;Meio Físico&#39;)">Meio Físico</button><button class="filter-btn" onclick="setFilter(&#39;frente&#39;,&#39;Socioeconomia&#39;)">Socioeconomia</button><button class="filter-btn" onclick="setFilter(&#39;frente&#39;,&#39;Gestão de Projetos&#39;)">Gestão de Projetos</button><button class="filter-btn" onclick="setFilter(&#39;frente&#39;,&#39;Transversal&#39;)">Transversal</button><button class="filter-btn" onclick="setFilter(&#39;frente&#39;,&#39;Gestão Amb.&#39;)">Gestão Amb.</button><button class="filter-btn" onclick="setFilter(&#39;frente&#39;,&#39;Eficiência&#39;)">Eficiência</button><div class="filter-sep"></div><button class="filter-btn active-blue" onclick="setFilter(&#39;status&#39;,&#39;Todos&#39;)">Todos</button><button class="filter-btn" onclick="setFilter(&#39;status&#39;,&#39;Concluída&#39;)">Concluída</button><button class="filter-btn" onclick="setFilter(&#39;status&#39;,&#39;Em andamento&#39;)">Em andamento</button><button class="filter-btn" onclick="setFilter(&#39;status&#39;,&#39;A iniciar&#39;)">A iniciar</button><div class="filter-sep"></div><button class="filter-btn" onclick="setFilter(&#39;novo&#39;,&#39;novas&#39;)">🆕 Novas</button><div class="filter-sep"></div><input class="search-input" placeholder="Buscar iniciativa…" value="" oninput="setFilter(&#39;search&#39;,this.value)"></div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr>
+          <th onclick="sortBy(&#39;id&#39;)">#</th>
+          <th onclick="sortBy(&#39;frente&#39;)">Frente</th>
+          <th onclick="sortBy(&#39;iniciativa&#39;)">Iniciativa</th>
+          <th onclick="sortBy(&#39;categoria&#39;)">Categoria</th>
+          <th onclick="sortBy(&#39;responsavel&#39;)">Responsável</th>
+          <th onclick="sortBy(&#39;status&#39;)">Status</th>
+          <th onclick="sortBy(&#39;mes_inicio&#39;)">Início</th>
+          <th onclick="sortBy(&#39;prazo&#39;)">Prazo</th>
+          <th>Último andamento</th>
+        </tr></thead>
+        <tbody id="table-body">
+    <tr class="">
+      <td class="td-id">12</td>
+      <td class="td-frente" style="color:#b91c1c">Socioeconomia</td>
+      <td class="td-iniciativa">Produção de Materiais (Comunicação)</td>
+      <td><span class="cat"><span class="cat-dot" style="background:#1a7a45"></span>Padronização e Qualidade</span></td>
+      <td class="td-resp">Julia Carquejo</td>
+      <td><span class="badge badge-amber">A iniciar</span></td>
+      <td class="td-prazo" style="color:var(--muted)">abr/26</td>
+      <td class="td-prazo" style="color:var(--text)">20/02/2027</td>
+      <td class="td-update">Pendente definição de etapas.</td>
+    </tr>
+    <tr class="">
+      <td class="td-id">18</td>
+      <td class="td-frente" style="color:#7c3aed">Gestão de Projetos</td>
+      <td class="td-iniciativa">Padronização de Dados</td>
+      <td><span class="cat"><span class="cat-dot" style="background:#1a7a45"></span>Padronização e Qualidade</span></td>
+      <td class="td-resp">João G. Amorim</td>
+      <td><span class="badge badge-amber">A iniciar</span></td>
+      <td class="td-prazo" style="color:var(--muted)">abr/26</td>
+      <td class="td-prazo" style="color:var(--faint)">N/I</td>
+      <td class="td-update">Pendente definição de fichas automáticas e treinamento de campo.</td>
+    </tr>
+    <tr class="">
+      <td class="td-id">24</td>
+      <td class="td-frente" style="color:#0e7490">Gestão Amb.</td>
+      <td class="td-iniciativa">Gestão Institucional</td>
+      <td><span class="cat"><span class="cat-dot" style="background:#1a7a45"></span>Padronização e Qualidade</span></td>
+      <td class="td-resp">Dione Aline</td>
+      <td><span class="badge badge-amber">A iniciar</span></td>
+      <td class="td-prazo" style="color:var(--muted)">abr/26</td>
+      <td class="td-prazo" style="color:var(--text)">30/04/2026</td>
+      <td class="td-update">Revisão de fluxos e documentos de gestão pendente.</td>
+    </tr>
+    <tr class="row-new">
+      <td class="td-id">26</td>
+      <td class="td-frente" style="color:#6b7280">Não alocada <span class="new-tag">🆕 nova</span></td>
+      <td class="td-iniciativa">Automação de Relatórios de Monitoramento Ambiental</td>
+      <td><span class="cat"><span class="cat-dot" style="background:#1557a0"></span>Processo e Eficiência Técnica</span></td>
+      <td class="td-resp">A definir</td>
+      <td><span class="badge badge-new">🆕 Nova</span></td>
+      <td class="td-prazo" style="color:var(--muted)">mai/26</td>
+      <td class="td-prazo" style="color:var(--faint)">N/I</td>
+      <td class="td-update">Registrada em 25/05 — pendente de alocação de frente e responsável.</td>
+    </tr>
+    <tr class="row-new">
+      <td class="td-id">27</td>
+      <td class="td-frente" style="color:#6b7280">Não alocada <span class="new-tag">🆕 nova</span></td>
+      <td class="td-iniciativa">Agente de IA para Triagem de Documentos IBAMA</td>
+      <td><span class="cat"><span class="cat-dot" style="background:#0e7490"></span>POC</span></td>
+      <td class="td-resp">A definir</td>
+      <td><span class="badge badge-new">🆕 Nova</span></td>
+      <td class="td-prazo" style="color:var(--muted)">mai/26</td>
+      <td class="td-prazo" style="color:var(--faint)">N/I</td>
+      <td class="td-update">Registrada em 25/05 — pendente de alocação de frente e responsável.</td>
+    </tr>
+    <tr class="row-new">
+      <td class="td-id">28</td>
+      <td class="td-frente" style="color:#6b7280">Não alocada <span class="new-tag">🆕 nova</span></td>
+      <td class="td-iniciativa">Padronização de Templates de Laudos Técnicos</td>
+      <td><span class="cat"><span class="cat-dot" style="background:#1a7a45"></span>Padronização e Qualidade</span></td>
+      <td class="td-resp">A definir</td>
+      <td><span class="badge badge-new">🆕 Nova</span></td>
+      <td class="td-prazo" style="color:var(--muted)">mai/26</td>
+      <td class="td-prazo" style="color:var(--faint)">N/I</td>
+      <td class="td-update">Registrada em 28/05 — pendente de alocação de frente e responsável.</td>
+    </tr>
+    <tr class="row-new">
+      <td class="td-id">29</td>
+      <td class="td-frente" style="color:#6b7280">Não alocada <span class="new-tag">🆕 nova</span></td>
+      <td class="td-iniciativa">Pesquisa de Ferramentas de GeoIA para Mapeamento de Vegetação</td>
+      <td><span class="cat"><span class="cat-dot" style="background:#7c3aed"></span>P&amp;D</span></td>
+      <td class="td-resp">A definir</td>
+      <td><span class="badge badge-new">🆕 Nova</span></td>
+      <td class="td-prazo" style="color:var(--muted)">mai/26</td>
+      <td class="td-prazo" style="color:var(--faint)">N/I</td>
+      <td class="td-update">Registrada em 28/05 — pendente de alocação de frente e responsável.</td>
+    </tr>
+    <tr class="row-new">
+      <td class="td-id">30</td>
+      <td class="td-frente" style="color:#6b7280">Não alocada <span class="new-tag">🆕 nova</span></td>
+      <td class="td-iniciativa">Capacitação em Uso de IA para Análise de Impacto Ambiental</td>
+      <td><span class="cat"><span class="cat-dot" style="background:#92600a"></span>Workshops e Treinamentos</span></td>
+      <td class="td-resp">A definir</td>
+      <td><span class="badge badge-new">🆕 Nova</span></td>
+      <td class="td-prazo" style="color:var(--muted)">jun/26</td>
+      <td class="td-prazo" style="color:var(--faint)">N/I</td>
+      <td class="td-update">Registrada em 01/06 — pendente de alocação de frente e responsável.</td>
+    </tr>
+    <tr class="">
+      <td class="td-id">14</td>
+      <td class="td-frente" style="color:#7c3aed">Gestão de Projetos</td>
+      <td class="td-iniciativa">Fluxo Projetos Pré-Leilão</td>
+      <td><span class="cat"><span class="cat-dot" style="background:#1a7a45"></span>Padronização e Qualidade</span></td>
+      <td class="td-resp">Pedro Silveira</td>
+      <td><span class="badge badge-green">Concluída</span></td>
+      <td class="td-prazo" style="color:var(--muted)">mar/26</td>
+      <td class="td-prazo" style="color:var(--text)">30/03/2026</td>
+      <td class="td-update">Procedimento emitido. Manual finalizado e encaminhado para revisão.</td>
+    </tr>
+    <tr class="">
+      <td class="td-id">17</td>
+      <td class="td-frente" style="color:#7c3aed">Gestão de Projetos</td>
+      <td class="td-iniciativa">Fichas de Inspeção (processos erosivos)</td>
+      <td><span class="cat"><span class="cat-dot" style="background:#1a7a45"></span>Padronização e Qualidade</span></td>
+      <td class="td-resp">Cristiane Dutra</td>
+      <td><span class="badge badge-green">Concluída</span></td>
+      <td class="td-prazo" style="color:var(--muted)">abr/26</td>
+      <td class="td-prazo" style="color:var(--faint)">N/I</td>
+      <td class="td-update">Testes finalizados e disponível para uso.</td>
+    </tr>
+    <tr class="">
+      <td class="td-id">01</td>
+      <td class="td-frente" style="color:#1a7a45">Fauna</td>
+      <td class="td-iniciativa">Revisão PEQuI/PDI ANEEL</td>
+      <td><span class="cat"><span class="cat-dot" style="background:#7c3aed"></span>P&amp;D</span></td>
+      <td class="td-resp">Tuliana Brunes</td>
+      <td><span class="badge badge-blue">Em andamento</span></td>
+      <td class="td-prazo" style="color:var(--muted)">mar/26</td>
+      <td class="td-prazo" style="color:var(--text)">06/03/2026</td>
+      <td class="td-update">Criação do projeto — em discussão com parceiro comercial para implantação.</td>
+    </tr>
+    <tr class="">
+      <td class="td-id">02</td>
+      <td class="td-frente" style="color:#1a7a45">Fauna</td>
+      <td class="td-iniciativa">Fluxo p/ Veterinários</td>
+      <td><span class="cat"><span class="cat-dot" style="background:#1557a0"></span>Processo e Eficiência Técnica</span></td>
+      <td class="td-resp">Murilo Santana</td>
+      <td><span class="badge badge-blue">Em andamento</span></td>
+      <td class="td-prazo" style="color:var(--muted)">mar/26</td>
+      <td class="td-prazo" style="color:var(--text)">31/03/2026</td>
+      <td class="td-update">Fluxo implementado, em revisão com GeoTech — card aberto para desenvolvimento.</td>
+    </tr>
+    <tr class="">
+      <td class="td-id">03</td>
+      <td class="td-frente" style="color:#1a7a45">Fauna</td>
+      <td class="td-iniciativa">PDI Ninhos em Torres</td>
+      <td><span class="cat"><span class="cat-dot" style="background:#7c3aed"></span>P&amp;D</span></td>
+      <td class="td-resp">Murilo Santana</td>
+      <td><span class="badge badge-blue">Em andamento</span></td>
+      <td class="td-prazo" style="color:var(--muted)">abr/26</td>
+      <td class="td-prazo" style="color:var(--faint)">N/I</td>
+      <td class="td-update">Parceria viabilizada com TSM; P&amp;D a ser desenvolvido para apresentação à Alupar.</td>
+    </tr>
+    <tr class="">
+      <td class="td-id">04</td>
+      <td class="td-frente" style="color:#1a7a45">Fauna</td>
+      <td class="td-iniciativa">Checklist Mobilização Resgate</td>
+      <td><span class="cat"><span class="cat-dot" style="background:#1a7a45"></span>Padronização e Qualidade</span></td>
+      <td class="td-resp">Sérgio Fernandes / Murilo</td>
+      <td><span class="badge badge-blue">Em andamento</span></td>
+      <td class="td-prazo" style="color:var(--muted)">abr/26</td>
+      <td class="td-prazo" style="color:var(--faint)">N/I</td>
+      <td class="td-update">Roteiro apresentado ao Geo; aguardando inclusão no WebGIS.</td>
+    </tr>
+    <tr class="">
+      <td class="td-id">05</td>
+      <td class="td-frente" style="color:#1a7a45">Fauna</td>
+      <td class="td-iniciativa">IA Expert — Fauna</td>
+      <td><span class="cat"><span class="cat-dot" style="background:#1557a0"></span>Processo e Eficiência Técnica</span></td>
+      <td class="td-resp">Sérgio Fernandes</td>
+      <td><span class="badge badge-blue">Em andamento</span></td>
+      <td class="td-prazo" style="color:var(--muted)">abr/26</td>
+      <td class="td-prazo" style="color:var(--text)">30/04/2026</td>
+      <td class="td-update">Validação pelos especialistas do prompt inicial em curso.</td>
+    </tr>
+    <tr class="">
+      <td class="td-id">06</td>
+      <td class="td-frente" style="color:#2e9e60">Flora</td>
+      <td class="td-iniciativa">Padronização ASV</td>
+      <td><span class="cat"><span class="cat-dot" style="background:#1a7a45"></span>Padronização e Qualidade</span></td>
+      <td class="td-resp">Mariana Morelli</td>
+      <td><span class="badge badge-blue">Em andamento</span></td>
+      <td class="td-prazo" style="color:var(--muted)">abr/26</td>
+      <td class="td-prazo" style="color:var(--text)">08/06/2026</td>
+      <td class="td-update">Compartilhado com Geo para análise técnica; aguardando validação.</td>
+    </tr>
+    <tr class="">
+      <td class="td-id">07</td>
+      <td class="td-frente" style="color:#2e9e60">Flora</td>
+      <td class="td-iniciativa">Manual SIGAM (CETESB)</td>
+      <td><span class="cat"><span class="cat-dot" style="background:#1a7a45"></span>Padronização e Qualidade</span></td>
+      <td class="td-resp">Luiz Junior</td>
+      <td><span class="badge badge-blue">Em andamento</span></td>
+      <td class="td-prazo" style="color:var(--muted)">abr/26</td>
+      <td class="td-prazo" style="color:var(--text)">10/04/2026</td>
+      <td class="td-update">Manual elaborado, em desenvolvimento da parte gráfica para divulgação.</td>
+    </tr>
+    <tr class="">
+      <td class="td-id">08</td>
+      <td class="td-frente" style="color:#1557a0">Meio Físico</td>
+      <td class="td-iniciativa">Treinamento Monitoramento de Ruído</td>
+      <td><span class="cat"><span class="cat-dot" style="background:#92600a"></span>Workshops e Treinamentos</span></td>
+      <td class="td-resp">Sérgio Fernandes</td>
+      <td><span class="badge badge-blue">Em andamento</span></td>
+      <td class="td-prazo" style="color:var(--muted)">mar/26</td>
+      <td class="td-prazo" style="color:var(--faint)">N/I</td>
+      <td class="td-update">Material finalizado; aguardando processamento GEO. Envio de divulgação pendente.</td>
+    </tr>
+    <tr class="">
+      <td class="td-id">09</td>
+      <td class="td-frente" style="color:#b91c1c">Socioeconomia</td>
+      <td class="td-iniciativa">Ouvidoria Integrada (diagnóstico)</td>
+      <td><span class="cat"><span class="cat-dot" style="background:#1a7a45"></span>Padronização e Qualidade</span></td>
+      <td class="td-resp">Julia Carquejo</td>
+      <td><span class="badge badge-blue">Em andamento</span></td>
+      <td class="td-prazo" style="color:var(--muted)">mar/26</td>
+      <td class="td-prazo" style="color:var(--text)">20/02/2027</td>
+      <td class="td-update">Pesquisa iniciada; levantamento de boas práticas e soluções de bots em andamento.</td>
+    </tr>
+    <tr class="">
+      <td class="td-id">10</td>
+      <td class="td-frente" style="color:#b91c1c">Socioeconomia</td>
+      <td class="td-iniciativa">Ouvidoria Integrada (fichas e ferramenta)</td>
+      <td><span class="cat"><span class="cat-dot" style="background:#1a7a45"></span>Padronização e Qualidade</span></td>
+      <td class="td-resp">Julia Carquejo</td>
+      <td><span class="badge badge-blue">Em andamento</span></td>
+      <td class="td-prazo" style="color:var(--muted)">abr/26</td>
+      <td class="td-prazo" style="color:var(--text)">20/02/2027</td>
+      <td class="td-update">Reuniões com fornecedores realizadas; orçamento da ouvidoria existente em análise.</td>
+    </tr>
+    <tr class="">
+      <td class="td-id">11</td>
+      <td class="td-frente" style="color:#b91c1c">Socioeconomia</td>
+      <td class="td-iniciativa">IA Expert — Socioeconomia</td>
+      <td><span class="cat"><span class="cat-dot" style="background:#1557a0"></span>Processo e Eficiência Técnica</span></td>
+      <td class="td-resp">Sérgio Fernandes</td>
+      <td><span class="badge badge-blue">Em andamento</span></td>
+      <td class="td-prazo" style="color:var(--muted)">abr/26</td>
+      <td class="td-prazo" style="color:var(--text)">30/04/2026</td>
+      <td class="td-update">Prompt disponibilizado; especialistas em validação.</td>
+    </tr>
+    <tr class="">
+      <td class="td-id">13</td>
+      <td class="td-frente" style="color:#7c3aed">Gestão de Projetos</td>
+      <td class="td-iniciativa">Automatização da TAP</td>
+      <td><span class="cat"><span class="cat-dot" style="background:#1557a0"></span>Processo e Eficiência Técnica</span></td>
+      <td class="td-resp">Alessandro Marques</td>
+      <td><span class="badge badge-blue">Em andamento</span></td>
+      <td class="td-prazo" style="color:var(--muted)">mar/26</td>
+      <td class="td-prazo" style="color:var(--text)">30/03/2026</td>
+      <td class="td-update">Teste com LD 138 kV Ascenty realizado; novo teste no ambiente Microsoft a fazer.</td>
+    </tr>
+    <tr class="">
+      <td class="td-id">15</td>
+      <td class="td-frente" style="color:#7c3aed">Gestão de Projetos</td>
+      <td class="td-iniciativa">Capacitação em Transmissão</td>
+      <td><span class="cat"><span class="cat-dot" style="background:#92600a"></span>Workshops e Treinamentos</span></td>
+      <td class="td-resp">Cristiane Dutra</td>
+      <td><span class="badge badge-blue">Em andamento</span></td>
+      <td class="td-prazo" style="color:var(--muted)">mar/26</td>
+      <td class="td-prazo" style="color:var(--text)">13/03/2026</td>
+      <td class="td-update">Material revisado por diretoria e comercial. 3 módulos, 10 aulas definidos.</td>
+    </tr>
+    <tr class="">
+      <td class="td-id">16</td>
+      <td class="td-frente" style="color:#7c3aed">Gestão de Projetos</td>
+      <td class="td-iniciativa">Documentos de Gestão de Implantação</td>
+      <td><span class="cat"><span class="cat-dot" style="background:#1a7a45"></span>Padronização e Qualidade</span></td>
+      <td class="td-resp">Cristiane Dutra</td>
+      <td><span class="badge badge-blue">Em andamento</span></td>
+      <td class="td-prazo" style="color:var(--muted)">abr/26</td>
+      <td class="td-prazo" style="color:var(--faint)">N/I</td>
+      <td class="td-update">Ficha nova finalizada; aguardando posicionamento do GEO.</td>
+    </tr>
+    <tr class="">
+      <td class="td-id">19</td>
+      <td class="td-frente" style="color:#92600a">Transversal</td>
+      <td class="td-iniciativa">EIA/RIMA com IA (Alt. Locacionais)</td>
+      <td><span class="cat"><span class="cat-dot" style="background:#0e7490"></span>POC</span></td>
+      <td class="td-resp">Marília Rocha</td>
+      <td><span class="badge badge-blue">Em andamento</span></td>
+      <td class="td-prazo" style="color:var(--muted)">mar/26</td>
+      <td class="td-prazo" style="color:var(--text)">01/06/2026</td>
+      <td class="td-update">Expert para licenciamento criado. Prompt elaborado para uso interno.</td>
+    </tr>
+    <tr class="">
+      <td class="td-id">20</td>
+      <td class="td-frente" style="color:#92600a">Transversal</td>
+      <td class="td-iniciativa">Capítulos Iniciais EIA/RAS com IA</td>
+      <td><span class="cat"><span class="cat-dot" style="background:#0e7490"></span>POC</span></td>
+      <td class="td-resp">Marília Rocha</td>
+      <td><span class="badge badge-blue">Em andamento</span></td>
+      <td class="td-prazo" style="color:var(--muted)">mar/26</td>
+      <td class="td-prazo" style="color:var(--text)">30/06/2026</td>
+      <td class="td-update">Teste com assistente de licenciamento iniciado para capítulos iniciais.</td>
+    </tr>
+    <tr class="">
+      <td class="td-id">21</td>
+      <td class="td-frente" style="color:#92600a">Transversal</td>
+      <td class="td-iniciativa">Funil de Atividades de Implantação/LT</td>
+      <td><span class="cat"><span class="cat-dot" style="background:#1557a0"></span>Processo e Eficiência Técnica</span></td>
+      <td class="td-resp">Kauê Lamounier</td>
+      <td><span class="badge badge-blue">Em andamento</span></td>
+      <td class="td-prazo" style="color:var(--muted)">abr/26</td>
+      <td class="td-prazo" style="color:var(--text)">30/09/2026</td>
+      <td class="td-update">Estrutura do Funil criada; criação das atividades em andamento.</td>
+    </tr>
+    <tr class="">
+      <td class="td-id">22</td>
+      <td class="td-frente" style="color:#92600a">Transversal</td>
+      <td class="td-iniciativa">Matriz de Risco Ambiental</td>
+      <td><span class="cat"><span class="cat-dot" style="background:#1a7a45"></span>Padronização e Qualidade</span></td>
+      <td class="td-resp">Marília / Bruna</td>
+      <td><span class="badge badge-blue">Em andamento</span></td>
+      <td class="td-prazo" style="color:var(--muted)">abr/26</td>
+      <td class="td-prazo" style="color:var(--text)">01/05/2026</td>
+      <td class="td-update">Metodologia elaborada; glossário de riscos do histórico em andamento.</td>
+    </tr>
+    <tr class="">
+      <td class="td-id">23</td>
+      <td class="td-frente" style="color:#92600a">Transversal</td>
+      <td class="td-iniciativa">Revisão de Qualidade com IA</td>
+      <td><span class="cat"><span class="cat-dot" style="background:#0e7490"></span>POC</span></td>
+      <td class="td-resp">Marília Rocha</td>
+      <td><span class="badge badge-blue">Em andamento</span></td>
+      <td class="td-prazo" style="color:var(--muted)">abr/26</td>
+      <td class="td-prazo" style="color:var(--faint)">N/I</td>
+      <td class="td-update">Testes com Adapta (meio físico e qualidade) realizados; resultados satisfatórios.</td>
+    </tr>
+    <tr class="">
+      <td class="td-id">25</td>
+      <td class="td-frente" style="color:#c2410c">Eficiência</td>
+      <td class="td-iniciativa">Matriz de Risco (Eficiência)</td>
+      <td><span class="cat"><span class="cat-dot" style="background:#1a7a45"></span>Padronização e Qualidade</span></td>
+      <td class="td-resp">Marília / Bruna</td>
+      <td><span class="badge badge-blue">Em andamento</span></td>
+      <td class="td-prazo" style="color:var(--muted)">abr/26</td>
+      <td class="td-prazo" style="color:var(--text)">01/05/2026</td>
+      <td class="td-update">Planilha automatizada em elaboração.</td>
+    </tr></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- GANTT -->
+  <div class="view" id="view-gantt">
+    <div class="gantt-wrap" id="gantt-container"><div class="gantt-header"><div class="gantt-hcell">Iniciativa</div><div class="gantt-hcell">mar/26</div><div class="gantt-hcell">abr/26</div><div class="gantt-hcell cur-month">mai/26 ●</div><div class="gantt-hcell">jun/26</div><div class="gantt-hcell">jul/26</div><div class="gantt-hcell">ago/26</div><div class="gantt-hcell">set/26</div></div><div class="gantt-row gantt-group-row"><div class="gantt-group" style="color:#1a7a45;">Fauna</div><div class="gantt-group-cell"></div><div class="gantt-group-cell"></div><div class="gantt-group-cell"></div><div class="gantt-group-cell"></div><div class="gantt-group-cell"></div><div class="gantt-group-cell"></div><div class="gantt-group-cell"></div></div><div class="gantt-row"><div class="gantt-name">Revisão PEQuI/PDI ANEEL<div class="gantt-sub">Tuliana Brunes</div></div><div class="gantt-cell"><div class="gantt-dot" style="background:#1557a0;"></div></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div></div><div class="gantt-row"><div class="gantt-name">Fluxo p/ Veterinários<div class="gantt-sub">Murilo Santana</div></div><div class="gantt-cell"><div class="gantt-dot" style="background:#1557a0;"></div></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div></div><div class="gantt-row"><div class="gantt-name">PDI Ninhos em Torres<div class="gantt-sub">Murilo Santana</div></div><div class="gantt-cell"></div><div class="gantt-cell"><div class="gantt-dot" style="background:#1557a0;"></div></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div></div><div class="gantt-row"><div class="gantt-name">Checklist Mobilização Resgate<div class="gantt-sub">Sérgio Fernandes / Murilo</div></div><div class="gantt-cell"></div><div class="gantt-cell"><div class="gantt-dot" style="background:#1557a0;"></div></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div></div><div class="gantt-row"><div class="gantt-name">IA Expert — Fauna<div class="gantt-sub">Sérgio Fernandes</div></div><div class="gantt-cell"></div><div class="gantt-cell"><div class="gantt-dot" style="background:#1557a0;"></div></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div></div><div class="gantt-row gantt-group-row"><div class="gantt-group" style="color:#2e9e60;">Flora</div><div class="gantt-group-cell"></div><div class="gantt-group-cell"></div><div class="gantt-group-cell"></div><div class="gantt-group-cell"></div><div class="gantt-group-cell"></div><div class="gantt-group-cell"></div><div class="gantt-group-cell"></div></div><div class="gantt-row"><div class="gantt-name">Padronização ASV<div class="gantt-sub">Mariana Morelli</div></div><div class="gantt-cell"></div><div class="gantt-cell"><div class="gantt-dot" style="background:#1557a0;"></div></div><div class="gantt-cell"><div class="gantt-bar" style="background:#1557a022;border:1px solid #1557a055;"></div></div><div class="gantt-cell"><div class="gantt-dot" style="background:#1557a0;box-shadow:0 0 0 3px #1557a033;"></div></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div></div><div class="gantt-row"><div class="gantt-name">Manual SIGAM (CETESB)<div class="gantt-sub">Luiz Junior</div></div><div class="gantt-cell"></div><div class="gantt-cell"><div class="gantt-dot" style="background:#1557a0;"></div></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div></div><div class="gantt-row gantt-group-row"><div class="gantt-group" style="color:#1557a0;">Meio Físico</div><div class="gantt-group-cell"></div><div class="gantt-group-cell"></div><div class="gantt-group-cell"></div><div class="gantt-group-cell"></div><div class="gantt-group-cell"></div><div class="gantt-group-cell"></div><div class="gantt-group-cell"></div></div><div class="gantt-row"><div class="gantt-name">Treinamento Monitoramento de Ruído<div class="gantt-sub">Sérgio Fernandes</div></div><div class="gantt-cell"><div class="gantt-dot" style="background:#1557a0;"></div></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div></div><div class="gantt-row gantt-group-row"><div class="gantt-group" style="color:#b91c1c;">Socioeconomia</div><div class="gantt-group-cell"></div><div class="gantt-group-cell"></div><div class="gantt-group-cell"></div><div class="gantt-group-cell"></div><div class="gantt-group-cell"></div><div class="gantt-group-cell"></div><div class="gantt-group-cell"></div></div><div class="gantt-row"><div class="gantt-name">Ouvidoria Integrada (diagnóstico)<div class="gantt-sub">Julia Carquejo</div></div><div class="gantt-cell"><div class="gantt-dot" style="background:#1557a0;"></div></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div></div><div class="gantt-row"><div class="gantt-name">Ouvidoria Integrada (fichas e ferramenta)<div class="gantt-sub">Julia Carquejo</div></div><div class="gantt-cell"></div><div class="gantt-cell"><div class="gantt-dot" style="background:#1557a0;"></div></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div></div><div class="gantt-row"><div class="gantt-name">IA Expert — Socioeconomia<div class="gantt-sub">Sérgio Fernandes</div></div><div class="gantt-cell"></div><div class="gantt-cell"><div class="gantt-dot" style="background:#1557a0;"></div></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div></div><div class="gantt-row"><div class="gantt-name">Produção de Materiais (Comunicação)<div class="gantt-sub">Julia Carquejo</div></div><div class="gantt-cell"></div><div class="gantt-cell"><div class="gantt-dot" style="background:#d97706;"></div></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div></div><div class="gantt-row gantt-group-row"><div class="gantt-group" style="color:#7c3aed;">Gestão de Projetos</div><div class="gantt-group-cell"></div><div class="gantt-group-cell"></div><div class="gantt-group-cell"></div><div class="gantt-group-cell"></div><div class="gantt-group-cell"></div><div class="gantt-group-cell"></div><div class="gantt-group-cell"></div></div><div class="gantt-row"><div class="gantt-name">Automatização da TAP<div class="gantt-sub">Alessandro Marques</div></div><div class="gantt-cell"><div class="gantt-dot" style="background:#1557a0;"></div></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div></div><div class="gantt-row"><div class="gantt-name">Fluxo Projetos Pré-Leilão<div class="gantt-sub">Pedro Silveira</div></div><div class="gantt-cell"><div class="gantt-dot" style="background:#1a7a45;"></div></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div></div><div class="gantt-row"><div class="gantt-name">Capacitação em Transmissão<div class="gantt-sub">Cristiane Dutra</div></div><div class="gantt-cell"><div class="gantt-dot" style="background:#1557a0;"></div></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div></div><div class="gantt-row"><div class="gantt-name">Documentos de Gestão de Implantação<div class="gantt-sub">Cristiane Dutra</div></div><div class="gantt-cell"></div><div class="gantt-cell"><div class="gantt-dot" style="background:#1557a0;"></div></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div></div><div class="gantt-row"><div class="gantt-name">Fichas de Inspeção (processos erosivos)<div class="gantt-sub">Cristiane Dutra</div></div><div class="gantt-cell"></div><div class="gantt-cell"><div class="gantt-dot" style="background:#1a7a45;"></div></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div></div><div class="gantt-row"><div class="gantt-name">Padronização de Dados<div class="gantt-sub">João G. Amorim</div></div><div class="gantt-cell"></div><div class="gantt-cell"><div class="gantt-dot" style="background:#d97706;"></div></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div></div><div class="gantt-row gantt-group-row"><div class="gantt-group" style="color:#92600a;">Transversal</div><div class="gantt-group-cell"></div><div class="gantt-group-cell"></div><div class="gantt-group-cell"></div><div class="gantt-group-cell"></div><div class="gantt-group-cell"></div><div class="gantt-group-cell"></div><div class="gantt-group-cell"></div></div><div class="gantt-row"><div class="gantt-name">EIA/RIMA com IA (Alt. Locacionais)<div class="gantt-sub">Marília Rocha</div></div><div class="gantt-cell"><div class="gantt-dot" style="background:#1557a0;"></div></div><div class="gantt-cell"><div class="gantt-bar" style="background:#1557a022;border:1px solid #1557a055;"></div></div><div class="gantt-cell"><div class="gantt-bar" style="background:#1557a022;border:1px solid #1557a055;"></div></div><div class="gantt-cell"><div class="gantt-dot" style="background:#1557a0;box-shadow:0 0 0 3px #1557a033;"></div></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div></div><div class="gantt-row"><div class="gantt-name">Capítulos Iniciais EIA/RAS com IA<div class="gantt-sub">Marília Rocha</div></div><div class="gantt-cell"><div class="gantt-dot" style="background:#1557a0;"></div></div><div class="gantt-cell"><div class="gantt-bar" style="background:#1557a022;border:1px solid #1557a055;"></div></div><div class="gantt-cell"><div class="gantt-bar" style="background:#1557a022;border:1px solid #1557a055;"></div></div><div class="gantt-cell"><div class="gantt-dot" style="background:#1557a0;box-shadow:0 0 0 3px #1557a033;"></div></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div></div><div class="gantt-row"><div class="gantt-name">Funil de Atividades de Implantação/LT<div class="gantt-sub">Kauê Lamounier</div></div><div class="gantt-cell"></div><div class="gantt-cell"><div class="gantt-dot" style="background:#1557a0;"></div></div><div class="gantt-cell"><div class="gantt-bar" style="background:#1557a022;border:1px solid #1557a055;"></div></div><div class="gantt-cell"><div class="gantt-bar" style="background:#1557a022;border:1px solid #1557a055;"></div></div><div class="gantt-cell"><div class="gantt-bar" style="background:#1557a022;border:1px solid #1557a055;"></div></div><div class="gantt-cell"><div class="gantt-bar" style="background:#1557a022;border:1px solid #1557a055;"></div></div><div class="gantt-cell"><div class="gantt-dot" style="background:#1557a0;box-shadow:0 0 0 3px #1557a033;"></div></div></div><div class="gantt-row"><div class="gantt-name">Matriz de Risco Ambiental<div class="gantt-sub">Marília / Bruna</div></div><div class="gantt-cell"></div><div class="gantt-cell"><div class="gantt-dot" style="background:#1557a0;"></div></div><div class="gantt-cell"><div class="gantt-dot" style="background:#1557a0;box-shadow:0 0 0 3px #1557a033;"></div></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div></div><div class="gantt-row"><div class="gantt-name">Revisão de Qualidade com IA<div class="gantt-sub">Marília Rocha</div></div><div class="gantt-cell"></div><div class="gantt-cell"><div class="gantt-dot" style="background:#1557a0;"></div></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div></div><div class="gantt-row gantt-group-row"><div class="gantt-group" style="color:#0e7490;">Gestão Amb.</div><div class="gantt-group-cell"></div><div class="gantt-group-cell"></div><div class="gantt-group-cell"></div><div class="gantt-group-cell"></div><div class="gantt-group-cell"></div><div class="gantt-group-cell"></div><div class="gantt-group-cell"></div></div><div class="gantt-row"><div class="gantt-name">Gestão Institucional<div class="gantt-sub">Dione Aline</div></div><div class="gantt-cell"></div><div class="gantt-cell"><div class="gantt-dot" style="background:#d97706;"></div></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div></div><div class="gantt-row gantt-group-row"><div class="gantt-group" style="color:#c2410c;">Eficiência</div><div class="gantt-group-cell"></div><div class="gantt-group-cell"></div><div class="gantt-group-cell"></div><div class="gantt-group-cell"></div><div class="gantt-group-cell"></div><div class="gantt-group-cell"></div><div class="gantt-group-cell"></div></div><div class="gantt-row"><div class="gantt-name">Matriz de Risco (Eficiência)<div class="gantt-sub">Marília / Bruna</div></div><div class="gantt-cell"></div><div class="gantt-cell"><div class="gantt-dot" style="background:#1557a0;"></div></div><div class="gantt-cell"><div class="gantt-dot" style="background:#1557a0;box-shadow:0 0 0 3px #1557a033;"></div></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div></div></div>
+  </div>
+</div>
+
+<script>
+const DATA = [
+  {id:1,frente:"Fauna",mes_inicio:"mar/26",categoria:"P&D",responsavel:"Tuliana Brunes",iniciativa:"Revisão PEQuI/PDI ANEEL",status:"Em andamento",prazo:"06/03/2026",novo:false,ultimo_update:"Criação do projeto — em discussão com parceiro comercial para implantação."},
+  {id:2,frente:"Fauna",mes_inicio:"mar/26",categoria:"Processo e Eficiência Técnica",responsavel:"Murilo Santana",iniciativa:"Fluxo p/ Veterinários",status:"Em andamento",prazo:"31/03/2026",novo:false,ultimo_update:"Fluxo implementado, em revisão com GeoTech — card aberto para desenvolvimento."},
+  {id:3,frente:"Fauna",mes_inicio:"abr/26",categoria:"P&D",responsavel:"Murilo Santana",iniciativa:"PDI Ninhos em Torres",status:"Em andamento",prazo:"N/I",novo:false,ultimo_update:"Parceria viabilizada com TSM; P&D a ser desenvolvido para apresentação à Alupar."},
+  {id:4,frente:"Fauna",mes_inicio:"abr/26",categoria:"Padronização e Qualidade",responsavel:"Sérgio Fernandes / Murilo",iniciativa:"Checklist Mobilização Resgate",status:"Em andamento",prazo:"N/I",novo:false,ultimo_update:"Roteiro apresentado ao Geo; aguardando inclusão no WebGIS."},
+  {id:5,frente:"Fauna",mes_inicio:"abr/26",categoria:"Processo e Eficiência Técnica",responsavel:"Sérgio Fernandes",iniciativa:"IA Expert — Fauna",status:"Em andamento",prazo:"30/04/2026",novo:false,ultimo_update:"Validação pelos especialistas do prompt inicial em curso."},
+  {id:6,frente:"Flora",mes_inicio:"abr/26",categoria:"Padronização e Qualidade",responsavel:"Mariana Morelli",iniciativa:"Padronização ASV",status:"Em andamento",prazo:"08/06/2026",novo:false,ultimo_update:"Compartilhado com Geo para análise técnica; aguardando validação."},
+  {id:7,frente:"Flora",mes_inicio:"abr/26",categoria:"Padronização e Qualidade",responsavel:"Luiz Junior",iniciativa:"Manual SIGAM (CETESB)",status:"Em andamento",prazo:"10/04/2026",novo:false,ultimo_update:"Manual elaborado, em desenvolvimento da parte gráfica para divulgação."},
+  {id:8,frente:"Meio Físico",mes_inicio:"mar/26",categoria:"Workshops e Treinamentos",responsavel:"Sérgio Fernandes",iniciativa:"Treinamento Monitoramento de Ruído",status:"Em andamento",prazo:"N/I",novo:false,ultimo_update:"Material finalizado; aguardando processamento GEO. Envio de divulgação pendente."},
+  {id:9,frente:"Socioeconomia",mes_inicio:"mar/26",categoria:"Padronização e Qualidade",responsavel:"Julia Carquejo",iniciativa:"Ouvidoria Integrada (diagnóstico)",status:"Em andamento",prazo:"20/02/2027",novo:false,ultimo_update:"Pesquisa iniciada; levantamento de boas práticas e soluções de bots em andamento."},
+  {id:10,frente:"Socioeconomia",mes_inicio:"abr/26",categoria:"Padronização e Qualidade",responsavel:"Julia Carquejo",iniciativa:"Ouvidoria Integrada (fichas e ferramenta)",status:"Em andamento",prazo:"20/02/2027",novo:false,ultimo_update:"Reuniões com fornecedores realizadas; orçamento da ouvidoria existente em análise."},
+  {id:11,frente:"Socioeconomia",mes_inicio:"abr/26",categoria:"Processo e Eficiência Técnica",responsavel:"Sérgio Fernandes",iniciativa:"IA Expert — Socioeconomia",status:"Em andamento",prazo:"30/04/2026",novo:false,ultimo_update:"Prompt disponibilizado; especialistas em validação."},
+  {id:12,frente:"Socioeconomia",mes_inicio:"abr/26",categoria:"Padronização e Qualidade",responsavel:"Julia Carquejo",iniciativa:"Produção de Materiais (Comunicação)",status:"A iniciar",prazo:"20/02/2027",novo:false,ultimo_update:"Pendente definição de etapas."},
+  {id:13,frente:"Gestão de Projetos",mes_inicio:"mar/26",categoria:"Processo e Eficiência Técnica",responsavel:"Alessandro Marques",iniciativa:"Automatização da TAP",status:"Em andamento",prazo:"30/03/2026",novo:false,ultimo_update:"Teste com LD 138 kV Ascenty realizado; novo teste no ambiente Microsoft a fazer."},
+  {id:14,frente:"Gestão de Projetos",mes_inicio:"mar/26",categoria:"Padronização e Qualidade",responsavel:"Pedro Silveira",iniciativa:"Fluxo Projetos Pré-Leilão",status:"Concluída",prazo:"30/03/2026",novo:false,ultimo_update:"Procedimento emitido. Manual finalizado e encaminhado para revisão."},
+  {id:15,frente:"Gestão de Projetos",mes_inicio:"mar/26",categoria:"Workshops e Treinamentos",responsavel:"Cristiane Dutra",iniciativa:"Capacitação em Transmissão",status:"Em andamento",prazo:"13/03/2026",novo:false,ultimo_update:"Material revisado por diretoria e comercial. 3 módulos, 10 aulas definidos."},
+  {id:16,frente:"Gestão de Projetos",mes_inicio:"abr/26",categoria:"Padronização e Qualidade",responsavel:"Cristiane Dutra",iniciativa:"Documentos de Gestão de Implantação",status:"Em andamento",prazo:"N/I",novo:false,ultimo_update:"Ficha nova finalizada; aguardando posicionamento do GEO."},
+  {id:17,frente:"Gestão de Projetos",mes_inicio:"abr/26",categoria:"Padronização e Qualidade",responsavel:"Cristiane Dutra",iniciativa:"Fichas de Inspeção (processos erosivos)",status:"Concluída",prazo:"N/I",novo:false,ultimo_update:"Testes finalizados e disponível para uso."},
+  {id:18,frente:"Gestão de Projetos",mes_inicio:"abr/26",categoria:"Padronização e Qualidade",responsavel:"João G. Amorim",iniciativa:"Padronização de Dados",status:"A iniciar",prazo:"N/I",novo:false,ultimo_update:"Pendente definição de fichas automáticas e treinamento de campo."},
+  {id:19,frente:"Transversal",mes_inicio:"mar/26",categoria:"POC",responsavel:"Marília Rocha",iniciativa:"EIA/RIMA com IA (Alt. Locacionais)",status:"Em andamento",prazo:"01/06/2026",novo:false,ultimo_update:"Expert para licenciamento criado. Prompt elaborado para uso interno."},
+  {id:20,frente:"Transversal",mes_inicio:"mar/26",categoria:"POC",responsavel:"Marília Rocha",iniciativa:"Capítulos Iniciais EIA/RAS com IA",status:"Em andamento",prazo:"30/06/2026",novo:false,ultimo_update:"Teste com assistente de licenciamento iniciado para capítulos iniciais."},
+  {id:21,frente:"Transversal",mes_inicio:"abr/26",categoria:"Processo e Eficiência Técnica",responsavel:"Kauê Lamounier",iniciativa:"Funil de Atividades de Implantação/LT",status:"Em andamento",prazo:"30/09/2026",novo:false,ultimo_update:"Estrutura do Funil criada; criação das atividades em andamento."},
+  {id:22,frente:"Transversal",mes_inicio:"abr/26",categoria:"Padronização e Qualidade",responsavel:"Marília / Bruna",iniciativa:"Matriz de Risco Ambiental",status:"Em andamento",prazo:"01/05/2026",novo:false,ultimo_update:"Metodologia elaborada; glossário de riscos do histórico em andamento."},
+  {id:23,frente:"Transversal",mes_inicio:"abr/26",categoria:"POC",responsavel:"Marília Rocha",iniciativa:"Revisão de Qualidade com IA",status:"Em andamento",prazo:"N/I",novo:false,ultimo_update:"Testes com Adapta (meio físico e qualidade) realizados; resultados satisfatórios."},
+  {id:24,frente:"Gestão Amb.",mes_inicio:"abr/26",categoria:"Padronização e Qualidade",responsavel:"Dione Aline",iniciativa:"Gestão Institucional",status:"A iniciar",prazo:"30/04/2026",novo:false,ultimo_update:"Revisão de fluxos e documentos de gestão pendente."},
+  {id:25,frente:"Eficiência",mes_inicio:"abr/26",categoria:"Padronização e Qualidade",responsavel:"Marília / Bruna",iniciativa:"Matriz de Risco (Eficiência)",status:"Em andamento",prazo:"01/05/2026",novo:false,ultimo_update:"Planilha automatizada em elaboração."},
+  // --- NOVAS (inseridas a partir de 25/05/2026 — pendentes de alocação) ---
+  {id:26,frente:"Não alocada",mes_inicio:"mai/26",categoria:"Processo e Eficiência Técnica",responsavel:"A definir",iniciativa:"Automação de Relatórios de Monitoramento Ambiental",status:"A iniciar",prazo:"N/I",novo:true,ultimo_update:"Registrada em 25/05 — pendente de alocação de frente e responsável."},
+  {id:27,frente:"Não alocada",mes_inicio:"mai/26",categoria:"POC",responsavel:"A definir",iniciativa:"Agente de IA para Triagem de Documentos IBAMA",status:"A iniciar",prazo:"N/I",novo:true,ultimo_update:"Registrada em 25/05 — pendente de alocação de frente e responsável."},
+  {id:28,frente:"Não alocada",mes_inicio:"mai/26",categoria:"Padronização e Qualidade",responsavel:"A definir",iniciativa:"Padronização de Templates de Laudos Técnicos",status:"A iniciar",prazo:"N/I",novo:true,ultimo_update:"Registrada em 28/05 — pendente de alocação de frente e responsável."},
+  {id:29,frente:"Não alocada",mes_inicio:"mai/26",categoria:"P&D",responsavel:"A definir",iniciativa:"Pesquisa de Ferramentas de GeoIA para Mapeamento de Vegetação",status:"A iniciar",prazo:"N/I",novo:true,ultimo_update:"Registrada em 28/05 — pendente de alocação de frente e responsável."},
+  {id:30,frente:"Não alocada",mes_inicio:"jun/26",categoria:"Workshops e Treinamentos",responsavel:"A definir",iniciativa:"Capacitação em Uso de IA para Análise de Impacto Ambiental",status:"A iniciar",prazo:"N/I",novo:true,ultimo_update:"Registrada em 01/06 — pendente de alocação de frente e responsável."},
+];
+
+const CAT_COLORS = {
+  "P&D":"#7c3aed","Processo e Eficiência Técnica":"#1557a0",
+  "Padronização e Qualidade":"#1a7a45","Workshops e Treinamentos":"#92600a","POC":"#0e7490"
+};
+const FRENTE_COLORS = {
+  "Fauna":"#1a7a45","Flora":"#2e9e60","Meio Físico":"#1557a0",
+  "Socioeconomia":"#b91c1c","Gestão de Projetos":"#7c3aed",
+  "Transversal":"#92600a","Gestão Amb.":"#0e7490","Eficiência":"#c2410c","Não alocada":"#6b7280"
+};
+
+let currentFilter = {frente:'Todas', status:'Todos', search:'', novo:'Todas'};
+let sortKey='id', sortAsc=true;
+
+function statusBadge(s, novo) {
+  if (novo) return `<span class="badge badge-new">🆕 Nova</span>`;
+  if (s==='Concluída')    return `<span class="badge badge-green">${s}</span>`;
+  if (s==='Em andamento') return `<span class="badge badge-blue">${s}</span>`;
+  return `<span class="badge badge-amber">${s}</span>`;
+}
+function catDot(c){
+  return `<span class="cat"><span class="cat-dot" style="background:${CAT_COLORS[c]||'#888'}"></span>${c}</span>`;
+}
+
+function renderMetrics(){
+  const total=DATA.length, nov=DATA.filter(d=>d.novo).length;
+  const conc=DATA.filter(d=>!d.novo&&d.status==='Concluída').length;
+  const and=DATA.filter(d=>!d.novo&&d.status==='Em andamento').length;
+  const ini=DATA.filter(d=>!d.novo&&d.status==='A iniciar').length;
+  document.getElementById('metrics').innerHTML=`
+    <div class="metric m-total"><div class="val">${total}</div><div class="lbl">Total de iniciativas</div></div>
+    <div class="metric m-green"><div class="val">${conc}</div><div class="lbl">Concluídas</div></div>
+    <div class="metric m-blue"><div class="val">${and}</div><div class="lbl">Em andamento</div></div>
+    <div class="metric m-amber"><div class="val">${ini}</div><div class="lbl">A iniciar</div></div>
+    <div class="metric m-new"><div class="val">${nov}</div><div class="lbl">Novas (desde 25/05)</div></div>
+    <div class="metric m-mar"><div class="val">${DATA.filter(d=>d.mes_inicio==='mar/26').length}</div><div class="lbl">Iniciadas em mar</div></div>
+  `;
+}
+
+function renderNewCards(){
+  const novas = DATA.filter(d=>d.novo);
+  document.getElementById('new-cards').innerHTML = novas.map(d=>`
+    <div class="new-card">
+      <div class="nc-title">${d.iniciativa}</div>
+      <div class="nc-meta">
+        <span class="nc-badge">${d.categoria}</span>
+        <span style="color:#6b7280;font-size:11px;">${d.mes_inicio} · ${d.responsavel}</span>
+      </div>
+    </div>`).join('');
+}
+
+function renderOverview(){
+  const active = DATA.filter(d=>!d.novo);
+  const fMap={};
+  active.forEach(d=>{fMap[d.frente]=(fMap[d.frente]||0)+1;});
+  const fSorted=Object.entries(fMap).sort((a,b)=>b[1]-a[1]);
+  const fMax=fSorted[0][1];
+  document.getElementById('chart-frente').innerHTML=fSorted.map(([f,n])=>`
+    <div class="bar-row">
+      <div class="bar-label">${f}</div>
+      <div class="bar-track"><div class="bar-fill" style="width:${Math.round(n/fMax*100)}%;background:${FRENTE_COLORS[f]||'#888'}"></div></div>
+      <div class="bar-count">${n}</div>
+    </div>`).join('');
+
+  const cMap={};
+  active.forEach(d=>{cMap[d.categoria]=(cMap[d.categoria]||0)+1;});
+  const cSorted=Object.entries(cMap).sort((a,b)=>b[1]-a[1]);
+  const cMax=cSorted[0][1];
+  document.getElementById('chart-cat').innerHTML=cSorted.map(([c,n])=>`
+    <div class="bar-row">
+      <div class="bar-label" style="font-size:12px;">${c}</div>
+      <div class="bar-track"><div class="bar-fill" style="width:${Math.round(n/cMax*100)}%;background:${CAT_COLORS[c]||'#888'}"></div></div>
+      <div class="bar-count">${n}</div>
+    </div>`).join('');
+
+  const frentes=[...new Set(active.map(d=>d.frente))];
+  const sCols={'Concluída':'#1a7a45','Em andamento':'#1557a0','A iniciar':'#d97706'};
+  const sfHtml=frentes.map(f=>{
+    const items=active.filter(d=>d.frente===f), total=items.length, counts={};
+    items.forEach(d=>{counts[d.status]=(counts[d.status]||0)+1;});
+    const bars=Object.entries(sCols).map(([s,col])=>{
+      const n=counts[s]||0, pct=Math.round(n/total*100);
+      return pct>0?`<div title="${s}: ${n}" style="width:${pct}%;background:${col};height:100%;"></div>`:'';
+    }).join('');
+    return `<div class="bar-row">
+      <div class="bar-label" style="font-size:12px;">${f}</div>
+      <div class="bar-track" style="height:10px;border-radius:5px;overflow:hidden;display:flex;">${bars}</div>
+      <div class="bar-count">${total}</div>
+    </div>`;
+  }).join('');
+  document.getElementById('chart-status-frente').innerHTML=sfHtml
+    +`<div style="display:flex;gap:16px;margin-top:14px;">${Object.entries(sCols).map(([s,c])=>`<span style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--muted)"><span style="width:8px;height:8px;border-radius:50%;background:${c};display:inline-block;"></span>${s}</span>`).join('')}</div>`;
+}
+
+function renderFilters(){
+  const frentes=['Todas',...new Set(DATA.filter(d=>!d.novo).map(d=>d.frente))];
+  const statuses=['Todos','Concluída','Em andamento','A iniciar'];
+  let html=frentes.map(f=>`<button class="filter-btn${currentFilter.frente===f?' active':''}" onclick="setFilter('frente','${f}')">${f}</button>`).join('');
+  html+=`<div class="filter-sep"></div>`;
+  html+=statuses.map(s=>`<button class="filter-btn${currentFilter.status===s?' active-blue':''}" onclick="setFilter('status','${s}')">${s}</button>`).join('');
+  html+=`<div class="filter-sep"></div>`;
+  html+=`<button class="filter-btn${currentFilter.novo==='novas'?' active':''}\" onclick="setFilter('novo','${currentFilter.novo==='novas'?'Todas':'novas'}')">🆕 Novas</button>`;
+  html+=`<div class="filter-sep"></div>`;
+  html+=`<input class="search-input" placeholder="Buscar iniciativa…" value="${currentFilter.search}" oninput="setFilter('search',this.value)">`;
+  document.getElementById('filters').innerHTML=html;
+}
+
+function setFilter(key,val){currentFilter[key]=val;renderFilters();renderTable();}
+function sortBy(key){if(sortKey===key)sortAsc=!sortAsc;else{sortKey=key;sortAsc=true;}renderTable();}
+
+function renderTable(){
+  let data=[...DATA];
+  if(currentFilter.frente!=='Todas') data=data.filter(d=>d.frente===currentFilter.frente);
+  if(currentFilter.status!=='Todos') data=data.filter(d=>d.status===currentFilter.status);
+  if(currentFilter.novo==='novas') data=data.filter(d=>d.novo);
+  if(currentFilter.search){const q=currentFilter.search.toLowerCase();data=data.filter(d=>d.iniciativa.toLowerCase().includes(q)||d.responsavel.toLowerCase().includes(q)||d.frente.toLowerCase().includes(q));}
+  data.sort((a,b)=>{let av=a[sortKey]||'',bv=b[sortKey]||'';if(sortKey==='id')return sortAsc?av-bv:bv-av;return sortAsc?av.localeCompare(bv,undefined,{numeric:true}):bv.localeCompare(av,undefined,{numeric:true});});
+  const tbody=document.getElementById('table-body');
+  if(!data.length){tbody.innerHTML=`<tr><td colspan="9" class="empty">Nenhuma iniciativa encontrada.</td></tr>`;return;}
+  tbody.innerHTML=data.map(d=>`
+    <tr class="${d.novo?'row-new':''}">
+      <td class="td-id">${String(d.id).padStart(2,'0')}</td>
+      <td class="td-frente" style="color:${FRENTE_COLORS[d.frente]||'#888'}">${d.frente}${d.novo?` <span class="new-tag">🆕 nova</span>`:''}</td>
+      <td class="td-iniciativa">${d.iniciativa}</td>
+      <td>${catDot(d.categoria)}</td>
+      <td class="td-resp">${d.responsavel}</td>
+      <td>${statusBadge(d.status,d.novo)}</td>
+      <td class="td-prazo" style="color:var(--muted)">${d.mes_inicio}</td>
+      <td class="td-prazo" style="color:${d.prazo==='N/I'?'var(--faint)':'var(--text)'}">${d.prazo}</td>
+      <td class="td-update">${d.ultimo_update}</td>
+    </tr>`).join('');
+}
+
+function renderGantt(){
+  const months=['mar/26','abr/26','mai/26','jun/26','jul/26','ago/26','set/26'];
+  const monthIdx={'mar/26':0,'abr/26':1,'mai/26':2,'jun/26':3,'jul/26':4,'ago/26':5,'set/26':6};
+  function prazoM(p){if(!p||p==='N/I')return null;const m=p.match(/(\d+)\/(\d+)\/(\d+)/);if(!m)return null;const d=new Date(+m[3],+m[2]-1,+m[1]);const k=`${['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'][d.getMonth()]}/26`;return monthIdx[k]!==undefined?monthIdx[k]:null;}
+  const active=DATA.filter(d=>!d.novo);
+  const frentes=[...new Set(active.map(d=>d.frente))];
+  const BAR={'Concluída':'#1a7a45','Em andamento':'#1557a0','A iniciar':'#d97706'};
+  let html=`<div class="gantt-header"><div class="gantt-hcell">Iniciativa</div>${months.map((m,i)=>`<div class="gantt-hcell${i===2?' cur-month':''}">${m}${i===2?' ●':''}</div>`).join('')}</div>`;
+  frentes.forEach(f=>{
+    const fc=FRENTE_COLORS[f]||'#888';
+    html+=`<div class="gantt-row gantt-group-row"><div class="gantt-group" style="color:${fc};">${f}</div>${months.map(()=>`<div class="gantt-group-cell"></div>`).join('')}</div>`;
+    active.filter(d=>d.frente===f).forEach(item=>{
+      const si=monthIdx[item.mes_inicio],ei=prazoM(item.prazo),col=BAR[item.status]||'#888';
+      const cells=months.map((_,i)=>{
+        let content='';
+        if(ei!==null&&i>=si&&i<=ei){content=`<div class="gantt-bar" style="background:${col}22;border:1px solid ${col}55;"></div>`;}
+        if(i===si)content=`<div class="gantt-dot" style="background:${col};"></div>`;
+        if(ei!==null&&i===ei&&i!==si)content=`<div class="gantt-dot" style="background:${col};box-shadow:0 0 0 3px ${col}33;"></div>`;
+        return `<div class="gantt-cell">${content}</div>`;
+      }).join('');
+      html+=`<div class="gantt-row"><div class="gantt-name">${item.iniciativa}<div class="gantt-sub">${item.responsavel}</div></div>${cells}</div>`;
+    });
+  });
+  document.getElementById('gantt-container').innerHTML=html;
+}
+
+function switchTab(name,el){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('view-'+name).classList.add('active');
+}
+
+renderMetrics();renderNewCards();renderOverview();renderFilters();renderTable();renderGantt();
+</script>
+
+
+</body></html>

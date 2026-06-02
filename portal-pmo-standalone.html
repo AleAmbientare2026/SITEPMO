@@ -1,0 +1,2281 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Portal PMO — Ambientare</title>
+<style>
+:root{
+  --az:#1a6fa8;--az2:#1256a0;--az3:#e8f4fd;--az4:#b3d9f5;
+  --vd:#2e8b4a;--vd2:#1a5c32;--vd3:#eaf5ee;--vd4:#a8d8b8;
+  --am:#d97706;--rm:#c0392b;--rx:#6d28d9;
+  --c1:#f4f6f4;--c2:#e4e8e4;--c3:#9aab98;--c4:#4a5a48;--c5:#1e2a1c;
+  --sb:256px;--hd:62px;--r:10px;
+  --fn:'Segoe UI',system-ui,-apple-system,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--fn);background:var(--c1);color:var(--c5);font-size:14px;min-height:100vh}
+
+/* ── LOGIN ── */
+.lo{position:fixed;inset:0;background:linear-gradient(135deg,var(--az2),var(--vd2));display:flex;align-items:center;justify-content:center;z-index:500}
+.lo.hidden{display:none}
+.lo-box{background:#fff;border-radius:16px;padding:36px 40px;width:380px;box-shadow:0 24px 64px rgba(0,0,0,.25);text-align:center}
+.lo-brand{font-size:22px;font-weight:800;letter-spacing:-.5px;margin-bottom:4px}
+.lo-brand span{color:var(--vd)}
+.lo-sub{font-size:12px;color:var(--c3);margin-bottom:22px}
+.lo-lbl{text-align:left;display:block;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--c3);margin-bottom:5px}
+.lo-inp{width:100%;padding:10px 14px;border:1.5px solid var(--c2);border-radius:8px;font-size:13px;outline:none;font-family:var(--fn);transition:border .2s}
+.lo-inp:focus{border-color:var(--az)}
+.lo-err{color:var(--rm);font-size:12px;margin:6px 0;display:none;font-weight:600}
+.lo-btn{width:100%;margin-top:12px;padding:11px;background:linear-gradient(90deg,var(--az),var(--vd));color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer}
+.lo-btn:hover{opacity:.9}
+.lo-skip{background:none;border:none;color:var(--az);font-size:11px;font-weight:600;cursor:pointer;text-decoration:underline;margin-top:10px;display:block}
+.lo-hint{font-size:11px;color:var(--c3);margin-top:10px}
+
+/* ── HEADER ── */
+.hdr{position:fixed;top:0;left:0;right:0;height:var(--hd);background:#fff;border-bottom:2px solid var(--az3);display:flex;align-items:center;padding:0 18px;z-index:200;gap:14px;box-shadow:0 2px 12px rgba(26,111,168,.1)}
+.h-brand{font-size:18px;font-weight:800;letter-spacing:-.5px;cursor:pointer;color:var(--az2)}
+.h-brand em{color:var(--vd);font-style:normal}
+.h-sep{width:1px;height:26px;background:var(--c2)}
+.h-sub{font-size:10px;font-weight:700;color:var(--c3);text-transform:uppercase;letter-spacing:1.2px;white-space:nowrap}
+.h-r{margin-left:auto;display:flex;align-items:center;gap:8px}
+.srch{display:flex;align-items:center;background:var(--c1);border:1.5px solid var(--c2);border-radius:8px;padding:0 12px;gap:8px;width:200px;height:34px;transition:border .2s}
+.srch:focus-within{border-color:var(--az)}
+.srch input{background:none;border:none;outline:none;font-size:13px;color:var(--c5);width:100%;font-family:var(--fn)}
+.srch input::placeholder{color:var(--c3)}
+.mbadge{padding:4px 10px;border-radius:6px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px}
+.mb-edit{background:var(--vd3);color:var(--vd2);border:1.5px solid var(--vd4)}
+.mb-view{background:var(--az3);color:var(--az2);border:1.5px solid var(--az4)}
+.hbtn{display:flex;align-items:center;gap:5px;padding:6px 12px;border-radius:7px;font-size:11px;font-weight:700;cursor:pointer;border:1.5px solid var(--az);color:var(--az);background:#fff;text-transform:uppercase;letter-spacing:.3px;transition:all .2s}
+.hbtn:hover,.hbtn.on{background:var(--az);color:#fff}
+.hbtn.gn{border-color:var(--vd);color:var(--vd)}.hbtn.gn:hover,.hbtn.gn.on{background:var(--vd);color:#fff}
+
+/* ── LAYOUT ── */
+.lay{display:flex;margin-top:var(--hd);min-height:calc(100vh - var(--hd))}
+.sb{width:var(--sb);background:#fff;border-right:1.5px solid var(--c2);position:fixed;top:var(--hd);bottom:0;overflow-y:auto;display:flex;flex-direction:column}
+.sb::-webkit-scrollbar{width:3px}.sb::-webkit-scrollbar-thumb{background:var(--c2);border-radius:3px}
+.mn{margin-left:var(--sb);flex:1;padding:26px 32px;overflow-x:hidden}
+.pg{display:none}.pg.on{display:block}
+
+/* ── SIDEBAR ── */
+.sb-home{display:flex;align-items:center;gap:9px;padding:14px 16px;font-size:13px;font-weight:700;color:var(--az2);cursor:pointer;border-bottom:1.5px solid var(--c2);transition:background .15s}
+.sb-home:hover{background:var(--az3)}
+.sb-tr{display:flex;align-items:center;gap:8px;padding:11px 14px;font-size:12px;font-weight:700;color:#fff;cursor:pointer;background:linear-gradient(90deg,var(--vd2),var(--vd));margin:10px 12px;border-radius:8px;transition:opacity .2s}
+.sb-tr:hover{opacity:.9}
+.sb-lbl{padding:10px 16px 4px;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:var(--c3)}
+.sb-ph{display:flex;align-items:center;gap:8px;padding:8px 14px;cursor:pointer;font-size:10px;font-weight:700;color:var(--c3);text-transform:uppercase;letter-spacing:1px;user-select:none;transition:background .15s}
+.sb-ph:hover{background:var(--c1)}
+.sb-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.chev{margin-left:auto;font-size:12px;transition:transform .2s;display:inline-block}
+.sb-ph.op .chev{transform:rotate(180deg)}
+.sb-its{display:none;padding-bottom:4px}.sb-its.op{display:block}
+.sb-it{display:flex;align-items:center;gap:7px;padding:6px 14px 6px 28px;cursor:pointer;font-size:11.5px;color:var(--c4);transition:all .15s;border-left:3px solid transparent;line-height:1.4}
+.sb-it:hover{background:var(--az3);color:var(--az);border-left-color:var(--az4)}
+.sb-it.on{background:var(--az3);color:var(--az2);border-left-color:var(--az);font-weight:700}
+.sb-cod{font-size:9px;background:var(--c2);padding:1px 4px;border-radius:3px;color:var(--c3);flex-shrink:0;font-family:monospace;font-weight:700}
+.sb-it.on .sb-cod{background:var(--az4);color:var(--az2)}
+.sb-foot{margin-top:auto;padding:14px 16px;border-top:1.5px solid var(--c2)}
+.btn-full{width:100%;padding:8px;background:var(--c1);border:1.5px solid var(--c2);border-radius:7px;font-size:11px;font-weight:700;cursor:pointer;color:var(--c4);display:flex;align-items:center;justify-content:center;gap:6px;transition:all .2s}
+.btn-full:hover{background:var(--az3);color:var(--az);border-color:var(--az4)}
+
+/* ── HERO ── */
+.hero{background:linear-gradient(135deg,var(--az2),var(--vd2));border-radius:var(--r);padding:26px 30px;color:#fff;margin-bottom:18px;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;right:-30px;top:-30px;width:160px;height:160px;border-radius:50%;background:rgba(255,255,255,.06)}
+.h-tag{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);border-radius:20px;padding:3px 12px;font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;display:inline-block;margin-bottom:10px}
+.hero h1{font-size:21px;font-weight:800;margin-bottom:5px;letter-spacing:-.3px}
+.hero p{font-size:12.5px;opacity:.8;max-width:520px;line-height:1.7}
+.h-badges{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}
+.h-badge{padding:4px 11px;border-radius:6px;font-size:10px;font-weight:600;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.9)}
+
+/* ── KPIs ── */
+.kpi-g{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px}
+.kpi{background:#fff;border:1.5px solid var(--c2);border-radius:var(--r);padding:14px;text-align:center}
+.kpi-n{font-size:28px;font-weight:800;line-height:1}
+.kpi-l{font-size:10px;color:var(--c3);margin-top:5px;font-weight:700;text-transform:uppercase;letter-spacing:.3px}
+
+/* ── PHASE CARDS ── */
+.ph-g{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:18px}
+.ph-c{background:#fff;border:1.5px solid var(--c2);border-radius:var(--r);padding:15px;cursor:pointer;transition:all .2s;border-top:4px solid}
+.ph-c:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(26,111,168,.1)}
+.ph-c h3{font-size:11px;font-weight:700;margin-bottom:4px;text-transform:uppercase;letter-spacing:.4px}
+.ph-c p{font-size:11px;color:var(--c3);line-height:1.5}
+.ph-ft{display:flex;justify-content:space-between;align-items:center;margin-top:10px;padding-top:10px;border-top:1px solid var(--c2)}
+.ph-ct{font-size:11px;color:var(--c3)}
+.ph-lk{font-size:10px;font-weight:700;cursor:pointer}
+
+/* ── CARDS / TABLES ── */
+.card{background:#fff;border:1.5px solid var(--c2);border-radius:var(--r);overflow:hidden;margin-bottom:14px}
+.c-hdr{padding:14px 20px;border-bottom:1.5px solid var(--c2);display:flex;align-items:center;gap:10px}
+.c-hdr h2{font-size:14px;font-weight:700}
+.c-hr{margin-left:auto;display:flex;gap:7px}
+.tbl{width:100%;border-collapse:collapse;font-size:12.5px}
+.tbl th{text-align:left;padding:9px 14px;background:var(--c1);font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--c3);border-bottom:1.5px solid var(--c2);white-space:nowrap}
+.tbl td{padding:10px 14px;border-bottom:1px solid var(--c2);vertical-align:middle}
+.tbl tr:last-child td{border-bottom:none}
+.tbl tr:hover td{background:#f8fbf8}
+.ph-row td{background:var(--az2)!important;color:#fff!important;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;padding:8px 14px!important}
+.d-code{font-family:monospace;font-size:11px;font-weight:700;color:var(--az2);white-space:nowrap}
+.d-lnk{cursor:pointer;font-weight:600;color:var(--c5)}.d-lnk:hover{color:var(--az);text-decoration:underline}
+
+/* ── PILLS ── */
+.pill{display:inline-flex;align-items:center;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:700;white-space:nowrap}
+.p-pop{background:#e8f4fd;color:var(--az2)}
+.p-man{background:var(--vd3);color:var(--vd2)}
+.p-tpl{background:#f3eeff;color:var(--rx)}
+.s-a{background:#fef9c3;color:#92400e}
+.s-e{background:#ffe8d3;color:#9a3412}
+.s-v{background:#d1fae5;color:#065f46}
+
+/* ── BUTTONS ── */
+.btn{display:inline-flex;align-items:center;gap:5px;padding:7px 13px;border-radius:7px;font-size:11px;font-weight:700;cursor:pointer;border:1.5px solid;transition:all .2s}
+.btn-p{background:var(--az);color:#fff;border-color:var(--az)}.btn-p:hover{background:var(--az2)}
+.btn-g{background:var(--vd);color:#fff;border-color:var(--vd)}.btn-g:hover{background:var(--vd2)}
+.btn-o{background:#fff;color:var(--c4);border-color:var(--c2)}.btn-o:hover{background:var(--c1)}
+.btn-sm{padding:5px 10px;font-size:10px}
+
+/* ── DOC PAGE ── */
+.bc{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--c3);margin-bottom:18px;font-weight:600;flex-wrap:wrap}
+.bc a{color:var(--c4);cursor:pointer;text-decoration:none}.bc a:hover{color:var(--az)}
+.d-hdr{background:#fff;border:1.5px solid var(--c2);border-radius:var(--r);padding:22px 26px;margin-bottom:12px}
+.d-mr{display:flex;align-items:center;gap:7px;margin-bottom:10px;flex-wrap:wrap}
+.d-h1{font-size:19px;font-weight:800;color:var(--c5);margin-bottom:7px;line-height:1.2}
+.d-desc{font-size:13px;color:var(--c4);line-height:1.7;max-width:680px;margin-bottom:14px}
+.d-ig{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;padding-top:14px;border-top:1.5px solid var(--c2)}
+.di-l{font-size:9px;text-transform:uppercase;letter-spacing:.8px;color:var(--c3);font-weight:700;margin-bottom:3px}
+.di-v{font-size:13px;font-weight:600;color:var(--c5)}
+.d-act{display:flex;gap:8px;margin-top:14px;padding-top:14px;border-top:1.5px solid var(--c2);flex-wrap:wrap}
+.sec{background:#fff;border:1.5px solid var(--c2);border-radius:var(--r);padding:18px 22px;margin-bottom:12px}
+.sec h3{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--c3);margin-bottom:12px;display:flex;align-items:center;gap:6px}
+.sec p{font-size:13px;color:var(--c4);line-height:1.7}
+.sec ul{list-style:none;display:flex;flex-direction:column;gap:6px}
+.sec li{font-size:13px;color:var(--c4);display:flex;align-items:flex-start;gap:8px;line-height:1.5}
+.sec li::before{content:'›';font-weight:700;flex-shrink:0;color:var(--az)}
+.io-g{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.raci-g{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.raci-c{background:var(--c1);border-radius:7px;padding:10px;text-align:center}
+.raci-r{font-size:18px;font-weight:800;line-height:1}
+.raci-n{font-size:11px;color:var(--c4);margin-top:3px;font-weight:500}
+.raci-l{font-size:10px;color:var(--c3);margin-top:1px}
+.steps{display:flex;flex-direction:column;gap:9px}
+.st{display:flex;gap:12px;padding:13px;background:var(--c1);border-radius:8px;border-left:3px solid var(--az)}
+.st.dec{border-left-color:var(--am);background:#fef9f0}
+.st.end{border-left-color:var(--vd);background:var(--vd3)}
+.st-n{width:26px;height:26px;border-radius:50%;background:linear-gradient(135deg,var(--az),var(--vd));color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;flex-shrink:0}
+.st.dec .st-n{background:var(--am)}.st.end .st-n{background:var(--vd)}
+.st-b strong{display:block;font-size:12.5px;font-weight:700;margin-bottom:3px;color:var(--c5)}
+.st-b p{font-size:12px;color:var(--c4);line-height:1.6}
+.st-tags{display:flex;gap:6px;margin-top:5px;flex-wrap:wrap}
+.stag{padding:2px 7px;border-radius:4px;font-size:10px;font-weight:700}
+.ref-blk{background:var(--az3);border:0.5px solid var(--az4);border-radius:8px;padding:12px 14px;margin-bottom:10px}
+.ref-it{display:flex;align-items:flex-start;gap:8px;padding:6px 0;border-bottom:1px solid var(--az4);font-size:12px;line-height:1.5;color:var(--az2)}
+.ref-it:last-child{border-bottom:none}
+.ref-it strong{font-size:11px;white-space:nowrap;min-width:130px;flex-shrink:0}
+
+/* ── QUIZ ── */
+.t-prog{display:flex;align-items:center;gap:10px;margin-bottom:12px;padding:9px 13px;background:var(--az3);border-radius:8px;border:0.5px solid var(--az4)}
+.t-bar{flex:1;height:5px;background:var(--az4);border-radius:3px;overflow:hidden}
+.t-fill{height:100%;background:var(--az);border-radius:3px;transition:width .4s}
+.t-lbl{font-size:11px;font-weight:700;color:var(--az2);white-space:nowrap}
+.scen{background:linear-gradient(135deg,var(--az3),var(--vd3));border:0.5px solid var(--az4);border-radius:8px;padding:12px;margin-bottom:10px}
+.sc-lbl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--az2);margin-bottom:4px}
+.scen p{font-size:13px;color:var(--c5);line-height:1.6}
+.q-txt{font-size:13px;font-weight:700;color:var(--c5);margin-bottom:10px}
+.opt{display:flex;align-items:center;gap:9px;padding:9px 13px;border-radius:8px;border:1px solid var(--c2);background:#fff;cursor:pointer;transition:all .2s;font-size:12.5px;margin-bottom:6px}
+.opt:hover{border-color:var(--az);background:var(--az3)}
+.opt.ok{border-color:var(--vd);background:var(--vd3);color:var(--vd2)}
+.opt.no{border-color:var(--rm);background:#fef2f2;color:var(--rm)}
+.ol{width:22px;height:22px;border-radius:50%;background:var(--c2);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;flex-shrink:0;color:var(--c4)}
+.opt.ok .ol{background:var(--vd4);color:var(--vd2)}.opt.no .ol{background:#fca5a5;color:var(--rm)}
+.fb{padding:9px 13px;border-radius:8px;font-size:12px;line-height:1.6;margin-top:8px;display:none}
+.fb.show{display:block}
+.fb.ok{background:var(--vd3);border:0.5px solid var(--vd4);color:var(--vd2)}
+.fb.no{background:#fef2f2;border:0.5px solid #fca5a5;color:var(--rm)}
+.q-nav{display:flex;align-items:center;justify-content:space-between;margin-top:12px;padding-top:12px;border-top:1px solid var(--c2)}
+.q-dots{display:flex;gap:5px}
+.q-dot{width:7px;height:7px;border-radius:50%;background:var(--az4);transition:all .2s}
+.q-dot.cur{background:var(--az);transform:scale(1.2)}.q-dot.dn{background:var(--az2)}
+.q-done{text-align:center;padding:20px;background:var(--vd3);border-radius:10px;margin-top:10px}
+
+/* ── PEOPLE ── */
+.ppl-g{display:grid;grid-template-columns:repeat(auto-fill,minmax(265px,1fr));gap:12px}
+.ppl-c{background:#fff;border:1.5px solid var(--c2);border-radius:var(--r);padding:16px}
+.ppl-top{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.ppl-av{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800;color:#fff;flex-shrink:0}
+.ppl-nm{font-size:13px;font-weight:700}
+.ppl-rl{font-size:11px;color:var(--c3);margin-top:2px}
+.ppl-ar{font-size:9px;font-weight:700;padding:1px 7px;border-radius:4px;margin-top:4px;display:inline-block}
+.ppl-mt{font-size:11.5px;color:var(--c4);line-height:1.7}
+.ppl-mt strong{color:var(--c5)}
+
+/* ── REFS ── */
+.rf-c{background:#fff;border:1.5px solid var(--c2);border-radius:var(--r);overflow:hidden;margin-bottom:12px}
+.rf-h{padding:14px 18px;border-bottom:1px solid var(--c2);display:flex;align-items:flex-start;gap:12px}
+.rf-badge{padding:3px 10px;border-radius:20px;font-size:10px;font-weight:700;letter-spacing:.3px;flex-shrink:0}
+.rf-t{font-size:14px;font-weight:800;color:var(--c5);margin-bottom:3px}
+.rf-s{font-size:11px;color:var(--c3)}
+.rf-body{padding:14px 18px;display:flex;flex-direction:column;gap:10px}
+.prin{background:var(--c1);border-radius:8px;padding:12px 14px;border-left:3px solid}
+.prin-l{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;margin-bottom:4px}
+.prin-t{font-size:12.5px;color:var(--c5);line-height:1.6;margin-bottom:5px}
+.prin-a{font-size:12px;color:var(--c4);line-height:1.5;padding:7px 10px;border-radius:6px;background:#fff;margin-top:4px;border-left:3px solid}
+.prin-ci{font-size:11px;color:var(--c3);font-style:italic;margin-top:4px}
+
+/* ── SEARCH ── */
+.sr-it{display:flex;align-items:flex-start;gap:12px;padding:10px;border-radius:8px;cursor:pointer;transition:background .15s}
+.sr-it:hover{background:var(--az3)}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:18px;right:18px;padding:10px 16px;border-radius:8px;font-size:12px;font-weight:700;z-index:999;display:none;box-shadow:0 4px 20px rgba(0,0,0,.15);color:#fff;background:var(--vd)}
+
+/* ── ABAS DO DOCUMENTO ── */
+.doc-tabs{display:flex;border-bottom:2px solid var(--c2);background:var(--c1);margin-bottom:0;overflow-x:auto}
+.dtab{padding:11px 18px;font-size:11px;font-weight:700;cursor:pointer;color:var(--c3);border-bottom:3px solid transparent;transition:all .15s;text-transform:uppercase;letter-spacing:.5px;white-space:nowrap;background:none;border-top:none;border-left:none;border-right:none}
+.dtab:hover{color:var(--az);background:var(--az3)}
+.dtab.on{border-bottom-color:var(--az);color:var(--az2);background:#fff}
+.dpane{display:none}.dpane.on{display:block}
+
+/* ── BPMN SVG ── */
+.bpmn-wrap{overflow-x:auto;background:#fff;border-radius:8px;border:1px solid var(--c2);padding:4px}
+.bpmn-wrap svg{min-width:700px;width:100%;display:block}
+.bpmn-legend{display:flex;gap:14px;flex-wrap:wrap;padding:10px 14px;background:var(--c1);border-radius:6px;border:1px solid var(--c2);margin-top:10px;font-size:11px;color:var(--c3)}
+.bleg{display:flex;align-items:center;gap:5px}
+
+/* ── MODO TELA CHEIA ── */
+body.fs .hdr{display:none!important}
+body.fs .sb{display:none!important}
+body.fs .mn{margin-left:0!important;padding:20px 40px!important}
+body.fs .lay{margin-top:0!important}
+.btn-fs{display:flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:7px;cursor:pointer;background:var(--c1);border:1.5px solid var(--c2);color:var(--c4);font-size:15px;transition:all .15s;flex-shrink:0}
+.btn-fs:hover{background:var(--az3);color:var(--az);border-color:var(--az4)}
+.fs-bar{display:none;position:fixed;top:10px;right:14px;z-index:600;background:#fff;border:1.5px solid var(--c2);border-radius:10px;padding:6px 12px;gap:10px;align-items:center;box-shadow:0 4px 20px rgba(0,0,0,.14)}
+body.fs .fs-bar{display:flex}
+.fs-brand{font-size:12px;font-weight:800;color:var(--az2)}
+.fs-brand em{color:var(--vd);font-style:normal}
+.fs-sep{width:1px;height:18px;background:var(--c2)}
+
+/* ── PRINT ── */
+@media print{
+  .hdr,.sb,.d-act,.hbtn,.bc,.btn,.h-r{display:none!important}
+  .mn{margin-left:0!important;padding:20px!important}
+  .card,.sec,.d-hdr{box-shadow:none!important;border:1px solid #ddd!important;break-inside:avoid}
+  body{background:#fff!important}
+}
+@media(max-width:768px){
+  :root{--sb:0px}
+  .sb{display:none}.mn{margin-left:0;padding:14px}
+  .kpi-g{grid-template-columns:repeat(2,1fr)}
+  .ph-g{grid-template-columns:1fr 1fr}
+  .io-g{grid-template-columns:1fr}
+  .d-ig{grid-template-columns:1fr 1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══ TELA DE SELEÇÃO DE PERFIL ═══ -->
+<div class="lo" id="lo">
+  <div style="width:100%;max-width:920px;padding:20px">
+    <!-- Logo / Título -->
+    <div style="text-align:center;margin-bottom:28px">
+      <div style="font-size:28px;font-weight:800;letter-spacing:-.8px;color:#fff;margin-bottom:6px">AMBIEN<span style="color:#a8d8b8">TARE</span></div>
+      <div style="font-size:13px;color:rgba(255,255,255,.6);font-weight:500;letter-spacing:.5px">PORTAL PMO · Sistema de Gestão de Projetos</div>
+    </div>
+
+    <!-- 3 cards de acesso -->
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:20px">
+
+      <!-- CARD: CONSULTA -->
+      <div style="background:rgba(255,255,255,.97);border-radius:14px;padding:26px 22px;text-align:center;box-shadow:0 8px 32px rgba(0,0,0,.18);border-top:5px solid #1a6fa8">
+        <div style="font-size:36px;margin-bottom:10px">📋</div>
+        <div style="font-size:15px;font-weight:800;color:#1256a0;margin-bottom:4px">Portal de Consulta</div>
+        <div style="font-size:11px;color:#9aab98;margin-bottom:14px;line-height:1.5">Acesse os procedimentos, fluxogramas BPMN, referências e busque qualquer POP.</div>
+        <div style="background:#e8f4fd;border-radius:6px;padding:6px 10px;font-size:10px;color:#1256a0;font-weight:700;margin-bottom:14px;text-transform:uppercase;letter-spacing:.5px">Coordenadores · Especialistas · Equipe</div>
+        <label style="text-align:left;display:block;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:#9aab98;margin-bottom:5px">Senha</label>
+        <input type="password" id="lip-c" class="lo-inp" placeholder="Senha de consulta..." onkeydown="if(event.key==='Enter')doLoginPerfil('consulta')">
+        <div class="lo-err" id="lerr-c">Senha incorreta.</div>
+        <button class="lo-btn" style="margin-top:10px;background:linear-gradient(90deg,#1256a0,#1a6fa8)" onclick="doLoginPerfil('consulta')">Entrar para Consultar</button>
+      </div>
+
+      <!-- CARD: TREINAMENTO -->
+      <div style="background:rgba(255,255,255,.97);border-radius:14px;padding:26px 22px;text-align:center;box-shadow:0 8px 32px rgba(0,0,0,.18);border-top:5px solid #2e8b4a;position:relative">
+        <div style="position:absolute;top:-10px;left:50%;transform:translateX(-50%);background:#2e8b4a;color:#fff;font-size:9px;font-weight:700;padding:3px 12px;border-radius:10px;letter-spacing:.8px;text-transform:uppercase">Recomendado para novos membros</div>
+        <div style="font-size:36px;margin-bottom:10px">🎓</div>
+        <div style="font-size:15px;font-weight:800;color:#1a5c32;margin-bottom:4px">Centro de Treinamento</div>
+        <div style="font-size:11px;color:#9aab98;margin-bottom:14px;line-height:1.5">Trilhas por perfil, quizzes com cenários reais, progresso e certificado de conclusão.</div>
+        <div style="background:#eaf5ee;border-radius:6px;padding:6px 10px;font-size:10px;color:#1a5c32;font-weight:700;margin-bottom:14px;text-transform:uppercase;letter-spacing:.5px">Novos membros · Capacitação · Onboarding</div>
+        <label style="text-align:left;display:block;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:#9aab98;margin-bottom:5px">Senha</label>
+        <input type="password" id="lip-t" class="lo-inp" placeholder="Senha de treinamento..." onkeydown="if(event.key==='Enter')doLoginPerfil('treino')">
+        <div class="lo-err" id="lerr-t">Senha incorreta.</div>
+        <label style="text-align:left;display:block;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:#9aab98;margin-bottom:5px;margin-top:8px">Seu nome (para o certificado)</label>
+        <input type="text" id="lip-nome" class="lo-inp" placeholder="Ex: Alessandro Ribeiro" style="margin-bottom:0">
+        <button class="lo-btn" style="margin-top:10px;background:linear-gradient(90deg,#1a5c32,#2e8b4a)" onclick="APP.nome=document.getElementById('lip-nome').value;doLoginPerfil('treino')">Entrar para Treinar</button>
+      </div>
+
+      <!-- CARD: GERENTE PMO -->
+      <div style="background:rgba(255,255,255,.97);border-radius:14px;padding:26px 22px;text-align:center;box-shadow:0 8px 32px rgba(0,0,0,.18);border-top:5px solid #374151">
+        <div style="font-size:36px;margin-bottom:10px">⚙️</div>
+        <div style="font-size:15px;font-weight:800;color:#1e2a1c;margin-bottom:4px">Gestão PMO</div>
+        <div style="font-size:11px;color:#9aab98;margin-bottom:14px;line-height:1.5">Acesso completo: índice, gestão de pessoas, governança, referências e edição.</div>
+        <div style="background:#f1efe8;border-radius:6px;padding:6px 10px;font-size:10px;color:#374151;font-weight:700;margin-bottom:14px;text-transform:uppercase;letter-spacing:.5px">Gerente PMO · Acesso irrestrito</div>
+        <label style="text-align:left;display:block;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:#9aab98;margin-bottom:5px">Senha</label>
+        <input type="password" id="lip-g" class="lo-inp" placeholder="Senha do Gerente PMO..." onkeydown="if(event.key==='Enter')doLoginPerfil('gerente')">
+        <div class="lo-err" id="lerr-g">Senha incorreta.</div>
+        <button class="lo-btn" style="margin-top:10px;background:linear-gradient(90deg,#1e2a1c,#374151)" onclick="doLoginPerfil('gerente')">Entrar como Gerente PMO</button>
+      </div>
+    </div>
+
+    <!-- Rodapé da tela de login -->
+    <div style="text-align:center;font-size:11px;color:rgba(255,255,255,.45)">
+      Portal PMO Ambientare v1.0 · 2025 · Modelo Híbrido Preditivo-Ágil
+    </div>
+  </div>
+</div>
+
+<!-- HEADER -->
+<header class="hdr">
+  <span class="h-brand" onclick="goHome()">AMBIEN<em>TARE</em></span>
+  <div class="h-sep"></div>
+  <span class="h-sub" id="h-modulo">Portal PMO</span>
+  <div class="h-r">
+    <div class="srch" id="srch-box"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input type="text" placeholder="Buscar POP, código..." id="si" autocomplete="off"></div>
+    <div class="mbadge mb-view" id="mbadge">—</div>
+    <!-- Navegação CONSULTA -->
+    <div id="nav-consulta" style="display:none;gap:6px;align-items:center">
+      <button class="hbtn on" id="bn-home" onclick="goHome()">📋 Procedimentos</button>
+      <button class="hbtn" id="bn-rf" onclick="goPage('rf')">📚 Referências</button>
+    </div>
+    <!-- Navegação TREINAMENTO -->
+    <div id="nav-treino" style="display:none;gap:6px;align-items:center">
+      <button class="hbtn gn on" id="bn-trilhas" onclick="goTrilhas()">🗺 Trilhas</button>
+      <button class="hbtn gn" id="bn-quizall" onclick="goPage('tr')">🎯 Todos os Quizzes</button>
+      <button class="hbtn gn" id="bn-cert" onclick="goPage('cert')">🏅 Certificados</button>
+    </div>
+    <!-- Navegação GERENTE -->
+    <div id="nav-gerente" style="display:none;gap:6px;align-items:center">
+      <button class="hbtn on" id="bn-home-g" onclick="goHome()">📋 Procedimentos</button>
+      <button class="hbtn gn" id="bn-tr-g" onclick="goPage('tr')">🎓 Treinamentos</button>
+      <button class="hbtn" id="bn-pp-g" onclick="goPage('pp')">👥 Pessoas</button>
+      <button class="hbtn" id="bn-rf-g" onclick="goPage('rf')">📚 Referências</button>
+    </div>
+    <button class="btn btn-o btn-sm" id="bn-out" style="display:none" onclick="doLogout()">⬅ Trocar perfil</button>
+    <button class="btn-fs" id="btn-fs" title="Modo tela cheia (F)" onclick="toggleFS()">⛶</button>
+  </div>
+</header>
+
+<!-- BARRA FLUTUANTE — só aparece no modo tela cheia -->
+<div class="fs-bar" id="fs-bar">
+  <span class="fs-brand">AMBIEN<em>TARE</em></span>
+  <span class="fs-sep"></span>
+  <button class="btn-fs" onclick="toggleFS()" title="Sair do modo tela cheia">✕</button>
+  <button class="btn btn-o btn-sm" onclick="goHome()" style="padding:4px 10px;font-size:10px">🏠 Índice</button>
+  <button class="btn btn-o btn-sm" id="fs-pdf-btn" onclick="fsExportPDF()" style="padding:4px 10px;font-size:10px;display:none">📄 PDF</button>
+</div>
+
+<!-- LAYOUT -->
+<div class="lay">
+  <aside class="sb">
+    <div class="sb-home" onclick="goHome()">🏠 Índice Geral</div>
+    <div class="sb-tr" onclick="goPage('tr')">📚 Centro de Treinamentos</div>
+    <div class="sb-lbl">Navegação por Fase</div>
+    <div id="sbnav"></div>
+    <div class="sb-foot">
+      <button class="btn-full" onclick="exportPDFIndice()">📄 Exportar Índice (PDF)</button>
+    </div>
+  </aside>
+
+  <main class="mn">
+    <!-- HOME -->
+    <div class="pg on" id="pg-home">
+      <div class="hero">
+        <div class="h-tag">PMO Ambientare · v1.0 · 2025</div>
+        <h1>Sistema de Gestão de Projetos</h1>
+        <p>Modelo híbrido preditivo-ágil fundamentado em PMBoK 7ª Ed., PRINCE2 2023, Scrum Guide 2020 e Kanban Method. Do TAP ao encerramento com EVM, Sprints e rastreabilidade total.</p>
+        <div class="h-badges">
+          <span class="h-badge">🔀 Híbrido Preditivo-Ágil</span>
+          <span class="h-badge">📊 EVM · SPI · CPI</span>
+          <span class="h-badge">🛠 MS Project · Planner · Power BI</span>
+          <span class="h-badge">📚 PMBoK · PRINCE2 · Agile</span>
+        </div>
+      </div>
+      <div class="kpi-g">
+        <div class="kpi"><div class="kpi-n" style="color:var(--az)" id="kn1">0</div><div class="kpi-l">Total de Documentos</div></div>
+        <div class="kpi"><div class="kpi-n" style="color:var(--vd)" id="kn2">0</div><div class="kpi-l">✅ Vigentes</div></div>
+        <div class="kpi"><div class="kpi-n" style="color:var(--am)" id="kn3">0</div><div class="kpi-l">🔄 Em Elaboração</div></div>
+        <div class="kpi"><div class="kpi-n" style="color:var(--rm)" id="kn4">0</div><div class="kpi-l">📋 A Criar</div></div>
+      </div>
+      <div class="ph-g" id="ph-g"></div>
+      <div class="card">
+        <div class="c-hdr">
+          <span>📋</span><h2>Índice Completo de Documentos</h2>
+          <div class="c-hr">
+            <button class="btn btn-o btn-sm" onclick="filtIdx('all')">Todos</button>
+            <button class="btn btn-o btn-sm" onclick="filtIdx('POP')">POPs</button>
+            <button class="btn btn-o btn-sm" onclick="filtIdx('Template')">Templates</button>
+            <button class="btn btn-o btn-sm" onclick="filtIdx('Manual')">Manuais</button>
+            <button class="btn btn-p btn-sm" onclick="exportPDFIndice()">PDF Completo</button>
+          </div>
+        </div>
+        <table class="tbl"><thead><tr><th>Código</th><th>Título</th><th>Tipo</th><th>Responsável</th><th>Status</th></tr></thead>
+        <tbody id="idx-tb"></tbody></table>
+      </div>
+    </div>
+
+    <!-- DOC -->
+    <div class="pg" id="pg-doc"><div id="doc-area"></div></div>
+
+    <!-- SEARCH -->
+    <div class="pg" id="pg-sr">
+      <div class="bc"><a onclick="goHome()">Índice</a> › <span>Resultados</span></div>
+      <div class="card"><div class="c-hdr"><h2 id="sr-title">Resultados</h2></div><div style="padding:16px" id="sr-res"></div></div>
+    </div>
+
+    <!-- TRAINING -->
+    <div class="pg" id="pg-tr">
+      <div class="hero" style="background:linear-gradient(135deg,var(--vd2),var(--az2))">
+        <div class="h-tag">Centro de Treinamentos</div>
+        <h1>Quizzes por POP</h1>
+        <p>Selecione um POP abaixo para iniciar seu quiz. O progresso é salvo durante a sessão.</p>
+      </div>
+      <div class="card"><div class="c-hdr"><h2>Todos os Treinamentos Disponíveis</h2></div><div style="padding:14px;display:grid;grid-template-columns:repeat(auto-fill,minmax(195px,1fr));gap:10px" id="tr-grid"></div></div>
+    </div>
+
+    <!-- TRILHAS -->
+    <div class="pg" id="pg-trilhas">
+      <div class="hero" style="background:linear-gradient(135deg,var(--vd2),var(--az2))">
+        <div class="h-tag">🗺 Trilhas de Aprendizado</div>
+        <h1>Escolha sua Trilha</h1>
+        <p>Cada trilha é uma sequência de POPs e quizzes estruturada para o seu perfil. Conclua todos os módulos para gerar seu certificado.</p>
+      </div>
+      <div id="trilhas-area"></div>
+    </div>
+
+    <!-- CERTIFICADOS -->
+    <div class="pg" id="pg-cert">
+      <div class="hero" style="background:linear-gradient(135deg,#374151,#1e2a1c)">
+        <div class="h-tag">🏅 Certificados</div>
+        <h1>Seus Certificados</h1>
+        <p>Complete uma trilha inteira para gerar e baixar seu certificado de conclusão.</p>
+      </div>
+      <div id="cert-area" style="margin-top:16px"></div>
+    </div>
+
+    <!-- PEOPLE -->
+    <div class="pg" id="pg-pp">
+      <div style="margin-bottom:18px"><h1 style="font-size:20px;font-weight:800;margin-bottom:4px">Gestão de Pessoas</h1><p style="font-size:13px;color:var(--c3)">Cadastro central — responsáveis em todos os POPs.</p></div>
+      <div class="ppl-g" id="ppl-g"></div>
+    </div>
+
+    <!-- REFS -->
+    <div class="pg" id="pg-rf">
+      <div class="hero" style="background:linear-gradient(135deg,var(--az2),#4c1d95)">
+        <div class="h-tag">Referências Teóricas</div>
+        <h1>Alicerce Acadêmico do Modelo Híbrido</h1>
+        <p>Cada decisão do modelo PMO da Ambientare está ancorada em frameworks internacionais. PMBoK 7, PRINCE2 2023, Scrum Guide 2020 e Kanban Method — com justificativa para cada escolha.</p>
+      </div>
+      <div id="rf-area"></div>
+    </div>
+  </main>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+// ═══════════════════════════════════════
+// DADOS
+// ═══════════════════════════════════════
+
+const PESSOAS=[
+  {id:'pmo',nome:'Gerente PMO',cargo:'Gerente de Escritório de Projetos',area:'PMO',cor:'#1a6fa8',pmo:'Gerente PMO',agil:'Product Owner',email:'pmo@ambientare.com.br'},
+  {id:'ales',nome:'Alessandro Ribeiro',cargo:'Especialista em Planejamento',area:'Planejamento',cor:'#854F0B',pmo:'Planejamento/EVM',agil:'Dev Team',email:'alessandro@ambientare.com.br'},
+  {id:'jord',nome:'Jordana Costa',cargo:'Analista Financeira',area:'Financeiro',cor:'#534AB7',pmo:'Financeiro/EVM',agil:'Dev Team',email:'jordana@ambientare.com.br'},
+  {id:'paula',nome:'Paula Mendes',cargo:'Agile Coach / Operações',area:'Ágil',cor:'#0F6E56',pmo:'Analista de Projetos',agil:'Scrum Master',email:'paula@ambientare.com.br'},
+  {id:'sergio',nome:'Sérgio Lima',cargo:'Especialista em IA e Inovação',area:'Inovação',cor:'#6d28d9',pmo:'Especialista IA',agil:'Dev Team',email:'sergio@ambientare.com.br'},
+  {id:'kaue',nome:'Kauê Ferreira',cargo:'Especialista em Processos',area:'Processos',cor:'#993C1D',pmo:'Especialista Processos',agil:'Dev Team',email:'kaue@ambientare.com.br'},
+  {id:'aline',nome:'Aline Pimenta',cargo:'Especialista em Business Intelligence',area:'PMO/BI',cor:'#1256a0',pmo:'Analista BI',agil:'Dev Team',email:'aline@ambientare.com.br'},
+];
+
+const FASES=[
+  {id:'f0',label:'Fase 0 — Iniciação',cor:'#1a6fa8',desc:'TAP, registro, estruturação e kick-off'},
+  {id:'f1',label:'Fase 1 — Planejamento',cor:'#1a5c32',desc:'EAP, baseline, RACI, backlog e riscos'},
+  {id:'f2',label:'Fase 2 — Execução Ágil',cor:'#085041',desc:'Sprints, Daily, DoR/DoD, WIP e apontamento'},
+  {id:'f3',label:'Fase 3 — Monitoramento',cor:'#854F0B',desc:'EVM, desvios, estouro, CR e contratos'},
+  {id:'f4',label:'Fase 4 — Dashboards',cor:'#534AB7',desc:'11 dashboards Power BI e relatório gerencial'},
+  {id:'f5',label:'Fase 5 — Encerramento',cor:'#7f1d1d',desc:'Checklist, contratos, lições e arquivamento'},
+  {id:'fg',label:'Governança Geral',cor:'#374151',desc:'Manuais estratégicos, onboarding e integração'},
+];
+
+const DOCS=[
+  // F0
+  {id:'d001',cod:'POP-PMO-001',titulo:'Abertura e Registro de Projeto',tipo:'POP',fase:'f0',resp:'pmo',status:'Vigente',
+   obj:'Registrar formalmente o início do projeto, gerar o código único (ANO-TIPO-SEQ), criar a pasta na rede e notificar a equipe.',
+   raci:{R:'Coord. PMO',A:'Gerente PMO',C:'Alessandro',I:'Equipe'},
+   ent:['Contrato assinado pela Diretoria','Briefing inicial do cliente','Designação do Coordenador'],
+   sai:['Código único do projeto gerado','Pasta criada na rede interna','Projeto registrado no PWA','E-mail de abertura enviado'],
+   sis:['MS Project / PWA','Rede Interna','E-mail corporativo'],
+   steps:[
+     {t:'Receber o contrato assinado',p:'A Diretoria repassa o contrato com briefing inicial ao Coordenador.',who:'Diretoria',sys:'E-mail',type:''},
+     {t:'Gerar código único do projeto',p:'Formato ANO-TIPO-SEQ (ex: 2025-LIC-047). Registrar na planilha mestre da rede.',who:'Coord. PMO',sys:'Rede Interna',type:''},
+     {t:'Criar estrutura de pastas na rede',p:'Coordenador acessa a rede interna e cria a pasta raiz /Projetos/ANO/CODIGO/ com 6 subpastas padrão: 01_Contrato, 02_TAP, 03_Planejamento, 04_Execucao, 05_Monitoramento, 06_Encerramento, 07_Comunicacoes. A equipe PMO tem autonomia total sobre esta estrutura.',who:'Coord. PMO',sys:'Rede Interna',type:''},
+     {t:'Registrar o projeto no PWA',p:'Alessandro cria o .mpp no MS Project, configura calendário, insere EAP nível 1 e publica no PWA.',who:'Alessandro',sys:'MS Project / PWA',type:''},
+     {t:'Enviar e-mail de abertura',p:'Coordenador envia e-mail formal com: código, cliente, escopo macro, responsável e link da pasta na rede.',who:'Coord. PMO',sys:'E-mail corporativo',type:'end'},
+   ],
+   quizzes:[{sc:'Maria foi designada coordenadora de um novo projeto de LT 500kV. O contrato foi assinado ontem e ela tem o briefing. O que ela deve fazer primeiro?',q:'Qual é a primeira ação obrigatória no POP-001?',opts:['Criar a EAP no MS Project','Gerar o código único e registrar na planilha mestre da rede','Enviar e-mail para a equipe','Convocar o kick-off'],ans:1,ok:'Correto! O código único é o primeiro passo — tudo o que vem depois (pasta, PWA, e-mail) usa este código como referência.',nok:'Sem o código gerado, não há como nomear a pasta, o projeto no PWA ou o e-mail. O código vem ANTES de tudo.'}]},
+
+  {id:'d002',cod:'POP-PMO-002',titulo:'Elaboração do TAP + Portfólio Digital',tipo:'POP',fase:'f0',resp:'pmo',status:'Vigente',
+   obj:'Documentar formalmente a autorização do projeto (TAP) e preencher a Tabela de Portfólio Digital (25 campos em 7 blocos) para alimentar o BI de portfólio.',
+   raci:{R:'Coord. PMO',A:'Gerente PMO',C:'Alessandro / Jordana',I:'Diretoria / Cliente'},
+   ent:['Código do projeto (POP-001)','Contrato assinado completo','Briefing técnico'],
+   sai:['TAP v1.0 assinado e arquivado','Tabela de Portfólio com 25 campos preenchidos','BI-01 atualizado','Kick-off convocado'],
+   sis:['TPL-PMO-001 (Word)','Tabela Portfólio (Excel/SharePoint)','Power BI'],
+   steps:[
+     {t:'Coletar informações do contrato',p:'Ler o contrato na íntegra. Extrair: objeto, prazo, valor, partes, obrigações, penalidades e premissas.',who:'Coord. PMO',sys:'Contrato / Rede',type:''},
+     {t:'Mapear stakeholders',p:'Identificar partes interessadas: cliente, órgãos ambientais, comunidades, subcontratados. Classificar por Influência × Interesse.',who:'Coord. PMO',sys:'TPL-PMO-001',type:''},
+     {t:'Definir objetivo SMART e escopo',p:'Redigir o objetivo SMART. Listar entregas incluídas E excluídas com critérios de aceitação.',who:'Coord. PMO',sys:'TPL-PMO-001',type:''},
+     {t:'[v2.0 OBRIGATÓRIO] Alimentar Tabela de Portfólio Digital',p:'Preencher 25 campos em 7 blocos: Identificação (5), Leilão (3 - condicionais), Empreendimento (3), Licenciamento (4), LP (4), LI+LO (6), OBS (1). Regra: BRANCO = dado futuro. N/A = não aplicável. Prazo: até o Kick-off.',who:'Especialista / Estagiário',sys:'Tabela Portfólio → Power BI',type:'dec'},
+     {t:'Revisão e aprovação pelo Gerente PMO',p:'Reunião de no máximo 30 min. Ajustar conforme feedback.',who:'Gerente PMO',sys:'E-mail / Teams',type:'dec'},
+     {t:'Assinar, arquivar e convocar Kick-off',p:'TAP assinado. Arquivar em 02_TAP/. Publicar no PWA. Convocar o kick-off (POP-006).',who:'Coord. PMO',sys:'Rede / PWA',type:'end'},
+   ],
+   quizzes:[{sc:'O estagiário Lucas preencheu a Tabela de Portfólio de um projeto de PCH (sem leilão). No campo "DATA DO LEILÃO" ele escreveu "N/A". No campo "DATA OBTENÇÃO LP" (ainda não obtida) também escreveu "N/A".',q:'O que Lucas fez de incorreto?',opts:['Nada — N/A é o padrão para campos não preenchidos','O campo LP deve ficar em BRANCO (não N/A). Branco = aguardando dado futuro. N/A = não se aplica ao projeto. Para PCH sem leilão, os campos de leilão recebem N/A corretamente. LP futura = branco.','Os campos de leilão também devem ficar em branco','N/A está correto em ambos os casos'],ans:1,ok:'Correto! Branco ≠ N/A. LP futura = branco (o BI sabe que vai ser preenchido). Leilão inexistente = N/A. Usar N/A em dados futuros distorce o dashboard BI-01.',nok:'N/A e branco têm significados técnicos distintos no BI. LP futura = branco. Sem leilão = N/A. Lucas acertou no leilão mas errou no LP.'}]},
+
+  {id:'d003',cod:'POP-PMO-003',titulo:'Criação da Estrutura de Pastas na Rede',tipo:'POP',fase:'f0',resp:'pmo',status:'Vigente',
+   obj:'Garantir que a estrutura de pastas padrão seja criada corretamente na rede interna no momento da abertura do projeto, com permissões adequadas.',
+   raci:{R:'Coord. PMO',A:'Gerente PMO',C:'Alessandro',I:'Equipe'},
+   ent:['Código do projeto (POP-001)','Lista de membros da equipe'],
+   sai:['6 subpastas criadas conforme padrão','Permissões por perfil configuradas','Equipe com acesso confirmado'],
+   sis:['Rede Interna'],
+   steps:[
+     {t:'Acessar a rede e criar a pasta raiz',p:'Coordenador acessa a rede interna com suas credenciais PMO e cria a pasta /Projetos/ANO/CODIGO/ diretamente. A equipe PMO possui permissão de escrita sobre a pasta /Projetos/ sem necessidade de acionamento externo.',who:'Coord. PMO',sys:'Rede Interna',type:''},
+     {t:'Criar as 7 subpastas padrão',p:'Dentro de /Projetos/ANO/CODIGO/ criar: 01_Contrato · 02_TAP · 03_Planejamento · 04_Execucao/[Disciplinas] · 05_Monitoramento · 06_Encerramento · 07_Comunicacoes. Usar o Template de Estrutura salvo em /PMO/Templates/Estrutura_Pastas_Padrao/ para garantir consistência.',who:'Coord. PMO',sys:'Rede Interna',type:''},
+     {t:'Configurar permissões de acesso',p:'Coordenador configura as permissões diretamente na rede: Controle Total → Coordenador + Gerente PMO. Leitura + Escrita → membros da equipe do projeto (pelo nome de usuário). Somente Leitura → demais colaboradores da Ambientare.',who:'Coord. PMO',sys:'Rede Interna',type:'dec'},
+     {t:'Notificar equipe e confirmar acesso',p:'Coordenador envia caminho da pasta. Todos confirmam acesso.',who:'Coord. PMO',sys:'E-mail',type:'end'},
+   ],
+   quizzes:[{sc:'Vários membros da equipe não conseguem salvar arquivos na pasta 04_Execucao. O Coordenador diz que funciona no computador dele.',q:'Qual é a causa mais provável e como o Coordenador resolve?',opts:['Problema nos computadores dos membros — acionar suporte técnico','As permissões foram configuradas apenas para o Coordenador. O próprio Coordenador PMO acessa as propriedades da pasta na rede e concede Leitura + Escrita para cada membro da equipe.','A pasta não existe — criar novamente','Aguardar o TI resolver'],ans:1,ok:'Correto! A equipe PMO tem autonomia total sobre a estrutura de pastas. O Coordenador acessa propriedades → Segurança → Editar e adiciona os membros diretamente.',nok:'Não há dependência de TI para gestão de pastas. O Coordenador PMO tem permissão para configurar o acesso diretamente na rede.'}]},
+
+  {id:'d004',cod:'POP-PMO-004',titulo:'Criação do Projeto no MS Project e PWA',tipo:'POP',fase:'f0',resp:'ales',status:'Vigente',
+   obj:'Alessandro cria e publica o arquivo .mpp no PWA. Jordana configura o calendário, cadastra os recursos com taxas horárias e insere a EAP nível 1 — base do fluxo de custos e receitas do projeto.',
+   raci:{R:'Alessandro',A:'Coord. PMO',C:'Jordana',I:'Equipe'},
+   ent:['TAP aprovado com escopo e equipe','Código do projeto gerado (POP-001)','Lista de recursos com % de dedicação','Tabela de taxas horárias por perfil (fornecida por Jordana)'],
+   sai:['Arquivo .mpp salvo na rede (Alessandro)','Projeto publicado no PWA com timesheet habilitado (Alessandro)','Calendário configurado (Jordana)','Recursos cadastrados com taxa R$/h (Jordana)','EAP nível 1 inserida no Project (Jordana)'],
+   sis:['MS Project Desktop','PWA (Project Web App)'],
+   steps:[
+     {t:'Alessandro — Criar o arquivo .mpp',p:'Alessandro cria novo projeto no MS Project Desktop: nome = código do projeto (ex: 2025-LIC-047), data de início = data contratual de início dos serviços, moeda = BRL. Salvar imediatamente em 03_Planejamento/ na rede.',who:'Alessandro',sys:'MS Project Desktop',type:''},
+     {t:'Jordana — Configurar o calendário do projeto',p:'Jordana acessa Projeto → Informações do Projeto → Calendário. Configura: seg-sex, 8h–17h (exceto 12h–13h). Insere feriados nacionais e estaduais do local do empreendimento. Configura calendários individuais para membros com regimes diferentes (ex: pesquisador em campo).',who:'Jordana',sys:'MS Project Desktop',type:''},
+     {t:'Jordana — Inserir a EAP nível 1',p:'Com base no TAP e no escopo contratual, Jordana insere as fases macro do projeto como tarefas resumo de nível 1 (ex: Meio Biótico, Meio Físico, Meio Socioeconômico, Licenciamento). Esta estrutura será decomposta até nível 3 no POP-007. A EAP nível 1 define os centros de custo do projeto.',who:'Jordana',sys:'MS Project Desktop',type:''},
+     {t:'Jordana — Cadastrar recursos com taxas horárias',p:'Para cada membro da equipe: nome (idêntico ao login M365 — essencial para o PWA), tipo = Trabalho, taxa padrão = R$/h conforme tabela de custos da Ambientare, % máximo de alocação no projeto. As taxas horárias são inseridas por Jordana pois alimentam diretamente o AC (custo real) do EVM.',who:'Jordana',sys:'MS Project Desktop',type:''},
+     {t:'Alessandro — Publicar no PWA e habilitar timesheet',p:'Alessandro publica o projeto no PWA (Project Web App). Configura o período do timesheet para semanal. Habilita o timesheet para cada recurso cadastrado. Testa o acesso de pelo menos um membro da equipe para confirmar que o apontamento está disponível.',who:'Alessandro',sys:'PWA',type:'end'},
+   ],
+   quizzes:[{sc:'Jordana cadastrou Rafael como recurso com a taxa horária correta, mas colocou o nome como "Rafael Souza" enquanto o login M365 dele é "rafael.souza.ambientare". Alessandro publicou no PWA e Rafael não consegue ver o timesheet.',q:'Qual é a causa e quem corrige?',opts:['Problema no servidor do PWA — aguardar','O nome do recurso no MS Project deve ser IDÊNTICO ao login M365. Jordana corrige o nome no Project para "rafael.souza.ambientare" e Alessandro republica no PWA.','Rafael precisa de permissão especial no sistema','Alessandro errou na configuração do timesheet'],ans:1,ok:'Correto! O PWA vincula o recurso pelo nome exato do login M365. Divergência = timesheet invisível. Jordana corrige o cadastro; Alessandro republica.',nok:'O timesheet do PWA usa o nome do recurso no Project como chave de vínculo com a conta M365. Uma letra diferente já basta para quebrar a ligação.'}]},
+
+  {id:'d005',cod:'POP-PMO-005',titulo:'Configuração do Quadro no MS Planner',tipo:'POP',fase:'f0',resp:'paula',status:'Vigente',
+   obj:'Criar e configurar o quadro Kanban no MS Planner com os 6 buckets, rótulos e membros corretos, fixando-o no canal do Teams.',
+   raci:{R:'Paula',A:'Coord. PMO',C:'Coord. PMO',I:'Equipe'},
+   ent:['Plano criado no Teams do projeto','Lista de membros','Código do projeto'],
+   sai:['6 buckets configurados','Rótulos de cor definidos','Membros adicionados','Planner fixado no Teams'],
+   sis:['MS Planner','MS Teams'],
+   steps:[
+     {t:'Criar o plano no Teams',p:'Paula cria novo Plano no MS Planner vinculado ao canal do Teams. Nome = código do projeto.',who:'Paula',sys:'MS Teams / Planner',type:''},
+     {t:'Configurar os 6 buckets',p:'Ordem: BACKLOG → A Fazer (Sprint) → Em Andamento [⚠️ WIP LIMIT=N] → Bloqueado → Em Revisão → Concluído.',who:'Paula',sys:'MS Planner',type:''},
+     {t:'Definir rótulos de cor',p:'Verde: entrega contratual. Amarelo: suporte. Vermelho: urgente/bloqueado. Azul: CGT/Inovação. Roxo: DoR pendente.',who:'Paula',sys:'MS Planner',type:''},
+     {t:'Adicionar membros e fixar no Teams',p:'Adicionar cada membro. Testar criação e movimentação de cards. Fixar como aba no canal.',who:'Paula',sys:'MS Teams',type:'end'},
+   ],
+   quizzes:[{sc:'A equipe tem 4 pessoas. Paula está configurando o bucket "Em Andamento" e precisa definir o WIP Limit.',q:'Qual é o WIP Limit correto para 4 pessoas?',opts:['4 cards (1 por pessoa)','8 cards (2 por pessoa × 4 membros)','6 cards (padrão fixo)','Não há limite'],ans:1,ok:'Correto! WIP Limit = 2 cards × membros ativos. 4 pessoas = 8 cards máximos em andamento.',nok:'O padrão do Kanban Method é 2 cards por pessoa. Com 4 membros: 2×4 = 8. Paula escreve "⚠️ WIP LIMIT = 8" no título do bucket.'}]},
+
+  {id:'d006',cod:'POP-PMO-006',titulo:'Kick-off: Apresentação do Projeto à Equipe',tipo:'POP',fase:'f0',resp:'pmo',status:'Vigente',
+   obj:'Apresentar formalmente o projeto à equipe, alinhando escopo, metodologia, ferramentas e ritos, marcando o início oficial da execução.',
+   raci:{R:'Coord. PMO',A:'Gerente PMO',C:'Paula / Alessandro',I:'Equipe / Cliente'},
+   ent:['TAP aprovado (POP-002)','Pastas criadas (POP-003)','Projeto no PWA (POP-004)','Planner configurado (POP-005)'],
+   sai:['Apresentação PPT arquivada','Ata de kick-off assinada e distribuída','Ritos definidos (horário Daily, dia Planning)','Equipe comprometida'],
+   sis:['MS Teams','PowerPoint (TPL-PMO-002)','E-mail'],
+   steps:[
+     {t:'Preparar a apresentação (D-3)',p:'PPT usando TPL-PMO-002: contexto, cliente, escopo, prazo, equipe (RACI), metodologia híbrida, ferramentas.',who:'Coord. PMO',sys:'PowerPoint',type:''},
+     {t:'Convocar a reunião (D-3)',p:'Convite pelo Outlook com agenda, link Teams e link do Planner. Duração máxima: 90 minutos.',who:'Coord. PMO',sys:'Outlook',type:''},
+     {t:'Apresentar escopo e metodologia',p:'Contexto, escopo contratual, prazo e marcos, equipe e papéis, modelo híbrido.',who:'Coord. PMO',sys:'Teams / PPT',type:''},
+     {t:'Demo ao vivo das ferramentas',p:'Paula mostra o Planner (buckets, WIP). Alessandro mostra o PWA e apontamento de horas.',who:'Paula + Alessandro',sys:'Planner / PWA',type:''},
+     {t:'Definir ritos e lavrar ata',p:'Horário Daily, dia Planning (quinzenal), Review e Retro. Ata distribuída em 24h. Arquivar em 07_Comunicacoes/.',who:'Coord. PMO',sys:'E-mail / Rede',type:'end'},
+   ],
+   quizzes:[{sc:'O kick-off está marcado para amanhã. O Planner não foi configurado porque Paula estava em campo.',q:'O kick-off deve acontecer amanhã mesmo assim?',opts:['Sim — a apresentação está pronta','Não — o Planner é pré-requisito (entrada) do POP-006. Paula configura hoje os buckets básicos. Kick-off sem ferramenta gera caos no primeiro dia.','Sim, mas sem a demo','Adiar por uma semana'],ans:1,ok:'Correto! Planner é entrada obrigatória. Paula configura hoje os buckets básicos. Uma configuração rápida hoje é melhor que um kick-off incompleto.',nok:'Kick-off sem Planner configurado = equipe sai sem acesso à ferramenta principal. Paula configura agora.'}]},
+
+  {id:'t001',cod:'TPL-PMO-001',titulo:'Template: Termo de Abertura do Projeto (TAP)',tipo:'Template',fase:'f0',resp:'pmo',status:'Em Elaboração',
+   obj:'Template Word padronizado com todas as seções obrigatórias do TAP: justificativa, objetivo SMART, escopo, stakeholders, premissas, riscos e assinaturas.',
+   raci:{R:'Coord. PMO',A:'Gerente PMO',C:'Equipe',I:'Cliente'},
+   ent:['Contrato assinado'],sai:['TAP preenchido e formatado'],sis:['MS Word'],
+   steps:[{t:'Usar este template para o TAP',p:'Abrir TPL-PMO-001.docx. Preencher todos os campos. Nunca apagar seções — se não aplicável, escrever "N/A + justificativa".',who:'Coord. PMO',sys:'MS Word',type:'end'}],
+   quizzes:[{sc:'O Coordenador quer deletar a seção "Restrições" porque acha que não há restrições no projeto.',q:'O que ele deve fazer?',opts:['Deletar — simplifica o documento','Manter e escrever "Sem restrições adicionais além das contratuais". Uma seção em branco indica que foi analisada, não ignorada.','Deixar a seção em branco','Perguntar ao Gerente PMO'],ans:1,ok:'Correto! Toda seção do TAP deve ter conteúdo. "Sem restrições" é resposta válida e documenta que a análise foi feita.',nok:'Deletar cria TAPs inconsistentes. "Sem restrições adicionais" é a resposta correta.'}]},
+
+  {id:'t002',cod:'TPL-PMO-002',titulo:'Template: Apresentação de Kick-off (PPT)',tipo:'Template',fase:'f0',resp:'pmo',status:'Em Elaboração',
+   obj:'Template PowerPoint com 12 slides obrigatórios para a apresentação de kick-off.',
+   raci:{R:'Coord. PMO',A:'Gerente PMO',C:'Paula',I:'Equipe / Cliente'},
+   ent:['TAP aprovado'],sai:['PPT formatado e arquivado'],sis:['PowerPoint'],
+   steps:[{t:'Personalizar o template',p:'Abrir TPL-PMO-002.pptx. Preencher os slides com dados do projeto. Salvar como CODIGO_Kickoff_v1.0.pptx em 07_Comunicacoes/.',who:'Coord. PMO',sys:'PowerPoint',type:'end'}],
+   quizzes:[]},
+
+  // F1
+  {id:'d007',cod:'POP-PMO-007',titulo:'Elaboração da EAP/WBS e Cronograma Macro',tipo:'POP',fase:'f1',resp:'jord',status:'Vigente',
+   obj:'Jordana estrutura a EAP do nível 1 ao nível 3 no MS Project — base do fluxo de custos e receitas. Alessandro sequencia as tarefas, define dependências, identifica o caminho crítico e congela a Baseline 0. O Coordenador valida o escopo e aprova o resultado.',
+   raci:{R:'Jordana',A:'Coord. PMO',C:'Alessandro / Equipe Técnica',I:'Gerente PMO'},
+   ent:['TAP aprovado com escopo contratual','EAP nível 1 do POP-004 (Jordana)','Contrato com todas as entregas e disciplinas','RACI preliminar com perfis da equipe'],
+   sai:['EAP nível 3 completa no MS Project (Jordana)','Cronograma com dependências e caminho crítico (Alessandro)','Marcos contratuais como milestones (Alessandro)','Baseline 0 salva e imutável (Alessandro)','Curva S de PV publicada no Power BI (Jordana)'],
+   sis:['MS Project Desktop','PWA','Power BI'],
+   steps:[
+     {t:'Coord. PMO — Validar e detalhar os pacotes de nível 2',p:'O Coordenador revisa o escopo do contrato e valida os componentes de nível 2 que já foram inseridos por Jordana no POP-004. Complementa com entregas específicas do contrato que ainda não estejam representadas (ex: relatórios parciais, reuniões de acompanhamento, aprovações de órgão).',who:'Coord. PMO',sys:'MS Project',type:''},
+     {t:'Jordana — Decompor a EAP do nível 2 ao nível 3',p:'Jordana decompõe cada componente de nível 2 em pacotes de trabalho verificáveis (nível 3). Cada pacote deve ter: duração estimável, responsável identificável e critério de aceitação claro. Esta decomposição é feita por Jordana pois define os centros de custo para o EVM: cada pacote nível 3 terá seu próprio BAC parcial.',who:'Jordana',sys:'MS Project Desktop',type:''},
+     {t:'Jordana — Estimar durações e verificar consistência financeira',p:'Para cada pacote de nível 3, Jordana insere a duração estimada em dias úteis, considerando a disponibilidade dos recursos já cadastrados. Verifica se a distribuição temporal dos custos (PV por pacote) está coerente com o cronograma de pagamentos do contrato.',who:'Jordana',sys:'MS Project Desktop',type:''},
+     {t:'Alessandro — Sequenciar tarefas e criar dependências',p:'Alessandro define as relações de precedência entre os pacotes de trabalho (FS = Finish-to-Start, SS = Start-to-Start, FF = Finish-to-Finish) com os lags necessários. Identifica e destaca o caminho crítico. Insere os marcos contratuais como milestones (duração = 0).',who:'Alessandro',sys:'MS Project Desktop',type:''},
+     {t:'Alessandro — Salvar a Baseline 0',p:'Após validação do Coordenador e de Jordana: Projeto → Definir Linha de Base → Baseline. Esta é a Baseline 0 — a fotografia original do projeto. NUNCA será alterada. Qualquer mudança de escopo gera CR (POP-025) e cria Baseline 1, 2, etc. A Baseline 0 é a referência permanente do SPI.',who:'Alessandro',sys:'MS Project Desktop',type:'dec'},
+     {t:'Jordana — Exportar Curva S e publicar no Power BI',p:'Jordana extrai o PV (Planned Value) mensal do MS Project: distribuição do custo planejado ao longo do tempo. Exporta para a pasta compartilhada. Alimenta o Power BI (BI-02 e BI-10) com a Curva S de PV — referência visual do desempenho planejado.',who:'Jordana',sys:'Power BI / Pasta Compartilhada',type:'end'},
+   ],
+   quizzes:[{sc:'O Coordenador quer salvar a Baseline 0 mas Jordana percebe que 3 pacotes de trabalho da disciplina "Meio Biótico" estão sem duração estimada — aparecem com 0 dias no Project.',q:'O que deve ser feito antes de salvar a Baseline 0?',opts:['Salvar assim mesmo — Alessandro ajusta depois','Jordana deve estimar e inserir as durações dos 3 pacotes ANTES de salvar. Baseline 0 com pacotes zerados = SPI incorreto desde o início, pois o PV destes pacotes será zero.','Alessandro insere durações padrão','Criar estes pacotes como CR depois'],ans:1,ok:'Correto! Jordana é a responsável pelas durações (base do custo). Baseline com pacotes zerados = EVM distorcido desde o Dia 1. Estimar antes de congelar.',nok:'Baseline 0 deve ser salva completa. Pacote com duração zero não contribui para o PV — é como se a entrega não existisse no planejamento financeiro.'}]},
+
+  {id:'d008',cod:'POP-PMO-008',titulo:'Definição da Baseline de Custos (BAC)',tipo:'POP',fase:'f1',resp:'jord',status:'Vigente',
+   obj:'Mapear custos estimados por pacote de trabalho, calcular o BAC total e gerar a Curva S de PV financeiro para o EVM.',
+   raci:{R:'Jordana',A:'Coord. PMO',C:'Alessandro',I:'Gerente PMO / Diretoria'},
+   ent:['EAP aprovada (POP-007)','Tabela de taxas horárias','Contrato com valor total'],sai:['BAC por pacote','Curva S financeira (PV mensal)','Margem planejada calculada','Power BI BI-05 alimentado'],sis:['MS Project','Planilha Financeira','Power BI'],
+   steps:[
+     {t:'Mapear custos por pacote',p:'Para cada pacote: HH por perfil × taxa horária + custos diretos (diárias, deslocamento, análises).',who:'Jordana',sys:'Planilha',type:''},
+     {t:'Calcular o BAC total',p:'BAC = soma de todos os custos. Verificar vs. valor contratual. Margem = (Contrato − BAC) / Contrato × 100.',who:'Jordana',sys:'Planilha',type:''},
+     {t:'Gerar Curva S de PV',p:'Distribuir o BAC mês a mês conforme cronograma do Project. Esta é a Curva S de PV do EVM.',who:'Jordana',sys:'MS Project / Planilha',type:''},
+     {t:'Inserir no Project e publicar no BI',p:'Alessandro insere custos no Project. Jordana exporta Curva S para o Power BI.',who:'Alessandro + Jordana',sys:'MS Project / Power BI',type:'end'},
+   ],
+   quizzes:[{sc:'Jordana calculou o BAC em R$480.000 para um contrato de R$550.000. O Coordenador quer inflá-lo para R$520.000 para "ter mais segurança".',q:'Esta solicitação faz sentido financeiramente?',opts:['Sim — mais BAC = mais segurança','Não — inflá-lo reduz a margem: (550k-520k)/550k = 5,4% vs. (550k-480k)/550k = 12,7%. BAC deve refletir o custo real estimado.','Sim — a margem não importa','Sim, com aprovação do Gerente PMO'],ans:1,ok:'Correto! BAC inflado reduz a margem aparente e distorce o EVM. O BAC deve ser honesto com o custo real.',nok:'BAC inflado = CPI artificialmente baixo = alarmes falsos. O BAC deve ser o custo real estimado.'}]},
+
+  {id:'d009',cod:'POP-PMO-009',titulo:'Elaboração da Matriz RACI',tipo:'POP',fase:'f1',resp:'pmo',status:'Vigente',
+   obj:'Formalizar papéis e responsabilidades para cada entrega contratual, eliminando ambiguidades sobre quem decide, executa, valida e é informado.',
+   raci:{R:'Coord. PMO',A:'Gerente PMO',C:'Equipe',I:'Cliente'},
+   ent:['EAP aprovada (POP-007)','Lista de membros com perfis'],sai:['Matriz RACI v1.0 aprovada','Registrada no Portal PMO','Todos cientes dos papéis'],sis:['TPL-PMO-003 (Excel)','E-mail'],
+   steps:[
+     {t:'Listar todas as entregas da EAP',p:'Coordenador extrai do Project as entregas nível 3. Estas se tornam as linhas da RACI.',who:'Coord. PMO',sys:'MS Project',type:''},
+     {t:'Atribuir R/A/C/I',p:'R = executa, A = aprova (APENAS 1 por entrega!), C = consultado, I = informado.',who:'Coord. PMO',sys:'TPL-PMO-003',type:''},
+     {t:'Validar com a equipe',p:'Cada membro confirma que entende e concorda com seus papéis.',who:'Equipe',sys:'E-mail / Teams',type:'dec'},
+     {t:'Aprovação e distribuição',p:'Gerente PMO assina a RACI v1.0. Distribuir e arquivar em 03_Planejamento/RACI/.',who:'Gerente PMO',sys:'E-mail / Rede',type:'end'},
+   ],
+   quizzes:[{sc:'A entrega "Relatório de Fauna" tem dois "A" (Aprovador): Coordenador e Gerente PMO.',q:'Isso está correto no padrão RACI?',opts:['Sim — dois aprovadores dão mais segurança','Não — o "A" deve ser ÚNICO por entrega. Dois As criam conflito de autoridade. Definir quem tem a palavra final.','Sim, se estiverem alinhados','Depende da criticidade'],ans:1,ok:'Correto! Regra fundamental da RACI: apenas 1 "A" por entrega. Dois aprovadores = ninguém sabe quem decide.',nok:'Dois "A" é o erro mais comum. Cria situações de aprovação conflitante.'}]},
+
+  {id:'d010',cod:'POP-PMO-010',titulo:'Definição do Backlog Inicial e Priorização',tipo:'POP',fase:'f1',resp:'pmo',status:'Vigente',
+   obj:'Traduzir as entregas da EAP em items acionáveis no Planner, priorizados por valor.',
+   raci:{R:'Coord. PMO',A:'Gerente PMO',C:'Paula',I:'Equipe'},
+   ent:['EAP nível 3 aprovada','RACI aprovada','Planner configurado'],sai:['Backlog no MS Planner','Items priorizados com DoR básico'],sis:['MS Planner','MS Project'],
+   steps:[
+     {t:'Traduzir entregas em cards',p:'Para cada pacote nível 3: criar card no BACKLOG. Título = nome da entrega. Descrição = critério de aceitação.',who:'Coord. PMO',sys:'MS Planner',type:''},
+     {t:'Estimar e priorizar',p:'Estimar horas, definir prioridade (Alta/Média/Baixa) e verificar pré-requisitos.',who:'Coord. PMO + Paula',sys:'MS Planner',type:''},
+     {t:'Aplicar DoR básico nos top 10',p:'Paula revisa os 10 mais prioritários: devem ter DoR completo para o 1º Sprint Planning.',who:'Paula',sys:'MS Planner',type:'end'},
+   ],
+   quizzes:[{sc:'O Coordenador quer criar um único card "Relatório Ambiental" para um relatório de 200 páginas que levará 3 meses.',q:'Esta granularidade está adequada?',opts:['Sim — um card = um relatório','Não — card de 3 meses não cabe em uma Sprint de 2 semanas. Decompor em capítulos/seções, cada um cabendo em 1 Sprint.','Sim — o Coordenador decide','Depende da equipe'],ans:1,ok:'Correto! Cards devem caber em 1 Sprint (2 semanas). Relatório de 3 meses = ~6 cards.',nok:'Card de 3 meses impossibilita Daily, DoD e entrega de valor parcial.'}]},
+
+  {id:'d011',cod:'POP-PMO-011',titulo:'Planejamento de Riscos e Respostas',tipo:'POP',fase:'f1',resp:'pmo',status:'Vigente',
+   obj:'Identificar, analisar e planejar respostas para riscos, dimensionando reserva de contingência.',
+   raci:{R:'Coord. PMO',A:'Gerente PMO',C:'Alessandro / Jordana / Equipe',I:'Cliente'},
+   ent:['EAP aprovada','Contrato com condicionantes'],sai:['Registro de Riscos (TPL-PMO-004)','Reserva de contingência calculada','Respostas com responsável'],sis:['TPL-PMO-004','MS Project','Planilha'],
+   steps:[
+     {t:'Sessão de identificação',p:'Brainstorming: riscos técnicos, externos (órgãos, clima), organizacionais. Mínimo 10 riscos.',who:'Coord. PMO + Equipe',sys:'Teams / TPL-PMO-004',type:''},
+     {t:'Análise qualitativa P × I',p:'Probabilidade × Impacto. Priorizar os 5 de maior exposição.',who:'Coord. PMO',sys:'TPL-PMO-004',type:''},
+     {t:'Definir respostas',p:'Para cada risco: estratégia (Mitigar/Aceitar/Transferir/Evitar), ação, responsável e gatilho.',who:'Coord. PMO + Equipe',sys:'TPL-PMO-004',type:''},
+     {t:'Calcular reserva de contingência',p:'Alessandro adiciona buffer no Project. Jordana calcula reserva financeira.',who:'Alessandro + Jordana',sys:'Project / Planilha',type:'end'},
+   ],
+   quizzes:[{sc:'"Chuvas intensas na época de campo" foi identificado como risco. A equipe propõe: "Torcer para não chover".',q:'Esta é uma resposta de risco adequada?',opts:['Sim — é externo e incontrolável','Não — toda resposta deve ter ação concreta + responsável + gatilho. Ex: "Planejar campanhas para estação seca + 15 dias de buffer. Responsável: Alessandro."','Sim — clima é sempre aceito','Depende da probabilidade'],ans:1,ok:'Correto! Aceitar um risco é válido, mas com buffer calculado e plano de contingência, não com passividade.',nok:'"Torcer" não é estratégia. Aceitação ativa = buffer dimensionado + plano de contingência.'}]},
+
+  {id:'d012',cod:'POP-PMO-012',titulo:'Análise Inicial do Contrato',tipo:'POP',fase:'f1',resp:'pmo',status:'Vigente',
+   obj:'Ler e mapear o contrato para identificar obrigações, marcos, pagamentos e penalidades, preenchendo a Ficha do Contrato e criando alertas.',
+   raci:{R:'Coord. PMO',A:'Gerente PMO',C:'Jurídico / Jordana',I:'Equipe'},
+   ent:['Contrato assinado'],sai:['Ficha do Contrato (TPL-PMO-005)','Alertas Outlook D-30 e D-15','Cronograma de pagamentos por Jordana'],sis:['TPL-PMO-005','Outlook','Planilha Jordana'],
+   steps:[
+     {t:'Ler o contrato na íntegra',p:'Marcar: prazos, marcos, pagamentos, penalidades, obrigações das partes e propriedade intelectual.',who:'Coord. PMO',sys:'Contrato',type:''},
+     {t:'Revisão jurídica das cláusulas críticas',p:'Jurídico revisa penalidade, rescisão, limitação de responsabilidade.',who:'Jurídico',sys:'Contrato',type:''},
+     {t:'Preencher Ficha do Contrato',p:'TPL-PMO-005 com todos os dados extraídos.',who:'Coord. PMO',sys:'TPL-PMO-005',type:''},
+     {t:'Criar alertas no Outlook',p:'Para cada marco: lembrete com 30 e 15 dias de antecedência.',who:'Coord. PMO',sys:'Outlook',type:''},
+     {t:'Registrar cronograma de pagamentos',p:'Jordana insere o cronograma na planilha para alimentar BI-04 e BI-11.',who:'Jordana',sys:'Planilha / Power BI',type:'end'},
+   ],
+   quizzes:[{sc:'O contrato prevê multa de 0,5%/dia por atraso na entrega do EIA. O Coordenador não configurou alertas.',q:'Qual é o risco desta omissão?',opts:['Nenhum — sabe o prazo de cabeça','Alto risco financeiro real. 30 dias de atraso = 15% do contrato em multa. Alertas de D-30 e D-15 existem para evitar este cenário.','Baixo — o projeto lembrará','Médio — depende da complexidade'],ans:1,ok:'Correto! 0,5%/dia × 30 dias = 15% em multa. Alertas no Outlook custam 5 minutos e previnem multas significativas.',nok:'Confiar na memória para prazos com penalidade é risco inaceitável.'}]},
+
+  {id:'t003',cod:'TPL-PMO-003',titulo:'Template: Matriz RACI',tipo:'Template',fase:'f1',resp:'pmo',status:'Em Elaboração',
+   obj:'Excel pré-formatado com a Matriz RACI para preenchimento de entregas e papéis R/A/C/I.',
+   raci:{R:'Coord. PMO',A:'Gerente PMO',C:'Equipe',I:'Cliente'},
+   ent:['EAP nível 3'],sai:['RACI preenchida e aprovada'],sis:['Excel'],
+   steps:[{t:'Preencher o template',p:'Abrir TPL-PMO-003.xlsx. Entregas nas linhas, membros nas colunas. Verificar: 1 "A" por entrega.',who:'Coord. PMO',sys:'Excel',type:'end'}],
+   quizzes:[]},
+
+  {id:'t004',cod:'TPL-PMO-004',titulo:'Template: Registro de Riscos',tipo:'Template',fase:'f1',resp:'pmo',status:'Em Elaboração',
+   obj:'Excel para registro e acompanhamento de riscos com P×I, estratégia, ação, responsável e status.',
+   raci:{R:'Coord. PMO',A:'Gerente PMO',C:'Equipe',I:'Diretoria'},
+   ent:['Sessão de identificação realizada'],sai:['Registro de Riscos atualizado'],sis:['Excel'],
+   steps:[{t:'Preencher o registro',p:'Abrir TPL-PMO-004.xlsx. Preencher todos os campos. Atualizar mensalmente.',who:'Coord. PMO',sys:'Excel',type:'end'}],
+   quizzes:[]},
+
+  {id:'t005',cod:'TPL-PMO-005',titulo:'Template: Ficha de Contrato',tipo:'Template',fase:'f1',resp:'pmo',status:'Em Elaboração',
+   obj:'Word para registro centralizado de dados contratuais: partes, objeto, valor, prazo, marcos, pagamentos e penalidades.',
+   raci:{R:'Coord. PMO',A:'Gerente PMO',C:'Jurídico / Jordana',I:'Equipe'},
+   ent:['Contrato assinado'],sai:['Ficha preenchida e arquivada'],sis:['MS Word'],
+   steps:[{t:'Preencher a Ficha',p:'Abrir TPL-PMO-005.docx. Preencher todos os campos. Arquivar em 01_Contrato/',who:'Coord. PMO',sys:'MS Word',type:'end'}],
+   quizzes:[]},
+
+  // F2
+  {id:'d013',cod:'POP-PMO-013',titulo:'Sprint Planning: Planejamento da Iteração',tipo:'POP',fase:'f2',resp:'pmo',status:'Vigente',
+   obj:'Garantir que cada Sprint inicie com meta clara, backlog comprometido e viável dentro da capacidade real.',
+   raci:{R:'Coord. PMO (PO)',A:'Gerente PMO',C:'Paula (SM)',I:'Equipe'},
+   ent:['Backlog priorizado com DoR','Velocidade histórica','Calendário da Sprint'],sai:['Meta da Sprint definida','Sprint Backlog populado','Comprometimento documentado'],sis:['MS Planner','Teams'],
+   steps:[
+     {t:'Preparação pré-Planning (D-1)',p:'Coordenador verifica DoR dos itens. Calcula capacidade: membros × 6h × dias úteis.',who:'Coord. PMO + Paula',sys:'MS Planner',type:''},
+     {t:'Formular a Meta da Sprint',p:'Meta em uma frase de valor: "Concluir o diagnóstico do Meio Biótico para validação do cliente".',who:'Coord. PMO + Equipe',sys:'Teams',type:''},
+     {t:'Selecionar items até 80% da capacidade',p:'Equipe estima horas. Selecionar até 80% para margem de segurança.',who:'Equipe',sys:'MS Planner',type:''},
+     {t:'Verificar DoR e atribuir responsáveis',p:'Paula verifica DoR de cada item. Itens que falham voltam ao backlog.',who:'Paula',sys:'MS Planner',type:'dec'},
+     {t:'Iniciar Sprint e comunicar',p:'Paula move cards para "A Fazer (Sprint)". Coordenador informa o PMO.',who:'Paula',sys:'Planner / E-mail',type:'end'},
+   ],
+   quizzes:[{sc:'A equipe tem 4 membros, Sprint de 10 dias úteis. Ana tira 2 dias de folga. Carlos tem 50% de dedicação.',q:'Qual é a capacidade correta desta Sprint?',opts:['4×6h×10 = 240h','(Ana: 8d×6h) + (Carlos: 10d×3h) + (2 outros: 10d×6h) = 48+30+120 = 198h','240h − 20% = 192h','4×8h×10 = 320h'],ans:1,ok:'Correto! Capacidade real considera ausências e dedicação parcial. 198h × 80% ≈ 158h comprometidos.',nok:'Cada membro tem realidade diferente. O cálculo deve ser individual, considerando ausências e % dedicação.'}]},
+
+  {id:'d014',cod:'POP-PMO-014',titulo:'Daily Stand-up: Reunião Diária de 15 Minutos',tipo:'POP',fase:'f2',resp:'paula',status:'Vigente',
+   obj:'Manter a equipe sincronizada, identificar impedimentos e garantir que o Planner reflita a realidade da execução.',
+   raci:{R:'Paula (SM)',A:'Coord. PMO',C:'Equipe',I:'Gerente PMO'},
+   ent:['Sprint ativa com backlog populado','Planner atualizado'],sai:['Planner atualizado em tempo real','Impedimentos registrados'],sis:['MS Planner','MS Teams'],
+   steps:[
+     {t:'Abrir pontualmente',p:'Paula inicia exatamente no horário. Câmera obrigatória. Planner visível na tela.',who:'Paula',sys:'MS Teams',type:''},
+     {t:'Tríade por membro (90s cada)',p:'"O que concluí?" + "O que farei?" + "Impedimentos?". Mover cards enquanto fala.',who:'Equipe',sys:'MS Planner',type:''},
+     {t:'Verificar WIP e gargalos',p:'Paula conta cards em andamento. WIP excedido → acionar POP-019 após a Daily.',who:'Paula',sys:'MS Planner',type:'dec'},
+     {t:'Encerrar em 15 min',p:'Assuntos extras → pós-Daily agendado. Jamais ultrapassar 15 minutos.',who:'Paula',sys:'Teams',type:'end'},
+   ],
+   quizzes:[{sc:'Carlos tem o card "Análise de Solos" há 3 dias sem atualização de percentual.',q:'O que Paula deve fazer?',opts:['Aguardar — Carlos está trabalhando','Pedir que Carlos atualize o % de conclusão agora e registre nas notas o motivo do atraso. % desatualizado = EVM incorreto.','Mover para Bloqueado','Escalar ao Coordenador imediatamente'],ans:1,ok:'Correto! % desatualizado = AC incorreto no EVM de Jordana. A Daily existe para forçar esta atualização diária.',nok:'Dado desatualizado = EVM falso. Paula pede atualização imediata durante a Daily.'}]},
+
+  {id:'d015',cod:'POP-PMO-015',titulo:'Definition of Ready (DoR)',tipo:'POP',fase:'f2',resp:'paula',status:'Vigente',
+   obj:'Critérios que um item deve atender antes de entrar na Sprint. Política explícita de entrada do Kanban.',
+   raci:{R:'Paula (SM)',A:'Coord. PMO',C:'Equipe',I:'Gerente PMO'},
+   ent:['Item do backlog candidato','EAP e contrato como referência'],sai:['Item aprovado (tag verde) ou reprovado (tag amarela)'],sis:['MS Planner','Rede Interna'],
+   steps:[
+     {t:'Aplicar os 5 critérios',p:'1) Descrição clara. 2) DoD conhecido. 3) Estimativa validada. 4) Responsável disponível. 5) Insumos na rede.',who:'Paula',sys:'MS Planner',type:''},
+     {t:'Verificar insumos fisicamente',p:'Arquivo deve estar na pasta da rede. Não basta "o cliente prometeu enviar".',who:'Paula + Resp.',sys:'Rede Interna',type:'dec'},
+     {t:'Registrar resultado',p:'Aprovado: tag verde "DoR ✓". Reprovado: tag amarela + comentário com critério faltante.',who:'Paula',sys:'MS Planner',type:'end'},
+   ],
+   quizzes:[{sc:'Rafael garante que o relatório base do IBAMA "está no e-mail". Paula precisa decidir se aprova o DoR.',q:'O que Paula deve fazer?',opts:['Aprovar — Rafael é experiente','Reprovar até o arquivo estar fisicamente na pasta da rede. "Está no e-mail" não é insumo disponível.','Aprovar com flag amarelo','Aguardar o Planning'],ans:1,ok:'Correto! DoR exige insumo na rede. E-mail = risco de arquivo corrompido, versão errada ou não achado na hora certa.',nok:'"Está no e-mail" já causou bloqueios reais. O arquivo precisa estar na pasta — acessível por qualquer membro.'}]},
+
+  {id:'d016',cod:'POP-PMO-016',titulo:'Definition of Done (DoD)',tipo:'POP',fase:'f2',resp:'paula',status:'Vigente',
+   obj:'Critérios objetivos que definem quando uma entrega está genuinamente concluída. Política explícita de saída do Kanban.',
+   raci:{R:'Paula (SM)',A:'Coord. PMO',C:'Especialistas Técnicos',I:'Gerente PMO'},
+   ent:['Contrato com critérios de aceitação','Normas técnicas aplicáveis'],sai:['DoD por tipo de entrega documentado','Checklist em cada card do Planner'],sis:['MS Planner'],
+   steps:[
+     {t:'Definir DoD por tipo',p:'Relatório Técnico: revisão por par + formatação + referências + figuras com fonte + ortografia + salvo na rede + aprovação Coord.',who:'Paula + Especialistas',sys:'Teams',type:''},
+     {t:'Inserir checklist em cada card',p:'Card só vai para "Em Revisão" quando 100% do checklist marcado.',who:'Paula',sys:'MS Planner',type:''},
+     {t:'Atualizar na Retrospectiva',p:'Retrabalho = critério faltando no DoD. Adicionar o que teria evitado.',who:'Paula + Equipe',sys:'Teams',type:'end'},
+   ],
+   quizzes:[{sc:'Rafael quer mover o card para Concluído mas o item "Metadados preenchidos" não está marcado.',q:'O card pode ser movido?',opts:['Sim — são só 5 minutos depois','Não — DoD é binário. 7/7 itens ou não está pronto. "Faço depois" = dívida técnica.','Sim, com flag amarelo','O Coordenador decide'],ans:1,ok:'Correto! DoD binário: 100% ou não está pronto. "Faço depois" nunca acontece.',nok:'"Faço depois" = dívida técnica que se acumula. O DoD existe para eliminar este padrão.'}]},
+
+  {id:'d017',cod:'POP-PMO-017',titulo:'WIP Limits e Gestão de Capacidade',tipo:'POP',fase:'f2',resp:'paula',status:'Vigente',
+   obj:'Estabelecer e fazer cumprir os limites de trabalho em andamento, protegendo a capacidade da equipe.',
+   raci:{R:'Paula (SM)',A:'Coord. PMO',C:'Equipe',I:'Gerente PMO'},
+   ent:['Sprint ativa','Calendário de disponibilidade'],sai:['WIP Limits definidos e visíveis','Alertas identificados na Daily'],sis:['MS Planner','Power BI'],
+   steps:[
+     {t:'Definir WIP Limits',p:'Máx. 2 cards por pessoa em "Em Andamento". Total = 2 × membros ativos.',who:'Paula + Coord.',sys:'MS Planner',type:''},
+     {t:'Monitorar na Daily',p:'Paula conta cards. WIP excedido → swarming após a Daily.',who:'Paula',sys:'MS Planner',type:'dec'},
+     {t:'Backlog Flexível ao final da Sprint',p:'Sprint concluída antes: 50% CGT/Inovação + 50% QA/QC.',who:'Paula + Coord.',sys:'E-mail',type:'end'},
+   ],
+   quizzes:[{sc:'Equipe de 5 membros. BI-06 mostra 14 cards em "Em Andamento" (limite=10).',q:'O que Paula deve fazer?',opts:['Ignorar — mais cards = mais produtividade','Acionar POP-019 (Swarming) após a Daily para priorizar e desbloquear os críticos.','Mover os excedentes para o backlog','Avisar o PMO durante a Daily'],ans:1,ok:'Correto! WIP 40% acima do limite = fluxo travado. Swarming após a Daily (não durante) é a resposta estruturada.',nok:'Swarming resolve o WIP. Mover cards aleatoriamente cria confusão. Avisar durante a Daily quebra os 15 min.'}]},
+
+  {id:'d018',cod:'POP-PMO-018',titulo:'Backlog Flexível: Uso do Tempo Livre',tipo:'POP',fase:'f2',resp:'kaue',status:'Vigente',
+   obj:'Formalizar o uso do tempo excedente da Sprint em inovação (CGT) e qualidade (QA/QC).',
+   raci:{R:'Kauê (Processos)',A:'Coord. PMO',C:'Paula / Sérgio',I:'Gerente PMO'},
+   ent:['Sprint concluída antes do prazo','Backlog CGT (Sérgio)','Backlog QA/QC (Paula)'],sai:['HH de CGT/QA registradas','Relatório ao Gerente PMO'],sis:['MS Planner','E-mail'],
+   steps:[
+     {t:'Calcular tempo disponível',p:'Horas disponíveis = dias restantes × 6h × membros. Paula comunica ao Coordenador.',who:'Paula',sys:'MS Planner',type:''},
+     {t:'Distribuição 50/50',p:'50% CGT/Inovação (Sérgio prioriza). 50% QA/QC (Paula prioriza).',who:'Coord. + Paula + Sérgio',sys:'Teams',type:''},
+     {t:'Registrar e reportar',p:'Kauê registra horas. Inclui na ata de Review.',who:'Kauê',sys:'Planner / E-mail',type:'end'},
+   ],
+   quizzes:[]},
+
+  {id:'d019',cod:'POP-PMO-019',titulo:'Swarming: Colaboração em Gargalos',tipo:'POP',fase:'f2',resp:'kaue',status:'Vigente',
+   obj:'Formalizar a colaboração intensiva para destravar gargalos críticos na Sprint.',
+   raci:{R:'Kauê (Processos)',A:'Coord. PMO',C:'Paula / Equipe',I:'Gerente PMO'},
+   ent:['Gargalo identificado na Daily','Disponibilidade de membros'],sai:['Gargalo destravado','Horas registradas','Lição Aprendida se recorrente'],sis:['MS Planner','Teams'],
+   steps:[
+     {t:'Identificar o gargalo',p:'Card bloqueado >1 dia, WIP excedido, ou risco de não atingir a Meta da Sprint.',who:'Paula',sys:'MS Planner',type:''},
+     {t:'Convocar sessão (máx. 3 pessoas)',p:'"@time — Swarming em [hora]. [Card] bloqueado por [motivo]."',who:'Paula',sys:'Teams',type:''},
+     {t:'Conduzir (2h máx)',p:'Responsável lidera. Colaboradores apoiam. Kauê facilita. Não transferir a ownership.',who:'Kauê + Equipe',sys:'Teams',type:'dec'},
+     {t:'Registrar e gerar Lição se recorrente',p:'Mesmo tipo de gargalo pela 2ª vez → POP-034 (Lições Aprendidas).',who:'Kauê',sys:'Planner / Rede',type:'end'},
+   ],
+   quizzes:[{sc:'Carlos decide assumir completamente o card de Ana durante o Swarming "porque é mais rápido".',q:'Esta ação está correta?',opts:['Sim — eficiência acima de tudo','Não — ownership permanece com Ana. Carlos colabora, não assume. Kauê intervém.','Sim se Ana concordar','Depende do prazo'],ans:1,ok:'Correto! Swarming ≠ transferência de tarefa. Ana lidera, Carlos apoia.',nok:'Transferir ownership destrói a responsabilidade individual. Swarming é colaboração, não substituição.'}]},
+
+  {id:'d020',cod:'POP-PMO-020',titulo:'Apontamento de Horas no PWA',tipo:'POP',fase:'f2',resp:'paula',status:'Vigente',
+   obj:'Garantir apontamento diário de horas para que o AC do EVM seja sempre fidedigno.',
+   raci:{R:'Paula (SM)',A:'Jordana',C:'Coord. PMO',I:'Alessandro / Gerente PMO'},
+   ent:['Sprint ativa','PWA configurado com timesheet'],sai:['Horas reais (AC) por card','EVM alimentado com dados reais'],sis:['PWA (Timesheet)','MS Project','Power BI'],
+   steps:[
+     {t:'Apontar diariamente até 18h',p:'Cada membro aponta horas no PWA por tarefa ao final do dia. Não acumular para sexta.',who:'Equipe',sys:'PWA',type:''},
+     {t:'Janela de tolerância',p:'Ajuste do dia anterior: até 10h do próximo dia. Acima de 2 dias: justificativa + aprovação de Paula.',who:'Equipe + Paula',sys:'PWA',type:''},
+     {t:'Atualizar % no Planner',p:'% de conclusão = julgamento técnico (não proporcional às horas gastas).',who:'Equipe',sys:'MS Planner',type:''},
+     {t:'Verificação semanal (sexta)',p:'Paula verifica. Lembrete direto para quem tem >2 dias sem apontar.',who:'Paula',sys:'PWA / Teams',type:'dec'},
+     {t:'Alimentação do EVM',p:'PWA → MS Project (AC). Alessandro verifica. Jordana puxa para BI toda segunda.',who:'Alessandro + Jordana',sys:'PWA / Project / Power BI',type:'end'},
+   ],
+   quizzes:[{sc:'Bruno trabalhou 5h na segunda mas não apontou. Na quarta ele lembra.',q:'O que Bruno deve fazer?',opts:['Não apontar — já passou muito tempo','Apontar com a data correta (segunda) e justificativa nos comentários — dentro da janela de 2 dias.','Apontar como terça para simplificar','Pedir aprovação de Paula antes'],ans:1,ok:'Correto! Janela de 2 dias existe para este caso. Data correta + justificativa = dado íntegro no EVM.',nok:'A janela de 2 dias existe exatamente para este caso. Data correta + justificativa mantém o AC fiel.'}]},
+
+  // F3
+  {id:'d021',cod:'POP-PMO-021',titulo:'Monitoramento do Cronograma e Escopo',tipo:'POP',fase:'f3',resp:'ales',status:'Vigente',
+   obj:'Garantir visibilidade contínua do andamento real vs. planejado, alimentando o EVM com dados precisos.',
+   raci:{R:'Alessandro',A:'Gerente PMO',C:'Coord. PMO',I:'Jordana / Paula'},
+   ent:['Baseline 0','Apontamento PWA','Progresso do Coordenador'],sai:['% conclusão física atualizada','SPI calculado','Caminho crítico atualizado'],sis:['MS Project','PWA','Power BI'],
+   steps:[
+     {t:'Coletar progresso (toda segunda)',p:'Alessandro extrai horas do PWA. Coordenador envia % física por e-mail até sexta.',who:'Alessandro + Coord.',sys:'PWA / E-mail',type:''},
+     {t:'Atualizar o MS Project',p:'Inserir % física por tarefa. NUNCA alterar a Baseline. Project recalcula SPI.',who:'Alessandro',sys:'MS Project',type:''},
+     {t:'Verificar caminho crítico',p:'Tarefa crítica atrasada = projeto atrasado. Ação imediata.',who:'Alessandro',sys:'MS Project',type:'dec'},
+     {t:'Publicar relatório semanal',p:'Curva S no Power BI. Coordenador notificado. Relatório ao PMO toda segunda 12h.',who:'Alessandro + Jordana',sys:'Power BI / E-mail',type:'end'},
+   ],
+   quizzes:[{sc:'Rafael diz que seu relatório está "70% pronto". Alessandro quer inserir sem validação do Coordenador.',q:'O que Alessandro deve fazer?',opts:['Inserir 70% — Rafael sabe','Aguardar validação do Coordenador. % não validado distorce o EVM.','Inserir 60% como margem','Inserir 100% e corrigir depois'],ans:1,ok:'Correto! % não validado = EV inflado = CPI otimista falso. O Coordenador valida semanalmente.',nok:'% sem validação é a principal causa de EVM irreal.'}]},
+
+  {id:'d022',cod:'POP-PMO-022',titulo:'Análise de Valor Agregado (EVM)',tipo:'POP',fase:'f3',resp:'jord',status:'Vigente',
+   obj:'Calcular SPI, CPI, EAC e variâncias para medir a saúde do projeto objetivamente.',
+   raci:{R:'Jordana',A:'Gerente PMO',C:'Alessandro / Coord.',I:'Diretoria'},
+   ent:['Baseline de custo e prazo','AC do PWA','% física validada'],sai:['EVM completo: PV, AC, EV, SPI, CPI, EAC','Curva S no Power BI','Alertas de desvio'],sis:['MS Project','Power BI','Planilha'],
+   steps:[
+     {t:'Coletar PV, AC, EV',p:'PV: baseline do Project. AC: horas×taxa do PWA. EV = % física × BAC.',who:'Jordana',sys:'Project / PWA',type:''},
+     {t:'Calcular SPI e CPI',p:'SPI=EV/PV. CPI=EV/AC. Semáforo: ≥0,95 verde | 0,85–0,94 amarelo | <0,85 vermelho.',who:'Jordana',sys:'Power BI',type:''},
+     {t:'Calcular variâncias e EAC',p:'SV=EV−PV. CV=EV−AC. EAC=BAC/CPI. EAC>BAC+10%: acionar POP-024.',who:'Jordana',sys:'Power BI / Planilha',type:'dec'},
+     {t:'Publicar e alertar',p:'Dashboard às 10h de segunda. Alerta automático para projetos com SPI ou CPI < 0,85.',who:'Aline + Jordana',sys:'Power BI Service',type:'end'},
+   ],
+   quizzes:[{sc:'BAC=R$500k. Mês 6: PV=R$250k, AC=R$280k, % física=40%.',q:'Qual é o EV?',opts:['R$250k (igual ao PV)','R$200k (40% × R$500k)','R$280k (o que foi gasto)','R$220k (média)'],ans:1,ok:'Correto! EV = % física × BAC = 40% × R$500k = R$200k. EV mede o valor do trabalho realmente concluído.',nok:'EV = % física × BAC. Não é o planejado nem o gasto. É o valor do trabalho CONCLUÍDO.'}]},
+
+  {id:'d023',cod:'POP-PMO-023',titulo:'Análise e Gestão de Desvios',tipo:'POP',fase:'f3',resp:'jord',status:'Vigente',
+   obj:'Identificar, classificar e responder estruturadamente a desvios de custo e prazo detectados pelo EVM.',
+   raci:{R:'Jordana',A:'Gerente PMO',C:'Alessandro / Coord.',I:'Diretoria'},
+   ent:['EVM atualizado','SPI e CPI calculados'],sai:['Causa raiz identificada','Plano de ação documentado','Nova EAC calculada'],sis:['Power BI','MS Project','E-mail'],
+   steps:[
+     {t:'Classificar o desvio',p:'Custo (CPI<1), Prazo (SPI<1) ou Duplo. Jordana classifica e prioriza.',who:'Jordana',sys:'Power BI',type:''},
+     {t:'Identificar causa raiz',p:'Qual fase concentra o desvio? Subestimativa, baixa produtividade, escopo informal?',who:'Jordana + Alessandro',sys:'Reunião',type:'dec'},
+     {t:'Plano de ação corretiva',p:'Subestimativa→revisar. Baixa prod.→swarming. Escopo informal→CR. Custo imprevi.→contingência.',who:'Coord. + Jordana',sys:'E-mail / Planner',type:''},
+     {t:'Comunicar e monitorar',p:'≤10%: Coord. monitora. 10–20%: PMO convocado. >20%: POP-024.',who:'Jordana + Gerente PMO',sys:'E-mail / Power BI',type:'end'},
+   ],
+   quizzes:[{sc:'SPI=0,88, CPI=0,96. Jordana precisa classificar.',q:'Qual é a classificação e prioridade?',opts:['Duplo desvio — ambos críticos','Desvio de prazo (SPI=0,88 abaixo de 0,90). CPI=0,96 OK. Prioridade: ações de prazo.','Desvio de custo apenas','Normal — ambos acima de 0,85'],ans:1,ok:'Correto! SPI=0,88 = faixa de atenção. CPI=0,96 = OK. Priorizar ações de prazo.',nok:'SPI=0,88 < 0,90 = atenção. CPI=0,96 ≥ 0,90 = OK. São desvios independentes.'}]},
+
+  {id:'d024',cod:'POP-PMO-024',titulo:'Protocolo de Estouro de Custo (3 Níveis)',tipo:'POP',fase:'f3',resp:'pmo',status:'Vigente',
+   obj:'Respostas estruturadas e proporcionais para estouro de custo com 3 níveis progressivos de escalação.',
+   raci:{R:'Gerente PMO',A:'Diretoria',C:'Jordana / Coord.',I:'Cliente (nível 3)'},
+   ent:['CPI calculado','EAC projetado','Análise de causa raiz'],sai:['Plano de ação por nível','Stakeholders notificados','Baseline revisada se necessário'],sis:['Power BI','MS Project','E-mail'],
+   steps:[
+     {t:'Nível 1 — Alerta (CPI 0,90–0,95)',p:'Ação interna. Coordenador convoca equipe em 48h. Redistribuir horas, otimizar processo.',who:'Coord. PMO',sys:'Teams / E-mail',type:'dec'},
+     {t:'Nível 2 — Atenção (CPI 0,80–0,90)',p:'Gerente PMO em 24h. Revisar escopo, avaliar CR, avaliar contingência. Diretoria informada.',who:'Gerente PMO + Jordana',sys:'Reunião / E-mail',type:'dec'},
+     {t:'Nível 3 — Crítico (CPI < 0,80)',p:'Reunião de crise com Diretoria em 24h. Congelar alocações. 3 cenários: otimista/realista/pessimista.',who:'Gerente PMO + Diretoria',sys:'Reunião',type:'dec'},
+     {t:'Registrar Lição Aprendida',p:'Independente do nível: data, CPI na identificação, causa raiz, ações, CPI após.',who:'Jordana',sys:'Rede / Power BI',type:'end'},
+   ],
+   quizzes:[{sc:'CPI=0,93. Coordenador quer "esperar mais uma semana para ver se melhora sozinho".',q:'Esta abordagem está correta?',opts:['Sim — 0,93 é quase 1','Não — CPI=0,93 é Nível 1. Protocolo: reunião em 48h para identificar causa. Esperar piora.','Sim — esperar 2 semanas','Só agir se cair abaixo de 0,90'],ans:1,ok:'Correto! CPI=0,93 = Nível 1 → ação em 48h. Desvios raramente se recuperam sozinhos sem ação.',nok:'Esperar com CPI=0,93 sem ação provavelmente leva ao Nível 2 em 2 semanas.'}]},
+
+  {id:'d025',cod:'POP-PMO-025',titulo:'Controle de Mudanças (Change Request)',tipo:'POP',fase:'f3',resp:'pmo',status:'Vigente',
+   obj:'Garantir que qualquer mudança no escopo, prazo ou custo seja formalmente analisada e aprovada antes de implementada.',
+   raci:{R:'Coord. PMO',A:'Gerente PMO',C:'Alessandro / Jordana / Jurídico',I:'Cliente / Diretoria'},
+   ent:['Mudança identificada','Contrato original','Baseline atual'],sai:['CR documentado e numerado','Impacto analisado','CR aprovado ou rejeitado','Baseline atualizada se aprovado'],sis:['TPL-PMO-006','MS Project','E-mail'],
+   steps:[
+     {t:'Registrar no TPL-PMO-006',p:'CR numerado: CR-CODIGO-001, 002... Coordenador é o único que abre CR.',who:'Coord. PMO',sys:'TPL-PMO-006',type:''},
+     {t:'Analisar impacto',p:'Alessandro: prazo. Jordana: custo. Prazo: 3 dias úteis.',who:'Alessandro + Jordana',sys:'Project / Planilha',type:''},
+     {t:'Submeter para aprovação',p:'>15% do BAC ou >30 dias: aprovação da Diretoria. Se cobrança ao cliente: Jurídico antes.',who:'Coord. → Gerente PMO',sys:'E-mail',type:'dec'},
+     {t:'Atualizar Baseline se aprovado',p:'Alessandro salva Baseline 1 (nunca sobrescreve Baseline 0). Jordana atualiza BAC no BI.',who:'Alessandro + Jordana',sys:'MS Project / Power BI',type:'end'},
+   ],
+   quizzes:[{sc:'Cliente pediu informalmente "um mapeamento rápido de APP". Coordenador disse "pode fazer".',q:'O que Alessandro deve fazer?',opts:['Adicionar no Project — o Coordenador autorizou','Alertar o Coordenador: requer CR. Sem CR aprovado, a tarefa não entra no Project.','Criar com flag de extra','Ignorar — é simples'],ans:1,ok:'Correto! Escopo informal = trabalho não pago + desvio de SPI. O CR formaliza e protege a Ambientare.',nok:'Adicionar sem CR = trabalho não remunerado + SPI distorcido.'}]},
+
+  {id:'d026',cod:'POP-PMO-026',titulo:'Monitoramento da Velocity',tipo:'POP',fase:'f3',resp:'paula',status:'Vigente',
+   obj:'Medir a velocidade histórica da equipe para planejar Sprints futuras de forma realista.',
+   raci:{R:'Paula',A:'Coord. PMO',C:'Kauê',I:'Gerente PMO / Alessandro'},
+   ent:['Sprint concluída com horas apontadas'],sai:['Velocity registrada','Média das 3 últimas Sprints','Ajuste da próxima Sprint'],sis:['MS Planner','Power BI','Excel'],
+   steps:[
+     {t:'Calcular Velocity',p:'Somar horas dos cards em "Concluído" com DoD confirmado. Não contar Em Revisão.',who:'Paula',sys:'MS Planner',type:''},
+     {t:'Registrar no histórico',p:'Excel/BI: Sprint, datas, membros, capacidade, horas entregues, variância.',who:'Paula',sys:'Excel / Power BI',type:''},
+     {t:'Ajustar capacidade da próxima Sprint',p:'Capacidade = min(teórica, média Velocity × 1,1).',who:'Paula',sys:'MS Planner',type:'end'},
+   ],
+   quizzes:[{sc:'Sprint encerrada: 3 cards Concluídos (42h), 1 Em Revisão (8h), 1 Bloqueado (5h).',q:'Qual é a Velocity desta Sprint?',opts:['55h (todas)','42h (apenas Concluídos com DoD)','50h (Concluído + Em Revisão)','47h (Concluído + Bloqueado)'],ans:1,ok:'Correto! Velocity = horas de cards Concluídos com DoD. 42h.',nok:'Cards Em Revisão/Bloqueado não geraram valor entregue.'}]},
+
+  {id:'d027',cod:'POP-PMO-027',titulo:'Sprint Review: Revisão e Validação',tipo:'POP',fase:'f3',resp:'pmo',status:'Vigente',
+   obj:'Demonstrar resultados ao Coordenador/cliente, validar entregas formalmente e atualizar o backlog.',
+   raci:{R:'Coord. PMO',A:'Gerente PMO',C:'Paula / Equipe',I:'Cliente'},
+   ent:['Sprint encerrada','DoD confirmado','Lista de entregas'],sai:['Entregas validadas','Feedback registrado','Backlog atualizado','Velocity registrada'],sis:['MS Planner','Teams','E-mail'],
+   steps:[
+     {t:'Preparar a Review',p:'Coordenador seleciona cards de Concluído. Paula prepara Planner. Máx. 60 min.',who:'Coord. + Paula',sys:'Planner / Outlook',type:''},
+     {t:'Demonstrar as entregas',p:'Cada responsável demonstra em ≤10 min. Nunca apresentar incompleto como concluído.',who:'Equipe + Coord.',sys:'Teams / Rede',type:''},
+     {t:'Coletar feedback',p:'Aceito / Aceito com ajuste <2h / Rejeitado → volta ao backlog com nova descrição.',who:'Coord. / Cliente',sys:'MS Planner',type:'dec'},
+     {t:'Registrar e encerrar',p:'Paula registra Velocity, % Meta, items aceitos/rejeitados. Ata em 24h.',who:'Paula + Coord.',sys:'E-mail / Planner',type:'end'},
+   ],
+   quizzes:[{sc:'Marcos quer apresentar o "Relatório de Fauna" que está 85% concluído.',q:'O Coordenador deve permitir?',opts:['Sim — 85% mostra progresso','Não — Review só demonstra entregas com DoD confirmado. 85% não tem DoD.','Sim com aviso','O cliente decide'],ans:1,ok:'Correto! Review mostra o que está PRONTO. 85% sem DoD = não é entrega da Sprint.',nok:'Apresentar incompleto como entrega é desonesto com o cliente.'}]},
+
+  {id:'d028',cod:'POP-PMO-028',titulo:'Retrospectiva da Sprint',tipo:'POP',fase:'f3',resp:'paula',status:'Vigente',
+   obj:'Inspecionar o processo e adaptar práticas para a próxima Sprint, promovendo melhoria contínua baseada em evidências.',
+   raci:{R:'Paula',A:'Coord. PMO',C:'Equipe',I:'Gerente PMO'},
+   ent:['Sprint Review concluída','Velocity registrada','Impedimentos documentados'],sai:['3–5 ações com responsável e prazo','Lições Aprendidas registradas'],sis:['Teams','Planner','Rede'],
+   steps:[
+     {t:'Preparar com dados objetivos',p:'Paula: Velocity, bloqueios por tipo, Swarmings, taxa DoD de 1ª tentativa, aderência WIP.',who:'Paula',sys:'Planner / Power BI',type:''},
+     {t:'O que funcionou?',p:'1–2 práticas específicas por membro. "O DoR impediu 3 bloqueios" = válido. "A equipe foi ótima" = não acionável.',who:'Paula + Equipe',sys:'Teams',type:''},
+     {t:'O que melhorar?',p:'Problemas de processo, nunca ataques pessoais. Paula medeia tensões.',who:'Paula + Equipe',sys:'Teams',type:'dec'},
+     {t:'Definir e registrar ações',p:'3–5 ações: específica + responsável + prazo. Paula arquiva e abre como próxima pauta.',who:'Paula',sys:'Rede / E-mail',type:'end'},
+   ],
+   quizzes:[{sc:'Carlos diz na Retro: "O Rafael nunca aponta horas direito e prejudica todo mundo."',q:'Como Paula deve responder?',opts:['Concordar — o dado é verdadeiro','Intervir: "Como podemos melhorar o processo de apontamento para toda a equipe?" Redirecionar de pessoa para processo.','Ignorar','Pedir que Rafael se justifique'],ans:1,ok:'Correto! Retro = processos, não pessoas. Paula protege o ambiente seguro.',nok:'Ataques pessoais na Retro criam medo. Paula redireciona sempre para o processo.'}]},
+
+  {id:'d029',cod:'POP-PMO-029',titulo:'Gestão de Contratos: Monitoramento',tipo:'POP',fase:'f3',resp:'pmo',status:'Vigente',
+   obj:'Monitorar mensalmente o cumprimento das obrigações contratuais antes que desvios gerem penalidades.',
+   raci:{R:'Coord. PMO',A:'Gerente PMO',C:'Jordana / Jurídico',I:'Diretoria'},
+   ent:['Ficha do Contrato','Alertas Outlook','Relatório de progresso'],sai:['Status de obrigações atualizado','Alertas emitidos','Pagamentos monitorados'],sis:['TPL-PMO-005','Outlook','E-mail'],
+   steps:[
+     {t:'Revisão mensal (dia 1)',p:'Coordenador revisa Ficha: prazo atingido? Entrega validada? Pagamento recebido?',who:'Coord. PMO',sys:'TPL-PMO-005',type:''},
+     {t:'Verificar alertas Outlook',p:'D-30: o que é necessário? D-15: risco? → comunicar ao PMO imediatamente.',who:'Coord. PMO',sys:'Outlook / Project',type:''},
+     {t:'Monitorar obrigações do cliente',p:'Dados prometidos recebidos? Atraso do cliente = direito de extensão. Documentar por e-mail.',who:'Coord. PMO',sys:'E-mail',type:'dec'},
+     {t:'Monitorar pagamentos',p:'>15 dias atrasado: notificação formal. >30 dias: PMO + Jurídico.',who:'Jordana + Coord.',sys:'Planilha / E-mail',type:'end'},
+   ],
+   quizzes:[{sc:'Pagamento de R$120k está atrasado há 25 dias.',q:'O que o protocolo determina?',opts:['Aguardar — o relacionamento é prioridade','Notificação formal obrigatória (gatilho: 15 dias). Com 25 dias, Coordenador notifica e informa o PMO.','Suspender serviços','Cobrar só pelo Jurídico'],ans:1,ok:'Correto! 25 dias > gatilho de 15 dias. Notificação formal é profissionalismo, não atrito.',nok:'Evitar notificação com R$120k atrasado é risco de fluxo de caixa real.'}]},
+
+  {id:'t006',cod:'TPL-PMO-006',titulo:'Template: Solicitação de Mudança (CR)',tipo:'Template',fase:'f3',resp:'pmo',status:'Em Elaboração',
+   obj:'Word para Change Request com: código CR, tipo, descrição, justificativa, impacto e assinaturas.',
+   raci:{R:'Coord. PMO',A:'Gerente PMO',C:'Alessandro / Jordana',I:'Cliente'},
+   ent:['Mudança identificada'],sai:['CR arquivado'],sis:['MS Word'],
+   steps:[{t:'Preencher CR',p:'Número sequencial: CR-CODIGO-001. Preencher todos os campos. Submeter ao PMO.',who:'Coord. PMO',sys:'MS Word',type:'end'}],
+   quizzes:[]},
+
+  // F4
+  {id:'d030',cod:'MAN-PMO-001',titulo:'Manual dos Dashboards Power BI',tipo:'Manual',fase:'f4',resp:'aline',status:'Vigente',
+   obj:'Arquitetura de dados, 11 dashboards documentados, papéis Jordana/Aline, ciclos de atualização e guia de leitura por nível de usuário.',
+   raci:{R:'Aline Pimenta',A:'Gerente PMO',C:'Jordana',I:'Todos os usuários'},
+   ent:['Dados das Fases 0–3','Planilhas EVM','Tabela Portfólio'],sai:['11 dashboards publicados','Alertas configurados','Guia distribuído'],sis:['Power BI Desktop','Power BI Service','Pasta Compartilhada'],
+   steps:[
+     {t:'Pipeline Jordana → Aline',p:'Jordana padroniza e exporta planilha até sexta 17h. Aline configura refresh automático no Service. Publicação toda segunda 10h.',who:'Jordana → Aline',sys:'Power BI Service',type:''},
+     {t:'Semáforo EVM padrão',p:'SPI/CPI ≥0,95: verde. 0,85–0,94: amarelo. <0,85: vermelho + alerta automático por e-mail.',who:'Aline',sys:'Power BI Service',type:''},
+     {t:'Guia por usuário',p:'Diretoria: BI-01,03,04,05,11. PMO: todos os 11. Coordenadores: BI-02,06,07,08,09,10.',who:'Aline + Gerente PMO',sys:'Power BI',type:'end'},
+   ],
+   quizzes:[{sc:'O BI-02 não atualizou na segunda. Os dados de Jordana estão corretos na pasta.',q:'Qual é a causa mais provável?',opts:['Erro no modelo BI','Problema na configuração do refresh automático no Power BI Service. Verificar log de erros.','Jordana exportou errado','Reiniciar o computador'],ans:1,ok:'Correto! Dado correto + dashboard não atualizado = problema no refresh do Service.',nok:'Verificar o log do Service primeiro — geralmente é permissão ou caminho de arquivo.'}]},
+
+  {id:'d031',cod:'POP-PMO-030',titulo:'Rotina de Atualização dos Dashboards',tipo:'POP',fase:'f4',resp:'aline',status:'Vigente',
+   obj:'Rotina semanal de coleta, padronização, publicação e verificação dos 11 dashboards Power BI.',
+   raci:{R:'Aline Pimenta',A:'Gerente PMO',C:'Jordana',I:'Todos os usuários'},
+   ent:['Planilhas EVM','Dados do PWA','Tabela Portfólio'],sai:['Dashboards publicados nos horários','Anomalias corrigidas'],sis:['Power BI','Pasta Compartilhada','E-mail'],
+   steps:[
+     {t:'Coleta (sexta até 17h)',p:'Jordana exporta EVM. Alessandro exporta alocação. Paula exporta Velocity.',who:'Jordana + Alessandro + Paula',sys:'Pasta Compartilhada',type:''},
+     {t:'Verificar anomalias (seg. 8h)',p:'CPI/SPI < 0 (dado errado), BAC zerado, % física = 0 há semanas → Jordana corrige.',who:'Aline',sys:'Power BI Desktop',type:'dec'},
+     {t:'Publicar (seg. 10h)',p:'Após verificação: publicar todos. Disparar alertas para projetos em vermelho.',who:'Aline',sys:'Power BI Service',type:'end'},
+   ],
+   quizzes:[]},
+
+  {id:'t007',cod:'TPL-PMO-007',titulo:'Template: Relatório de Status (RAS)',tipo:'Template',fase:'f4',resp:'pmo',status:'Em Elaboração',
+   obj:'Word para Relatório de Acompanhamento Semanal ao cliente com % físico, EVM, próximas entregas e riscos.',
+   raci:{R:'Coord. PMO',A:'Gerente PMO',C:'Alessandro / Jordana',I:'Cliente'},
+   ent:['EVM semanal','% física'],sai:['RAS enviado ao cliente'],sis:['MS Word','E-mail'],
+   steps:[{t:'Preencher e enviar',p:'Abrir TPL-PMO-007.docx. Preencher com dados do EVM. Revisar com PMO antes de enviar.',who:'Coord. PMO',sys:'MS Word / E-mail',type:'end'}],
+   quizzes:[]},
+
+  {id:'t008',cod:'TPL-PMO-008',titulo:'Template: Relatório Gerencial Mensal',tipo:'Template',fase:'f4',resp:'pmo',status:'Em Elaboração',
+   obj:'PowerPoint para Relatório Gerencial à Diretoria com visão consolidada do portfólio.',
+   raci:{R:'Gerente PMO',A:'Diretoria',C:'Jordana / Aline',I:'Coordenadores'},
+   ent:['Dashboards BI atualizados'],sai:['Relatório apresentado'],sis:['PowerPoint','Power BI'],
+   steps:[{t:'Preparar com dados do BI',p:'Abrir TPL-PMO-008.pptx. Inserir prints dos dashboards. Análise executiva do Gerente PMO.',who:'Gerente PMO',sys:'PowerPoint / Power BI',type:'end'}],
+   quizzes:[]},
+
+  // F5
+  {id:'d032',cod:'POP-PMO-032',titulo:'Checklist de Encerramento do Projeto',tipo:'POP',fase:'f5',resp:'pmo',status:'Vigente',
+   obj:'Garantir encerramento completo: técnico, financeiro, contratual, documental e de aprendizado. Projeto não encerra sem checklist 100%.',
+   raci:{R:'Coord. PMO',A:'Gerente PMO',C:'Alessandro / Jordana / Paula',I:'Cliente / Diretoria'},
+   ent:['Entregas aceitas pelo cliente','EVM final','Sprint Review final concluída'],sai:['Checklist 100%','Termo de Encerramento assinado','Projeto encerrado no PWA'],sis:['TPL-PMO-009','MS Project / PWA','Rede'],
+   steps:[
+     {t:'Distribuir responsabilidades',p:'Alessandro (sistemas), Jordana (financeiro), Paula (ágil), Coordenador (técnico/contratual).',who:'Coord. PMO',sys:'E-mail / Teams',type:''},
+     {t:'Verificar entregas técnicas',p:'Todos os aceites formais por escrito. Sem aceite formal = não encerrar.',who:'Coord. PMO',sys:'E-mail / Rede',type:'dec'},
+     {t:'Encerramento financeiro',p:'Jordana: CPI final, margem real, pagamentos recebidos, contingência não utilizada.',who:'Jordana',sys:'Planilha / Power BI',type:''},
+     {t:'Encerramento nos sistemas',p:'Alessandro: "Concluído" no PWA. Paula: arquivar Planner. Coord: atualizar Tabela Portfólio.',who:'Alessandro + Paula + Coord.',sys:'PWA / Planner / Portfólio',type:''},
+     {t:'Assinar Termo de Encerramento',p:'TPL-PMO-009. Assinaturas: Gerente PMO + Coordenador. Arquivar em 06_Encerramento/.',who:'Gerente PMO + Coord.',sys:'Rede / E-mail',type:'end'},
+   ],
+   quizzes:[{sc:'Gerente PMO quer assinar o Termo antes das Lições Aprendidas, "para agilizar".',q:'Esta sequência está correta?',opts:['Sim — Lições podem vir depois','Não — o Termo é assinado APÓS o checklist 100%, incluindo Lições. Assinar antes falsifica o documento.','Sim se for em até 1 semana','Depende da urgência'],ans:1,ok:'Correto! O Termo certifica que TUDO foi concluído. Assinar com itens pendentes falsifica o documento.',nok:'Assinar com lições pendentes torna o checklist opcional. A sequência é inegociável.'}]},
+
+  {id:'d033',cod:'POP-PMO-033',titulo:'Gestão de Contratos: Encerramento',tipo:'POP',fase:'f5',resp:'pmo',status:'Vigente',
+   obj:'Encerrar formalmente obrigações contratuais, coletar aceite final e encaminhar ao Jurídico.',
+   raci:{R:'Coord. PMO',A:'Gerente PMO',C:'Jordana / Jurídico',I:'Diretoria / Cliente'},
+   ent:['Ficha do Contrato','Relatório final de pagamentos','Lista de subcontratados'],sai:['Aceite Final assinado','Subcontratados quitados','Documentação arquivada'],sis:['TPL-PMO-005','E-mail','Jurídico'],
+   steps:[
+     {t:'Verificar obrigações da Ambientare',p:'Percorrer Ficha: cada obrigação cumprida? Evidência arquivada?',who:'Coord. PMO',sys:'TPL-PMO-005',type:''},
+     {t:'Coletar Aceite Final',p:'Enviar Termo de Aceite com prazo de 10 dias. Sem aceite = projeto não encerra.',who:'Coord. PMO',sys:'E-mail',type:'dec'},
+     {t:'Desmobilizar subcontratados',p:'Escopo entregue? Pagamento efetuado? NF final arquivada?',who:'Coord. + Jordana',sys:'E-mail / Financeiro',type:''},
+     {t:'Encaminhamento jurídico',p:'Jurídico: contrato, aceite, registros. Guarda: 5 anos (10 anos para licenciamento).',who:'Jurídico + Gerente PMO',sys:'E-mail / Arquivo',type:'end'},
+   ],
+   quizzes:[{sc:'Cliente enviou aceite com ressalva: "o mapa da APA não está na escala solicitada". A Ambientare entregou na escala do contrato.',q:'O que o Coordenador deve fazer?',opts:['Refazer — cliente sempre tem razão','Encaminhar ao Jurídico. Se a entrega está em conformidade contratual, contestar formalmente com evidência.','Ignorar','Refazer para manter o relacionamento'],ans:1,ok:'Correto! Ressalva no Aceite = contestação formal. Jurídico avalia. Conformidade contratual protege a Ambientare.',nok:'Ceder a ressalvas não contratuais cria precedente. O contrato e o Jurídico são os árbitros.'}]},
+
+  {id:'d034',cod:'POP-PMO-034',titulo:'Registro de Lições Aprendidas',tipo:'POP',fase:'f5',resp:'pmo',status:'Vigente',
+   obj:'Capturar e estruturar o conhecimento gerado para aplicação em projetos futuros.',
+   raci:{R:'Coord. PMO',A:'Gerente PMO',C:'Equipe',I:'PMO / Futuros coordenadores'},
+   ent:['Retrospectiva Final','EVM final','Impedimentos documentados'],sai:['Mínimo 5 lições estruturadas','Repositório atualizado'],sis:['TPL-PMO-010','Rede','Power BI'],
+   steps:[
+     {t:'Sessão de coleta (60–90 min)',p:'60min: o que funcionou? | 20min: problemas? | 10min: alertas para projetos similares.',who:'Coord. PMO + Equipe',sys:'Teams / TPL-PMO-010',type:''},
+     {t:'Estruturar no formato padrão',p:'Cada lição: Categoria, Título, Contexto, Causa Raiz, Impacto (R$ ou dias), Ação Preventiva, Ação Corretiva.',who:'Coord. PMO',sys:'TPL-PMO-010',type:''},
+     {t:'Publicar no repositório',p:'Arquivar em: /PMO/Repositorio_Licoes_Aprendidas/TIPOLOGIA/CODIGO_LA.xlsx.',who:'Coord. PMO + Aline',sys:'Rede / Power BI',type:'end'},
+   ],
+   quizzes:[{sc:'LT 500kV no Pará: CPI final 0,78. Levantamento de Fauna demandou 40% mais horas por espécies ameaçadas não mapeadas no TAP.',q:'Como estruturar esta lição para ser útil no futuro?',opts:['"Não subestime o Meio Biótico" — genérico','Categoria: Técnico/Planejamento. Título: "Fauna em áreas com potencial de espécies ameaçadas exige buffer de +40%". Ação preventiva: consultar ICMBio antes de estimar.','Lição: "O cliente deveria ter avisado"','Lição: "Contratar especialista mais experiente"'],ans:1,ok:'Correto! Lição útil = específica + mensurável + acionável. "+40% + consultar ICMBio" muda o próximo projeto.',nok:'"Não subestime" é genérico e inútil. Lição com número e ação específica é o que muda o próximo projeto.'}]},
+
+  {id:'d035',cod:'POP-PMO-035',titulo:'Arquivamento e Encerramento na Rede/PWA',tipo:'POP',fase:'f5',resp:'ales',status:'Vigente',
+   obj:'Organizar e arquivar documentação do projeto com prazo de guarda definido.',
+   raci:{R:'Coord. PMO',A:'Gerente PMO',C:'Alessandro / Paula',I:'Equipe'},
+   ent:['Checklist 100% (POP-032)','Pasta ativa na rede','Projeto ativo no PWA'],sai:['Pasta histórica com índice','Projeto encerrado no PWA','Planner arquivado','Backup confirmado'],sis:['Rede Interna','PWA','MS Planner'],
+   steps:[
+     {t:'Organizar pasta final',p:'Apenas versões definitivas. Criar INDICE_CODIGO.xlsx com todos os documentos.',who:'Coord. PMO',sys:'Rede',type:''},
+     {t:'Mover pasta para o histórico',p:'Coordenador PMO move a pasta /Projetos/ANO/CODIGO/ para /Projetos/Historico/ANO/CODIGO/ diretamente na rede. Em seguida, altera as permissões para Somente Leitura para todos os membros da equipe, mantendo Controle Total apenas para o Gerente PMO.',who:'Coord. PMO',sys:'Rede Interna',type:'dec'},
+     {t:'Encerrar no PWA e arquivar Planner',p:'Alessandro: "Concluído" + CPI final. Paula: arquivar plano (não deletar).',who:'Alessandro + Paula',sys:'PWA / Planner',type:''},
+     {t:'Verificar backup e notificar a equipe',p:'Coordenador verifica se a pasta histórica está íntegra (abre 3 arquivos aleatórios para confirmar). Notifica a equipe por e-mail informando o novo caminho e o acesso Somente Leitura. Guarda: 5 anos padrão / 10 anos para projetos de licenciamento ambiental.',who:'Coord. PMO',sys:'Rede / E-mail',type:'end'},
+   ],
+   quizzes:[{sc:'O Coordenador terminou de mover a pasta para o Histórico. Quer deletar a pasta original imediatamente para liberar espaço.',q:'O que deve ser feito primeiro?',opts:['Deletar imediatamente — a cópia já está no Histórico','Antes de deletar qualquer coisa: abrir pelo menos 3 arquivos da pasta histórica para confirmar a integridade. Só após a verificação eliminar a pasta original.','Esperar 30 dias antes de deletar','Pedir autorização à Diretoria'],ans:1,ok:'Correto! A verificação de integridade é feita pelo próprio Coordenador PMO: abre arquivos do destino, confirma que estão legíveis, aí elimina a origem.',nok:'Deletar sem verificar o destino é o risco mais comum. A equipe PMO tem autonomia para verificar e concluir sem dependência externa.'}]},
+
+  {id:'t009',cod:'TPL-PMO-009',titulo:'Template: Termo de Encerramento',tipo:'Template',fase:'f5',resp:'pmo',status:'Em Elaboração',
+   obj:'Word para Termo de Encerramento com: dados, CPI/SPI finais, entregas realizadas, lições principais e assinaturas.',
+   raci:{R:'Coord. PMO',A:'Gerente PMO',C:'Equipe',I:'Cliente / Diretoria'},
+   ent:['Checklist 100%'],sai:['Termo assinado e arquivado'],sis:['MS Word'],
+   steps:[{t:'Preencher e assinar',p:'Abrir TPL-PMO-009.docx. Assinar: Gerente PMO + Coordenador. Arquivar em 06_Encerramento/',who:'Coord. + Gerente PMO',sys:'MS Word / Rede',type:'end'}],
+   quizzes:[]},
+
+  {id:'t010',cod:'TPL-PMO-010',titulo:'Template: Lições Aprendidas',tipo:'Template',fase:'f5',resp:'pmo',status:'Em Elaboração',
+   obj:'Excel para estruturar Lições Aprendidas com todos os campos obrigatórios do formato padrão.',
+   raci:{R:'Coord. PMO',A:'Gerente PMO',C:'Equipe',I:'PMO'},
+   ent:['Sessão de lições realizada'],sai:['Repositório atualizado'],sis:['Excel'],
+   steps:[{t:'Preencher por lição',p:'Abrir TPL-PMO-010.xlsx. Uma linha por lição. Mínimo 5 por projeto.',who:'Coord. PMO',sys:'Excel',type:'end'}],
+   quizzes:[]},
+
+  // GOVERNANÇA
+  {id:'g001',cod:'MAN-PMO-002',titulo:'Manual do Modelo Híbrido Preditivo-Ágil',tipo:'Manual',fase:'fg',resp:'pmo',status:'Vigente',
+   obj:'Documenta o modelo híbrido da Ambientare: quando usar preditivo vs. ágil, o Trio de Ouro (MS Project + Planner + Power BI) e as bases teóricas.',
+   raci:{R:'Gerente PMO',A:'Diretoria',C:'Toda a equipe PMO',I:'Toda a Ambientare'},
+   ent:['Todos os POPs elaborados'],sai:['Manual distribuído','Treinamento de onboarding baseado no manual'],sis:['MS Word / Portal PMO'],
+   steps:[
+     {t:'Trio de Ouro',p:'MS Project (Alessandro): EAP, Baseline, EVM, recursos. MS Planner (Paula): Sprints, Kanban, Daily. Power BI (Aline/Jordana): 11 dashboards unificando os dois mundos.',who:'Gerente PMO',sys:'Portal PMO',type:''},
+     {t:'Quando usar Preditivo',p:'Alta certeza de escopo, baseline contratual, gestão financeira. POPs: 007, 008, 021, 022, 023, 024, 025.',who:'Gerente PMO',sys:'Portal PMO',type:''},
+     {t:'Quando usar Ágil',p:'Incerteza técnica, execução diária, adaptação rápida. POPs: 013–020, 026–028.',who:'Gerente PMO',sys:'Portal PMO',type:'end'},
+   ],
+   quizzes:[{sc:'Coordenador pergunta: "Por que usamos Project E Planner? Não é redundante?"',q:'Qual é a resposta correta?',opts:['É redundância — escolher um simplificaria','Não é redundância. Project resolve o preditivo (EVM, baseline, financeiro). Planner resolve o ágil (Sprint, WIP, Daily). POP-036 concilia os dois semanalmente. Power BI une os dois para decisão.','Planner vai substituir o Project','São usados em fases diferentes'],ans:1,ok:'Correto! Cada ferramenta é insubstituível. Project: macro/financeiro. Planner: micro/operacional. Não há sobreposição.',nok:'Eliminar uma destroçaria o modelo. Project sem kanban. Planner sem EVM. A complementaridade é intencional.'}]},
+
+  {id:'g002',cod:'MAN-PMO-003',titulo:'Guia de Onboarding PMO',tipo:'Manual',fase:'fg',resp:'paula',status:'Vigente',
+   obj:'Integrar novos membros em 30 dias com todos os acessos, trilha de treinamento e primeiro Sprint concluído com autonomia.',
+   raci:{R:'Paula',A:'Gerente PMO',C:'Alessandro / Aline',I:'Novo membro'},
+   ent:['Novo membro designado','Sistemas configurados'],sai:['Novo membro operacional em 30 dias','Trilha concluída'],sis:['Portal PMO','MS Planner / PWA / Project','Teams'],
+   steps:[
+     {t:'Dia 1 — Boas-vindas',p:'Paula recebe, apresenta a equipe, entrega guia impresso, explica o modelo híbrido em 30 min.',who:'Paula',sys:'Teams',type:''},
+     {t:'Dia 2 — Configuração de acessos',p:'Paula configura junto com o novo membro: acesso à pasta do projeto na rede (Coord. PMO concede permissão), MS Teams/Planner (Paula adiciona ao plano), PWA (Alessandro cadastra como recurso), Power BI Service (Aline concede acesso ao workspace), Portal PMO (acesso livre para visualização). Para e-mail corporativo e credenciais M365, acionar o responsável administrativo da Ambientare.',who:'Paula + Coord. PMO',sys:'Rede / Teams / PWA / BI',type:''},
+     {t:'Dias 3–5 — Leitura do Portal',p:'Novo membro lê POPs da fase ativa. Dúvidas na Daily.',who:'Novo membro',sys:'Portal PMO',type:''},
+     {t:'Semana 2 — Treinamento prático',p:'Paula: demo Planner + PWA (60 min). Aline: tour Power BI (45 min).',who:'Paula + Aline',sys:'Planner / PWA / BI',type:''},
+     {t:'Dias 15–30 — Execução e avaliação',p:'Sprint Planning com card próprio. Apontamento autônomo. Review + Retro. Avaliação de conclusão.',who:'Paula + Gerente PMO',sys:'Todos',type:'end'},
+   ],
+   quizzes:[{sc:'Rafael chegou há 5 dias mas não acessa o PWA porque "Alessandro ainda não o cadastrou como recurso no MS Project".',q:'O que Paula deve fazer?',opts:['Aguardar — é responsabilidade de Alessandro','Acionar Alessandro imediatamente. Cadastrar o recurso no Project e habilitar o timesheet no PWA é obrigação do Dia 2 do onboarding. 5 dias sem apontamento = AC zerado no EVM do projeto ativo.','Rafael aponta as horas depois de forma retroativa','Paula cadastra no lugar de Alessandro'],ans:1,ok:'Correto! Dia 2 = acessos obrigatórios. Alessandro é o responsável pelo PWA. Paula cobra a resolução imediata — sem dependência de TI externo.',nok:'O cadastro no PWA é responsabilidade de Alessandro, dentro da equipe PMO. Paula aciona Alessandro diretamente.'}]},
+
+  {id:'g003',cod:'POP-PMO-036',titulo:'Integração Planner → MS Project',tipo:'POP',fase:'fg',resp:'ales',status:'Vigente',
+   obj:'Conciliar semanalmente dados do Planner com o MS Project, garantindo que o EVM esteja sempre baseado em dados reais.',
+   raci:{R:'Alessandro',A:'Gerente PMO',C:'Paula / Jordana',I:'Coordenadores'},
+   ent:['Dados do Planner (Paula)','Timesheet PWA','% física validada'],sai:['MS Project atualizado com AC real','EVM com dados reais no Power BI'],sis:['MS Planner','MS Project / PWA','Power BI'],
+   steps:[
+     {t:'Extração semanal do Planner (Paula)',p:'Paula exporta toda segunda: cards concluídos, % em andamento, horas de Swarming.',who:'Paula',sys:'MS Planner / Excel',type:''},
+     {t:'Conciliação Planner × Project',p:'Card "Relatório Flora Concluído" no Planner = tarefa no Project → 100%. Divergências → Coordenador.',who:'Alessandro',sys:'MS Project / Excel',type:'dec'},
+     {t:'Atualizar o MS Project',p:'% física inserida. AC vem automaticamente do PWA. Project recalcula EV e SPI.',who:'Alessandro',sys:'MS Project',type:''},
+     {t:'Publicação no BI (até 12h seg.)',p:'Jordana calcula SPI, CPI, EAC. Aline publica no Power BI.',who:'Jordana + Aline',sys:'Power BI Service',type:'end'},
+   ],
+   quizzes:[{sc:'Alessandro encontra 15h apontadas no PWA em "Atividades Gerais" sem correspondência na EAP.',q:'O que ele deve fazer?',opts:['Ignorar — não afetam','Identificar com o responsável a tarefa correta da EAP. Reatribuir no PWA. Horas em "Gerais" distorcem o AC.','Distribuir proporcionalmente','Deletar as horas'],ans:1,ok:'Correto! Horas sem tarefa = AC sem EV = CPI distorcido. Identificar e reatribuir mantém o EVM íntegro.',nok:'Deletar é fraude. Distribuir é arbitrário. Identificar a tarefa correta é a única solução.'}]},
+
+  {id:'g004',cod:'POP-PMO-037',titulo:'Avaliação de Maturidade MMGP',tipo:'POP',fase:'fg',resp:'pmo',status:'Vigente',
+   obj:'Avaliar semestralmente a maturidade em GP da Ambientare (MMGP) para identificar gaps e planejar evolução.',
+   raci:{R:'Gerente PMO',A:'Diretoria',C:'Coord. / Paula / Alessandro',I:'Toda a empresa'},
+   ent:['Dados de execução dos projetos','Indicadores BI','Lições Aprendidas'],sai:['Nível de maturidade quantificado (0–1000)','Gaps por dimensão','Plano de ação com prazo'],sis:['Questionário MMGP','Power BI','Apresentação'],
+   steps:[
+     {t:'Aplicar questionário MMGP',p:'5 dimensões: Processos, Ferramentas, Pessoal, Estrutura, Alinhamento Estratégico.',who:'Gerente PMO + Equipe PMO',sys:'Questionário / Teams',type:''},
+     {t:'Pontuar (0–1000)',p:'Nível 2: 200–399. Nível 3: 400–599. Nível 4: 600–799. Meta Ambientare: Nível 4 em 18 meses.',who:'Gerente PMO',sys:'Excel / Power BI',type:''},
+     {t:'Identificar gaps e plano de ação',p:'Gap em Processos = POPs não seguidos → treinamentos. Gap em Pessoal = equipe não treinada → trilhas.',who:'Gerente PMO + Coord.',sys:'Reunião / Power BI',type:'dec'},
+     {t:'Apresentar à Diretoria',p:'Resultado e plano. Aline cria dashboard de maturidade. Revisão semestral.',who:'Gerente PMO + Aline',sys:'Power BI / Apresentação',type:'end'},
+   ],
+   quizzes:[{sc:'Avaliação: pontuação alta em Processos (POPs existem) mas baixa em Pessoal (equipe não treinada).',q:'O que isso indica e qual a ação?',opts:['Está bem — os processos são bons','Gap clássico Nível 2→3: documentação existe mas não foi internalizada. Ação: trilhas de treinamento do Portal PMO.','Reescrever os processos','Contratar mais pessoas'],ans:1,ok:'Correto! Gap mais comum 2→3: processo existe mas equipe não seguiu. O Portal PMO foi construído para fechar este gap.',nok:'Reescrever processos bons é desperdício. O problema é internalização — não os documentos.'}]},
+];
+
+// ═══════════════════════════════════════
+// CONFIG DE SENHAS E PERFIS
+// ═══════════════════════════════════════
+const PERFIS={
+  consulta:{ senha:'pmo2025',   label:'Consulta',    badge:'📋 Consulta',    mbCls:'mb-view',   nav:'nav-consulta', cor:'#1256a0' },
+  treino:  { senha:'treinar2025',label:'Treinamento', badge:'🎓 Treinamento', mbCls:'mb-edit',   nav:'nav-treino',   cor:'#1a5c32' },
+  gerente: { senha:'ambientare2025', label:'Gerente PMO', badge:'⚙️ Gerente PMO', mbCls:'mb-edit', nav:'nav-gerente', cor:'#374151' },
+};
+
+let APP={perfil:null,editor:false,docAtual:null,qState:{},trProgress:{},nome:''};
+
+// ═══════════════════════════════════════
+// AUTH
+// ═══════════════════════════════════════
+function doLoginPerfil(perfil){
+  const cfg=PERFIS[perfil];
+  const inputs={consulta:'lip-c',treino:'lip-t',gerente:'lip-g'};
+  const errs={consulta:'lerr-c',treino:'lerr-t',gerente:'lerr-g'};
+  const val=document.getElementById(inputs[perfil]).value;
+  if(val===cfg.senha){
+    APP.perfil=perfil;
+    APP.editor=(perfil==='gerente');
+    document.getElementById('lo').classList.add('hidden');
+    // Badge
+    document.getElementById('mbadge').textContent=cfg.badge;
+    document.getElementById('mbadge').className='mbadge mb-edit';
+    document.getElementById('mbadge').style.background=cfg.cor+'22';
+    document.getElementById('mbadge').style.color=cfg.cor;
+    document.getElementById('mbadge').style.borderColor=cfg.cor+'44';
+    // Header sub
+    const labels={consulta:'Portal de Consulta · Procedimentos PMO',treino:'Centro de Treinamento · PMO Ambientare',gerente:'Gestão PMO · Acesso Completo'};
+    document.getElementById('h-modulo').textContent=labels[perfil];
+    // Nav
+    ['nav-consulta','nav-treino','nav-gerente'].forEach(n=>{
+      const el=document.getElementById(n);
+      el.style.display=(n===cfg.nav)?'flex':'none';
+    });
+    document.getElementById('bn-out').style.display='flex';
+    // Search — ocultar no modo treino
+    document.getElementById('srch-box').style.display=(perfil==='treino')?'none':'flex';
+    init(perfil);
+  } else {
+    document.getElementById(errs[perfil]).style.display='block';
+    setTimeout(()=>document.getElementById(errs[perfil]).style.display='none',2500);
+  }
+}
+
+function doLogout(){
+  APP={perfil:null,editor:false,docAtual:null,qState:{},trProgress:{},nome:''};
+  document.getElementById('lo').classList.remove('hidden');
+  ['lip-c','lip-t','lip-g'].forEach(id=>document.getElementById(id).value='');
+  ['nav-consulta','nav-treino','nav-gerente'].forEach(n=>document.getElementById(n).style.display='none');
+  document.getElementById('bn-out').style.display='none';
+}
+
+// ═══════════════════════════════════════
+// INIT POR PERFIL
+// ═══════════════════════════════════════
+function init(perfil){
+  buildSidebar(perfil);
+  buildPeople();
+  buildRefs();
+  buildTraining();
+  buildTrilhas();
+  buildCertArea();
+  bindSearch();
+  if(perfil==='treino'){
+    goTrilhas();
+  } else {
+    renderHome();
+  }
+}
+
+// ═══════════════════════════════════════
+// SIDEBAR — varia por perfil
+// ═══════════════════════════════════════
+const TRILHAS_DEF=[
+  {id:'coord',label:'Coordenador de Projeto',emoji:'📋',cor:'#1256a0',desc:'TAP → EAP → EVM → CR → Encerramento',horas:'~6h',
+   pops:['d001','d002','d007','d008','d009','d010','d011','d012','d013','d022','d023','d024','d025','d029','d032']},
+  {id:'spec',label:'Especialista Técnico',emoji:'🔬',cor:'#2e8b4a',desc:'DoR → DoD → Daily → Swarming → Velocity',horas:'~4h',
+   pops:['d015','d016','d013','d014','d020','d017','d019','d027','d028','d034']},
+  {id:'est',label:'Estagiário / Analista',emoji:'🎓',cor:'#d97706',desc:'Portfólio → Planner → Daily → Apontamento',horas:'~2,5h',
+   pops:['d002','d003','d005','d014','d020','d015','d016']},
+  {id:'ales',label:'Alessandro — Planejamento',emoji:'📊',cor:'#374151',desc:'MS Project → EAP → EVM → Integração Planner',horas:'~3h',
+   pops:['d004','d007','d008','d021','d022','g003','d025','d035']},
+];
+
+function buildSidebar(perfil){
+  const nav=document.getElementById('sbnav');
+  if(perfil==='treino'){
+    // Sidebar de treinamento: trilhas + progresso
+    nav.innerHTML=`<div style="padding:10px 14px 4px;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--c3)">Trilhas</div>`+
+    TRILHAS_DEF.map(t=>{
+      const total=t.pops.filter(id=>DOCS.find(d=>d.id===id)?.quizzes?.[0]?.q).length;
+      const done=Object.keys(APP.qState).filter(id=>t.pops.includes(id)&&APP.qState[id]?.ans?.length).length;
+      const pct=total?Math.round(done/total*100):0;
+      return`<div style="padding:10px 14px;cursor:pointer;border-left:3px solid ${t.cor};margin-bottom:2px;background:${pct===100?t.cor+'11':'transparent'}" onclick="startTrilhaNav('${t.id}')">
+        <div style="font-size:11px;font-weight:700;color:${t.cor};margin-bottom:3px">${t.emoji} ${t.label}</div>
+        <div style="height:4px;background:var(--c2);border-radius:2px;overflow:hidden;margin-bottom:3px"><div style="height:100%;background:${t.cor};border-radius:2px;width:${pct}%;transition:width .4s"></div></div>
+        <div style="font-size:10px;color:var(--c3)">${done}/${total} módulos · ${pct}%</div>
+      </div>`;
+    }).join('')+
+    `<div style="padding:10px 14px 4px;margin-top:8px;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--c3)">Módulos Individuais</div>`+
+    DOCS.filter(d=>d.quizzes?.[0]?.q).map(d=>{
+      const f=FASES.find(x=>x.id===d.fase);
+      const done=APP.qState[d.id]?.ans?.length>0;
+      return`<div class="sb-it ${done?'on':''}" onclick="showDocTreino('${d.id}')">
+        <span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${d.titulo}</span>
+        <span style="font-size:10px">${done?'✅':''}</span>
+        <span class="sb-cod" style="border-color:${f?.cor}">${d.cod.replace('POP-PMO-','').replace('TPL-PMO-','T').replace('MAN-PMO-','M')}</span>
+      </div>`;
+    }).join('');
+  } else {
+    // Sidebar padrão: por fase
+    nav.innerHTML=FASES.map(f=>{
+      const ds=DOCS.filter(d=>d.fase===f.id);
+      return`<div class="sb-ph" onclick="toggleSb(this)">
+        <span class="sb-dot" style="background:${f.cor}"></span>
+        <span style="flex:1;font-size:9px">${f.label}</span>
+        <span class="chev">▾</span>
+      </div>
+      <div class="sb-its">${ds.map(d=>`<div class="sb-it" id="si-${d.id}" onclick="showDoc('${d.id}')">
+        <span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${d.titulo}</span>
+        <span class="sb-cod">${d.cod.replace('POP-PMO-','').replace('TPL-PMO-','T').replace('MAN-PMO-','M')}</span>
+      </div>`).join('')}</div>`;
+    }).join('');
+  }
+}
+function toggleSb(el){el.classList.toggle('op');el.nextElementSibling.classList.toggle('op');}
+
+// ═══════════════════════════════════════
+// TRILHAS — Ambiente de Treinamento
+// ═══════════════════════════════════════
+function goTrilhas(){setPage('trilhas');document.querySelectorAll('.hbtn').forEach(b=>b.classList.remove('on'));const btn=document.getElementById('bn-trilhas');if(btn)btn.classList.add('on');buildTrilhasPage();}
+
+function buildTrilhas(){
+  const el=document.getElementById('trilhas-area');
+  if(!el)return;
+  buildTrilhasPage();
+}
+
+function buildTrilhasPage(){
+  const el=document.getElementById('trilhas-area');
+  if(!el)return;
+  el.innerHTML=TRILHAS_DEF.map(t=>{
+    const popsComQuiz=t.pops.filter(id=>DOCS.find(d=>d.id===id)?.quizzes?.[0]?.q);
+    const done=popsComQuiz.filter(id=>APP.qState[id]?.ans?.length>0).length;
+    const pct=popsComQuiz.length?Math.round(done/popsComQuiz.length*100):0;
+    const concluida=pct===100;
+    return`<div style="background:#fff;border:1.5px solid var(--c2);border-radius:12px;overflow:hidden;margin-bottom:16px;border-left:6px solid ${t.cor}">
+      <div style="padding:18px 22px;display:flex;align-items:center;gap:16px">
+        <div style="font-size:36px">${t.emoji}</div>
+        <div style="flex:1">
+          <div style="font-family:'Segoe UI',sans-serif;font-size:16px;font-weight:800;color:${t.cor};margin-bottom:3px">${t.label}</div>
+          <div style="font-size:12px;color:var(--c3);margin-bottom:8px">${t.desc} · ${t.horas}</div>
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="flex:1;height:6px;background:var(--c2);border-radius:3px;overflow:hidden"><div style="height:100%;background:${t.cor};border-radius:3px;width:${pct}%;transition:width .5s"></div></div>
+            <span style="font-size:12px;font-weight:700;color:${t.cor};white-space:nowrap">${done}/${popsComQuiz.length} · ${pct}%</span>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px;align-items:flex-end">
+          <button class="btn btn-sm" style="background:${t.cor};color:#fff;border-color:${t.cor}" onclick="startTrilhaNav('${t.id}')">
+            ${concluida?'↺ Refazer':'▶ ${done>0?"Continuar":"Iniciar"}'}
+          </button>
+          ${concluida?`<button class="btn btn-sm btn-o" onclick="gerarCertificado('${t.id}')">🏅 Certificado</button>`:''}
+        </div>
+      </div>
+      <div style="padding:0 22px 16px;display:flex;gap:6px;flex-wrap:wrap">
+        ${t.pops.map((pid,i)=>{
+          const d=DOCS.find(x=>x.id===pid);
+          if(!d)return'';
+          const temQuiz=d.quizzes?.[0]?.q;
+          const feito=temQuiz&&APP.qState[pid]?.ans?.length>0;
+          const atual=!feito&&temQuiz&&(done===t.pops.slice(0,i).filter(id=>APP.qState[id]?.ans?.length>0).length);
+          return`<div onclick="showDocTreino('${pid}')" style="padding:4px 10px;border-radius:6px;font-size:10px;font-weight:700;cursor:pointer;border:1px solid ${feito?t.cor:atual?t.cor+'88':'var(--c2)'};background:${feito?t.cor+'15':atual?t.cor+'08':'transparent'};color:${feito?t.cor:atual?t.cor:'var(--c3)'}">
+            ${feito?'✓ ':atual?'▶ ':i+1+'. '}${d.cod.replace('POP-PMO-','POP-').replace('TPL-PMO-','TPL-').replace('MAN-PMO-','MAN-')}
+          </div>`;
+        }).join('')}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function startTrilhaNav(trilhaId){
+  const t=TRILHAS_DEF.find(x=>x.id===trilhaId);
+  if(!t)return;
+  // Encontrar o primeiro POP não concluído com quiz
+  const prox=t.pops.find(id=>{
+    const d=DOCS.find(x=>x.id===id);
+    return d?.quizzes?.[0]?.q && !APP.qState[id]?.ans?.length;
+  })||t.pops.find(id=>DOCS.find(x=>x.id===id)?.quizzes?.[0]?.q);
+  if(prox)showDocTreino(prox);
+}
+
+// Mostrar doc no modo TREINAMENTO — aba quiz aberta por padrão
+function showDocTreino(id){
+  showDoc(id);
+  // Após renderizar, abrir aba de treinamento automaticamente
+  setTimeout(()=>{
+    const quizTab=document.querySelector(`#dp-quiz-${id}`);
+    const card=quizTab?.closest('.card');
+    if(quizTab&&card){
+      card.querySelectorAll('.dtab').forEach(b=>b.classList.remove('on'));
+      card.querySelectorAll('.dpane').forEach(p=>p.classList.remove('on'));
+      const tabs=card.querySelectorAll('.dtab');
+      tabs.forEach(b=>{if(b.textContent.includes('Treinamento')){b.classList.add('on');}});
+      quizTab.classList.add('on');
+      renderQuiz(id);
+      // Após responder quiz, atualizar progresso na sidebar
+    }
+  },50);
+}
+
+// ═══════════════════════════════════════
+// CERTIFICADOS
+// ═══════════════════════════════════════
+function buildCertArea(){
+  const el=document.getElementById('cert-area');
+  if(!el)return;
+  renderCertArea();
+}
+function renderCertArea(){
+  const el=document.getElementById('cert-area');
+  if(!el)return;
+  const concluidas=TRILHAS_DEF.filter(t=>{
+    const comQuiz=t.pops.filter(id=>DOCS.find(d=>d.id===id)?.quizzes?.[0]?.q);
+    return comQuiz.length&&comQuiz.every(id=>APP.qState[id]?.ans?.length>0);
+  });
+  if(!concluidas.length){
+    el.innerHTML=`<div style="text-align:center;padding:40px;background:#fff;border-radius:12px;border:1.5px dashed var(--c2)">
+      <div style="font-size:48px;margin-bottom:12px">🏅</div>
+      <h3 style="font-size:15px;font-weight:700;color:var(--c3);margin-bottom:6px">Nenhuma trilha concluída ainda</h3>
+      <p style="font-size:13px;color:var(--c3)">Complete todos os quizzes de uma trilha para gerar seu certificado.</p>
+      <button class="btn btn-g btn-sm" style="margin-top:14px" onclick="goTrilhas()">Ir para as Trilhas →</button>
+    </div>`;
+    return;
+  }
+  el.innerHTML=concluidas.map(t=>`
+    <div style="background:#fff;border:1.5px solid ${t.cor};border-radius:12px;padding:22px 26px;margin-bottom:12px;display:flex;align-items:center;gap:18px">
+      <div style="font-size:48px">${t.emoji}</div>
+      <div style="flex:1">
+        <div style="font-size:16px;font-weight:800;color:${t.cor};margin-bottom:4px">${t.label}</div>
+        <div style="font-size:12px;color:var(--c3)">Trilha concluída · ${t.pops.filter(id=>DOCS.find(d=>d.id===id)?.quizzes?.[0]?.q).length} módulos · Aprovado</div>
+      </div>
+      <button class="btn btn-sm" style="background:${t.cor};color:#fff;border-color:${t.cor}" onclick="gerarCertificado('${t.id}')">🏅 Gerar Certificado</button>
+    </div>`).join('');
+}
+
+function gerarCertificado(trilhaId){
+  const t=TRILHAS_DEF.find(x=>x.id===trilhaId);
+  if(!t)return;
+  const hoje=new Date().toLocaleDateString('pt-BR',{day:'2-digit',month:'long',year:'numeric'});
+  const win=window.open('','_blank');
+  win.document.write(`<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8">
+  <title>Certificado — ${t.label}</title>
+  <style>
+    body{margin:0;background:#f4f6f4;display:flex;align-items:center;justify-content:center;min-height:100vh;font-family:'Segoe UI',sans-serif}
+    .cert{width:800px;background:#fff;border:3px solid ${t.cor};border-radius:16px;padding:50px 60px;text-align:center;box-shadow:0 8px 40px rgba(0,0,0,.12);position:relative}
+    .cert::before{content:'';position:absolute;inset:8px;border:1.5px solid ${t.cor}44;border-radius:12px;pointer-events:none}
+    .brand{font-size:24px;font-weight:800;color:${t.cor};letter-spacing:-0.5px;margin-bottom:4px}
+    .sub{font-size:12px;color:#9aab98;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:28px}
+    .certifica{font-size:14px;color:#4a5a48;margin-bottom:16px;text-transform:uppercase;letter-spacing:2px}
+    .nome{font-size:28px;font-weight:800;color:#1e2a1c;margin-bottom:20px;border-bottom:2px solid ${t.cor};padding-bottom:12px}
+    .trilha{font-size:18px;font-weight:700;color:${t.cor};margin-bottom:6px}
+    .desc{font-size:13px;color:#4a5a48;margin-bottom:24px;line-height:1.6}
+    .data{font-size:12px;color:#9aab98;margin-top:24px}
+    .modulos{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin:16px 0}
+    .mod{padding:3px 10px;border-radius:4px;font-size:10px;font-weight:700;background:${t.cor}15;color:${t.cor};border:1px solid ${t.cor}44}
+    @media print{body{background:#fff}.cert{box-shadow:none;border:2px solid ${t.cor}}}
+  </style></head><body>
+  <div class="cert">
+    <div style="font-size:48px;margin-bottom:6px">${t.emoji}</div>
+    <div class="brand">AMBIENTARE</div>
+    <div class="sub">Portal PMO · Sistema de Gestão de Projetos</div>
+    <div class="certifica">Certificamos que</div>
+    <div class="nome">${APP.nome||'Membro da Equipe Ambientare'}</div>
+    <div class="trilha">${t.label}</div>
+    <div class="desc">concluiu com êxito a trilha de treinamento do Portal PMO Ambientare,<br>demonstrando compreensão dos processos, metodologias e ferramentas<br>do modelo híbrido preditivo-ágil.</div>
+    <div class="modulos">
+      ${t.pops.filter(id=>DOCS.find(d=>d.id===id)?.quizzes?.[0]?.q).map(id=>{
+        const d=DOCS.find(x=>x.id===id);
+        return d?`<span class="mod">${d.cod.replace('POP-PMO-','POP-').replace('MAN-PMO-','MAN-')}</span>`:'';
+      }).join('')}
+    </div>
+    <div style="display:flex;justify-content:center;gap:60px;margin-top:24px;padding-top:20px;border-top:1px solid #e4e8e4">
+      <div><div style="font-weight:700;color:#1e2a1c;font-size:13px">PMO Ambientare</div><div style="font-size:11px;color:#9aab98">Portal de Gestão de Projetos</div></div>
+      <div><div style="font-weight:700;color:#1e2a1c;font-size:13px">Modelo Híbrido</div><div style="font-size:11px;color:#9aab98">PMBoK · PRINCE2 · Agile</div></div>
+    </div>
+    <div class="data">Emitido em ${hoje}</div>
+    <button onclick="window.print()" style="margin-top:18px;padding:10px 24px;background:${t.cor};color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer">Imprimir / Salvar PDF</button>
+  </div>
+</body></html>`);
+  win.document.close();
+}
+
+// ═══════════════════════════════════════
+// HOME
+// ═══════════════════════════════════════
+function renderHome(){
+  const total=DOCS.length;
+  const vigentes=DOCS.filter(d=>d.status==='Vigente').length;
+  const elab=DOCS.filter(d=>d.status==='Em Elaboração').length;
+  const criar=DOCS.filter(d=>d.status==='A Criar').length;
+  const pct=Math.round(vigentes/total*100);
+
+  document.getElementById('kn1').textContent=total;
+  document.getElementById('kn2').textContent=vigentes;
+  document.getElementById('kn3').textContent=elab;
+  document.getElementById('kn4').textContent=criar;
+
+  // Barra de progresso no hero
+  const heroEl=document.querySelector('.hero');
+  if(heroEl){
+    const existingBar=heroEl.querySelector('.hero-progress');
+    if(!existingBar){
+      const bar=document.createElement('div');
+      bar.className='hero-progress';
+      bar.style.cssText='margin-top:16px';
+      bar.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px">
+        <span style="font-size:11px;font-weight:700;color:rgba(255,255,255,.8)">Progresso de elaboração do sistema</span>
+        <span style="font-size:13px;font-weight:800;color:#fff">${pct}% concluído</span>
+      </div>
+      <div style="height:8px;background:rgba(255,255,255,.2);border-radius:4px;overflow:hidden">
+        <div style="height:100%;background:#a8d8b8;border-radius:4px;width:${pct}%;transition:width 1s ease"></div>
+      </div>
+      <div style="display:flex;gap:14px;margin-top:8px;font-size:11px;color:rgba(255,255,255,.7)">
+        <span>✅ ${vigentes} Vigentes</span>
+        <span>🔄 ${elab} Em Elaboração</span>
+        <span>📋 ${criar} A Criar</span>
+      </div>`;
+      heroEl.appendChild(bar);
+    } else {
+      existingBar.querySelector('div:first-child span:last-child').textContent=`${pct}% concluído`;
+      existingBar.querySelector('div:nth-child(2) div').style.width=`${pct}%`;
+      existingBar.querySelector('div:last-child').innerHTML=`<span>✅ ${vigentes} Vigentes</span><span>🔄 ${elab} Em Elaboração</span><span>📋 ${criar} A Criar</span>`;
+    }
+  }
+  document.getElementById('ph-g').innerHTML=FASES.slice(0,6).map(f=>{
+    const cnt=DOCS.filter(d=>d.fase===f.id).length;
+    const el=DOCS.filter(d=>d.fase===f.id&&d.status==='Em Elaboração').length;
+    return`<div class="ph-c" style="border-top-color:${f.cor}" onclick="filtPhase('${f.id}')">
+      <h3 style="color:${f.cor}">${f.label}</h3><p>${f.desc}</p>
+      <div class="ph-ft"><span class="ph-ct">${cnt} docs · ${el} em elab.</span><span class="ph-lk" style="color:${f.cor}">Ver todos →</span>
+    </div></div>`;
+  }).join('');
+  buildIdx(DOCS);
+}
+
+function filtIdx(tipo){buildIdx(tipo==='all'?DOCS:DOCS.filter(d=>d.tipo.includes(tipo)));}
+function filtPhase(fid){buildIdx(DOCS.filter(d=>d.fase===fid));document.querySelector('.tbl').scrollIntoView({behavior:'smooth'});}
+
+function buildIdx(docs){
+  let h='';
+  FASES.forEach(f=>{
+    const pd=docs.filter(d=>d.fase===f.id);
+    if(!pd.length)return;
+    h+=`<tr class="ph-row"><td colspan="5" style="background:${f.cor}!important">${f.label}</td></tr>`;
+    pd.forEach(d=>{
+      const p=PESSOAS.find(x=>x.id===d.resp);
+      h+=`<tr><td><span class="d-code">${d.cod}</span></td>
+        <td><span class="d-lnk" onclick="showDoc('${d.id}')">${d.titulo}</span></td>
+        <td>${tpill(d.tipo)}</td>
+        <td style="font-size:12px;color:var(--c3)">${p?p.nome.split(' ')[0]:'—'}</td>
+        <td>${spill(d.status)}</td></tr>`;
+    });
+  });
+  document.getElementById('idx-tb').innerHTML=h;
+}
+
+// ═══════════════════════════════════════
+// DOC PAGE
+// ═══════════════════════════════════════
+function showDoc(id){
+  const d=DOCS.find(x=>x.id===id);
+  if(!d)return;
+  APP.docAtual=id;
+  if(!APP.qState[id])APP.qState[id]={step:0,ans:[]};
+  document.querySelectorAll('.sb-it').forEach(x=>x.classList.remove('on'));
+  const si=document.getElementById('si-'+id);
+  if(si){si.classList.add('on');const its=si.closest('.sb-its');if(its&&!its.classList.contains('op')){its.classList.add('op');its.previousElementSibling.classList.add('op');}}
+  const f=FASES.find(x=>x.id===d.fase);
+  const rp=PESSOAS.find(p=>p.id===d.resp);
+  const refs=getRefsForFase(d.fase);
+  const bpmnSvg=buildBPMN(d);
+
+  document.getElementById('doc-area').innerHTML=`
+    <div class="bc"><a onclick="goHome()">Índice</a> ›
+      <a onclick="filtPhase('${d.fase}')">${f?f.label:''}</a> ›
+      <span>${d.cod}</span></div>
+    <div class="d-hdr">
+      <div class="d-mr">
+        <span class="pill" style="background:#e8f4fd;color:var(--az2);font-family:monospace">${d.cod}</span>
+        ${tpill(d.tipo)} ${spill(d.status)}
+        <span class="pill" style="background:${f?f.cor+'22':'#88888822'};color:${f?f.cor:'#888'}">${f?f.label:''}</span>
+      </div>
+      <div class="d-h1">${d.titulo}</div>
+      <div class="d-desc">${d.obj}</div>
+      <div class="d-ig">
+        <div><div class="di-l">Responsável</div><div class="di-v">${rp?rp.nome:'—'}</div></div>
+        <div><div class="di-l">Versão</div><div class="di-v">1.0</div></div>
+        <div><div class="di-l">Status</div><div class="di-v">${d.status}</div></div>
+        <div><div class="di-l">Fase</div><div class="di-v">${f?f.label:''}</div></div>
+      </div>
+      <div class="d-act">
+        <button class="btn btn-p" onclick="exportPDFDoc('${id}')">📄 Exportar PDF</button>
+        <button class="btn btn-o" onclick="showToast('Link copiado!')">🔗 Compartilhar</button>
+        <button class="btn btn-o" onclick="goHome()">← Índice</button>
+      </div>
+    </div>
+
+    <!-- ABAS -->
+    <div class="card">
+      <div class="doc-tabs">
+        <button class="dtab on" onclick="swDocTab(this,'ov','${id}')">📋 Visão Geral</button>
+        <button class="dtab" onclick="swDocTab(this,'bpmn','${id}')">🔀 Fluxo BPMN</button>
+        <button class="dtab" onclick="swDocTab(this,'steps','${id}')">🔢 Passo a Passo</button>
+        <button class="dtab" onclick="swDocTab(this,'refs','${id}')">📚 Referências</button>
+        ${d.quizzes&&d.quizzes.length&&d.quizzes[0].q?`<button class="dtab" onclick="swDocTab(this,'quiz','${id}')">🎓 Treinamento</button>`:''}
+      </div>
+
+      <!-- ABA: VISÃO GERAL -->
+      <div class="dpane on" id="dp-ov-${id}" style="padding:18px">
+        <div class="raci-g" style="margin-bottom:14px">
+          ${[['R','Responsável',d.raci.R,'var(--vd)'],['A','Aprovador',d.raci.A,'var(--am)'],['C','Consultado',d.raci.C,'var(--az)'],['I','Informado',d.raci.I,'var(--rx)']].map(([r,l,n,c])=>`
+          <div class="raci-c"><div class="raci-r" style="color:${c}">${r}</div><div class="raci-n">${n}</div><div class="raci-l">${l}</div></div>`).join('')}
+        </div>
+        <div class="io-g">
+          <div style="background:var(--c1);border-radius:8px;padding:14px">
+            <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--c3);margin-bottom:9px">📥 Entradas</div>
+            <ul class="sec" style="background:none;padding:0;border:none">${d.ent.map(e=>`<li style="color:var(--az)">${e}</li>`).join('')}</ul>
+          </div>
+          <div style="background:var(--c1);border-radius:8px;padding:14px">
+            <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--c3);margin-bottom:9px">📤 Saídas</div>
+            <ul class="sec" style="background:none;padding:0;border:none">${d.sai.map(s=>`<li style="color:var(--vd)">${s}</li>`).join('')}</ul>
+          </div>
+        </div>
+        <div style="margin-top:14px;background:var(--c1);border-radius:8px;padding:12px">
+          <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--c3);margin-bottom:7px">🛠 Sistemas Utilizados</div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">${d.sis.map(s=>`<span style="padding:3px 10px;background:#fff;border:1px solid var(--c2);border-radius:6px;font-size:11px;color:var(--c4)">${s}</span>`).join('')}</div>
+        </div>
+      </div>
+
+      <!-- ABA: FLUXO BPMN -->
+      <div class="dpane" id="dp-bpmn-${id}" style="padding:16px">
+        <p style="font-size:12px;color:var(--c3);margin-bottom:10px">Fluxograma BPMN com swimlanes por responsável. Formas: retângulo = tarefa normal · losango = decisão/gateway · borda dupla = tarefa de encerramento.</p>
+        <div class="bpmn-wrap">${bpmnSvg}</div>
+        <div class="bpmn-legend">
+          <div class="bleg"><svg width="14" height="14"><circle cx="7" cy="7" r="5" fill="none" stroke="#3B6D11" stroke-width="1.5"/></svg> Início (S)</div>
+          <div class="bleg"><svg width="14" height="14"><rect x="1" y="3" width="12" height="8" rx="2" fill="none" stroke="#888" stroke-width="1"/></svg> Tarefa</div>
+          <div class="bleg"><svg width="14" height="14"><polygon points="7,1 13,7 7,13 1,7" fill="none" stroke="#D97706" stroke-width="1"/></svg> Gateway/Decisão</div>
+          <div class="bleg"><svg width="14" height="14"><rect x="1" y="3" width="12" height="8" rx="2" fill="none" stroke="#2e8b4a" stroke-width="1.5"/></svg> Tarefa Final</div>
+          <div class="bleg"><svg width="14" height="14"><circle cx="7" cy="7" r="5" fill="none" stroke="#c0392b" stroke-width="2"/></svg> Fim (F)</div>
+          <div class="bleg"><svg width="20" height="2" style="margin-top:6px"><line x1="0" y1="1" x2="20" y2="1" stroke="#aaa" stroke-width="1" stroke-dasharray="3 2"/></svg> Fluxo entre raias</div>
+        </div>
+      </div>
+
+      <!-- ABA: PASSO A PASSO -->
+      <div class="dpane" id="dp-steps-${id}" style="padding:18px">
+        <div class="steps">${d.steps.map((s,i)=>`
+        <div class="st ${s.type==='dec'?'dec':s.type==='end'?'end':''}">
+          <div class="st-n">${i+1}</div>
+          <div class="st-b"><strong>${s.t}</strong><p>${s.p}</p>
+          <div class="st-tags">
+            <span class="stag" style="background:var(--c2);color:var(--c4)">👤 ${s.who}</span>
+            <span class="stag" style="background:var(--az3);color:var(--az2)">🛠 ${s.sys}</span>
+            ${s.type==='dec'?'<span class="stag" style="background:#FEF3C7;color:#92400E">⚡ Gateway</span>':''}
+            ${s.type==='end'?'<span class="stag" style="background:var(--vd3);color:var(--vd2)">✅ Encerramento</span>':''}
+          </div></div>
+        </div>`).join('')}</div>
+      </div>
+
+      <!-- ABA: REFERÊNCIAS -->
+      <div class="dpane" id="dp-refs-${id}" style="padding:18px">
+        <div style="background:var(--az3);border:0.5px solid var(--az4);border-radius:8px;padding:14px;margin-bottom:12px">
+          <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--az2);margin-bottom:10px">📚 Embasamento Teórico — ${f?f.label:''}</div>
+          <div class="ref-blk" style="background:none;border:none;padding:0">${refs.map(r=>`<div class="ref-it"><strong>${r.fw}</strong><span>${r.uso}</span></div>`).join('')}</div>
+        </div>
+        <div style="background:var(--c1);border-radius:8px;padding:12px">
+          <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--c3);margin-bottom:8px">Por que este processo foi desenhado assim?</div>
+          <p style="font-size:12.5px;color:var(--c4);line-height:1.7">${getJustificativa(d)}</p>
+        </div>
+      </div>
+
+      <!-- ABA: TREINAMENTO -->
+      ${d.quizzes&&d.quizzes.length&&d.quizzes[0].q?`
+      <div class="dpane" id="dp-quiz-${id}" style="padding:18px">
+        <div id="qarea-${id}"></div>
+      </div>`:''}
+    </div>
+  `;
+  if(d.quizzes&&d.quizzes.length&&d.quizzes[0].q){
+    // Quiz renderizado ao clicar na aba — não precisa inicializar aqui
+  }
+  setPage('doc');
+  document.querySelectorAll('.hbtn').forEach(b=>b.classList.remove('on'));
+  // Atualizar botão PDF na barra flutuante
+  const pdfBtn=document.getElementById('fs-pdf-btn');
+  if(pdfBtn)pdfBtn.style.display=document.body.classList.contains('fs')?'flex':'none';
+}
+
+function swDocTab(btn,tab,id){
+  const card=btn.closest('.card');
+  card.querySelectorAll('.dtab').forEach(b=>b.classList.remove('on'));
+  card.querySelectorAll('.dpane').forEach(p=>p.classList.remove('on'));
+  btn.classList.add('on');
+  const pane=document.getElementById('dp-'+tab+'-'+id);
+  if(pane){
+    pane.classList.add('on');
+    if(tab==='quiz')renderQuiz(id);
+  }
+}
+
+function getJustificativa(d){
+  const map={
+    f0:`Este processo foi estruturado com base no processo <strong>"Starting Up a Project" do PRINCE2 2023</strong>, que exige designação formal do gerente, registro e briefing antes de qualquer trabalho. O PMBoK 7 complementa com o <strong>Domínio de Iniciação</strong> — a formalização do projeto através de um artefato (TAP) que autoriza e documenta sua existência. O Scrum Guide 2020 referencia a necessidade de um "Sprint 0" para configuração do ambiente antes de iniciar a execução.`,
+    f1:`O planejamento híbrido da Ambientare combina o rigor do <strong>PMBoK 7 (Domínio Planejamento)</strong> — EAP, baseline imutável, EVM — com a flexibilidade do <strong>Agile Manifesto (Princípio 3)</strong> — backlog priorizado por valor para entrega contínua. O PRINCE2 2023 fundamenta a análise contratual e a elaboração do Business Case (TAP). Esta combinação garante controle financeiro rigoroso sem sacrificar a adaptabilidade da execução.`,
+    f2:`A execução ágil é fundamentada no <strong>Scrum Guide 2020</strong> (Sprint Planning, Daily, Review, Retro, DoD, Sprint Backlog) e no <strong>Kanban Method de David Anderson (2010)</strong> (WIP Limits, fluxo, políticas explícitas DoR/DoD). O Agile Manifesto sustenta os valores centrais: indivíduos sobre processos, entregável funcionando sobre documentação extensa. Os WIP Limits de 2 cards/pessoa foram derivados diretamente do Kanban Method.`,
+    f3:`O monitoramento utiliza o <strong>EVM (Earned Value Management)</strong>, referenciado no PMBoK 7 como principal instrumento de medição de desempenho. O protocolo de estouro em 3 níveis implementa o <strong>Princípio 5 do PRINCE2 2023 — Gerenciamento por Exceção</strong>: tolerâncias por alçada, sem escalar ao nível superior enquanto dentro dos limites. A norma <strong>ANSI/EIA-748</strong> é a referência técnica do EVM.`,
+    f4:`Os 11 dashboards foram estruturados seguindo o <strong>Domínio de Entrega do PMBoK 7</strong> e a visão de portfólio do <strong>OPM3 (PMI, 3ª Ed.)</strong>. O BI-03 (Saúde Físico-Financeira) implementa a revisão contínua do <strong>Business Case do PRINCE2 2023 (Princípio 1)</strong>: o projeto só continua enquanto ISF e ISFin justificam o investimento.`,
+    f5:`O encerramento segue o processo <strong>"Closing a Project" do PRINCE2 2023</strong> — aceite formal, desmobilização e encaminhamento jurídico — combinado com o <strong>Domínio de Encerramento do PMBoK 7</strong>. As Lições Aprendidas são o insumo principal do modelo <strong>MMGP de Darci Prado (2010)</strong> para a evolução da maturidade organizacional de nível 2 para 3.`,
+    fg:`A Governança Geral incorpora o <strong>Princípio 12 do PMBoK 7 (Pensamento Sistêmico)</strong> — projetos dentro de portfólios, dentro de estratégias — e a <strong>Estrutura de Governança do PRINCE2 2023</strong>: revisões formais, autoridade delegada e escalação estruturada. O <strong>MMGP de Prado</strong> orienta o roteiro de maturidade: documentação existe (Nível 2) mas a meta é Nível 4 em 18 meses.`,
+  };
+  return map[d.fase]||`Este procedimento foi desenvolvido seguindo as boas práticas do PMBoK 7, PRINCE2 2023, Scrum Guide 2020 e Kanban Method, adaptadas ao contexto da Ambientare e ao modelo híbrido preditivo-ágil.`;
+}
+
+function getRefsForFase(fid){
+  const m={
+    f0:[{fw:'PMBoK 7 — Domínio Iniciação',uso:'Abertura formal, autorização e identificação de stakeholders'},{fw:'PRINCE2 2023 — Starting Up a Project',uso:'Designação do gerente, registro e briefing inicial'},{fw:'Scrum Guide 2020 — Sprint 0',uso:'Configuração do ambiente antes da execução'}],
+    f1:[{fw:'PMBoK 7 — Domínio Planejamento',uso:'EAP, Baseline de custo e prazo, RACI e riscos'},{fw:'PRINCE2 2023 — Initiating a Project',uso:'Plano de projeto, análise contratual, business case'},{fw:'Agile Manifesto — Princípio 3',uso:'Backlog priorizado por valor para entrega contínua'}],
+    f2:[{fw:'Scrum Guide 2020 — Eventos e Artefatos',uso:'Sprint Planning, Daily, Review, Retro, DoD, Sprint Backlog'},{fw:'Kanban Method — Anderson, 2010',uso:'WIP Limits, fluxo de trabalho, políticas explícitas (DoR/DoD)'},{fw:'Agile Manifesto — Valores 1 e 2',uso:'Indivíduos sobre processos; entregável sobre documentação'}],
+    f3:[{fw:'PMBoK 7 — Domínio Medição',uso:'EVM: PV, AC, EV, SPI, CPI, EAC, variâncias'},{fw:'PRINCE2 2023 — Gestão por Exceção',uso:'Protocolo de 3 níveis com tolerâncias por alçada'},{fw:'ANSI/EIA-748',uso:'Norma técnica de referência para o EVM'}],
+    f4:[{fw:'PMBoK 7 — Domínio Entrega',uso:'Indicadores de valor entregue e saúde do portfólio'},{fw:'OPM3 — PMI 3ª Ed.',uso:'Maturidade de portfólio: visão cruzada de projetos e programas'},{fw:'PRINCE2 2023 — Business Case contínuo',uso:'BI-03 operacionaliza a revisão contínua da justificativa de negócio'}],
+    f5:[{fw:'PMBoK 7 — Domínio Encerramento',uso:'Aceite formal, arquivamento, transferência de conhecimento'},{fw:'PRINCE2 2023 — Closing a Project',uso:'Checklist de encerramento, aceite do cliente, desmobilização'},{fw:'MMGP — Darci Prado, 2010',uso:'Lições Aprendidas como insumo para evolução da maturidade'}],
+    fg:[{fw:'PMBoK 7 — Princípio de Governança',uso:'Estrutura de decisão escalonada e papéis por alçada'},{fw:'PRINCE2 2023 — Estrutura de Governança',uso:'Revisões formais, autoridade delegada, escalação'},{fw:'MMGP Prado — Maturidade 3→4',uso:'Transição de processos documentados para processos gerenciados'}],
+  };
+  return m[fid]||[{fw:'PMBoK 7',uso:'Referência geral'},{fw:'PRINCE2 2023',uso:'Governança'},{fw:'Scrum/Kanban',uso:'Execução ágil'}];
+}
+
+// ═══════════════════════════════════════
+// QUIZ
+// ═══════════════════════════════════════
+function renderQuiz(docId){
+  const d=DOCS.find(x=>x.id===docId);
+  if(!d||!d.quizzes||!d.quizzes[0]||!d.quizzes[0].q)return;
+  if(!APP.qState[docId])APP.qState[docId]={step:0,ans:[]};
+  const ts=APP.qState[docId],qs=d.quizzes,c=ts.step,tot=qs.length;
+  const el=document.getElementById('qarea-'+docId);
+  if(!el)return;
+  if(c>=tot){
+    el.innerHTML=`<div class="q-done"><div style="font-size:36px;margin-bottom:8px">🎓</div><h3 style="color:var(--vd2);margin-bottom:5px">Treinamento Concluído!</h3><p style="font-size:12px;color:var(--c3);margin-bottom:12px">${tot} módulo(s) concluído(s)</p><button class="btn btn-g btn-sm" onclick="resetQ('${docId}')">↺ Refazer</button></div>`;
+    return;
+  }
+  const qi=qs[c],ans=ts.ans[c],pct=Math.round((c/tot)*100);
+  el.innerHTML=`<div class="t-prog"><span style="font-size:13px">🎯</span><div class="t-bar"><div class="t-fill" style="width:${pct}%"></div></div><span class="t-lbl">${c+1}/${tot}</span></div>
+  <div style="background:var(--c1);border-radius:10px;padding:14px">
+    <div class="scen"><div class="sc-lbl">📍 Cenário Real</div><p>${qi.sc}</p></div>
+    <div class="q-txt">${qi.q}</div>
+    ${qi.opts.map((o,i)=>`<div class="opt ${ans!==undefined?(i===qi.ans?'ok':i===ans&&i!==qi.ans?'no':''):''}" onclick="ansQ('${docId}',${c},${i})">
+      <span class="ol">${String.fromCharCode(65+i)}</span>${o}</div>`).join('')}
+    <div class="fb ok ${ans!==undefined&&ans===qi.ans?'show':''}"><strong>✓ Correto!</strong> ${qi.ok}</div>
+    <div class="fb no ${ans!==undefined&&ans!==qi.ans?'show':''}"><strong>✗ Não exatamente.</strong> ${qi.nok}</div>
+  </div>
+  <div class="q-nav">
+    <div class="q-dots">${qs.map((_,i)=>`<span class="q-dot ${i<c?'dn':i===c?'cur':''}"></span>`).join('')}</div>
+    <div style="display:flex;gap:7px">
+      ${c>0?`<button class="btn btn-o btn-sm" onclick="prevQ('${docId}')">← Anterior</button>`:''}
+      ${ans!==undefined?`<button class="btn btn-p btn-sm" onclick="nextQ('${docId}')">${c<tot-1?'Próximo →':'Concluir ✓'}</button>`:''}
+    </div>
+  </div>`;
+}
+function nextQ(id){APP.qState[id].step++;renderQuiz(id);if(APP.perfil==='treino'){buildSidebar('treino');buildTrilhasPage();renderCertArea();}}
+function prevQ(id){if(APP.qState[id].step>0){APP.qState[id].step--;renderQuiz(id);}}
+function resetQ(id){APP.qState[id]={step:0,ans:[]};renderQuiz(id);}
+
+// ═══════════════════════════════════════
+// PEOPLE
+// ═══════════════════════════════════════
+function buildPeople(){
+  document.getElementById('ppl-g').innerHTML=PESSOAS.map(p=>{
+    const ini=p.nome.split(' ').map(n=>n[0]).slice(0,2).join('').toUpperCase();
+    return`<div class="ppl-c">
+      <div class="ppl-top">
+        <div class="ppl-av" style="background:${p.cor}">${ini}</div>
+        <div><div class="ppl-nm">${p.nome}</div><div class="ppl-rl">${p.cargo}</div>
+        <span class="ppl-ar" style="background:${p.cor}22;color:${p.cor}">${p.area}</span></div>
+      </div>
+      <div class="ppl-mt">
+        <div><strong>PMO:</strong> ${p.pmo}</div>
+        <div><strong>Ágil:</strong> ${p.agil}</div>
+        <div><strong>E-mail:</strong> ${p.email}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ═══════════════════════════════════════
+// REFS
+// ═══════════════════════════════════════
+function buildRefs(){
+  const data=[
+    {badge:'PMBoK 7ª Ed. · PMI · 2021',bbg:'#FAEEDA',bc:'#633806',border:'#854F0B',title:'Project Management Body of Knowledge — 7ª Edição',sub:'12 Princípios e 8 Domínios de Desempenho',
+     prins:[
+       {l:'Domínio Planejamento — EAP, Baseline e EVM',c:'#854F0B',t:'O EVM é o principal instrumento de medição do PMBoK 7. A EAP (POP-007), Baseline de Custo (POP-008) e o cálculo semanal de SPI/CPI/EAC (POP-022) implementam o Domínio de Medição.',a:'EVM da Ambientare: PV = Baseline do Project. AC = PWA. EV = % física × BAC validado pelo Coordenador. Jordana calcula e Aline publica no BI-02 toda segunda 10h.',ci:'"Focus on value — continually evaluate and adjust project work to maximize business value." — PMBoK 7, Princípio 4'},
+       {l:'Princípio 12 — Pensamento Sistêmico e Governança Escalonada',c:'#854F0B',t:'Governança escalonada: projetos existem dentro de portfólios, dentro de estratégias organizacionais. Cada nível tem autoridade e tolerância definidas.',a:'POP-024 implementa 3 níveis: CPI 0,90–0,95 (Coordenador), 0,80–0,90 (Gerente PMO), <0,80 (Diretoria). RACI (POP-009) formaliza alçadas de decisão por entrega.',ci:'"Recognize, evaluate, and respond to system interactions." — PMBoK 7, Princípio 12'},
+     ]},
+    {badge:'PRINCE2 2023 · PeopleCert',bbg:'#EEEDFE',bc:'#3C3489',border:'#534AB7',title:'PRINCE2 — Projects in Controlled Environments (2023)',sub:'7 Princípios · 7 Práticas · 7 Processos',
+     prins:[
+       {l:'Princípio 1 — Business Case Contínuo',c:'#534AB7',t:'O projeto só se justifica enquanto há razão de negócio válida. O Business Case deve ser revisado continuamente — não apenas no início.',a:'O TAP (POP-002) contém a Justificativa SMART. O EVM (POP-022) revisa continuamente se o projeto justifica o investimento. CPI < 0,80 = questionamento da viabilidade.',ci:'"A project must have a valid business justification." — PRINCE2 2023, Princípio 1'},
+       {l:'Princípio 5 — Gerenciamento por Exceção',c:'#534AB7',t:'Cada nível tem tolerâncias. Apenas exceções (além da tolerância) são escaladas ao nível superior. Sem exceção = autonomia total para o nível atual.',a:'POP-024: CPI 0,90–0,95 = Coordenador resolve (tolerância). CPI 0,80–0,90 = Gerente PMO (exceção). CPI < 0,80 = Diretoria (crise). Esta é a implementação direta do Princípio 5.',ci:'"Manage by exception." — PRINCE2 2023, Princípio 5'},
+     ]},
+    {badge:'Scrum Guide 2020 · Schwaber & Sutherland',bbg:'#E1F5EE',bc:'#085041',border:'#0F6E56',title:'Scrum Guide 2020 — Ken Schwaber & Jeff Sutherland',sub:'Papéis, Eventos e Artefatos do Framework Scrum',
+     prins:[
+       {l:'Papéis — PO e SM adaptados à Ambientare',c:'#0F6E56',t:'Coordenador = Product Owner: responsável por maximizar o valor do produto, chegar com backlog priorizado e aceitar/rejeitar entregas. Paula = Scrum Master: facilita, remove impedimentos, protege a equipe.',a:'POP-009 (RACI) registra formalmente estes papéis. POP-013 (Planning): PO chega com backlog. POP-027 (Review): PO aceita ou rejeita. POP-028 (Retro): SM facilita.',ci:'"The Product Owner is responsible for maximizing the value of the product." — Scrum Guide 2020'},
+       {l:'3 Pilares — Transparência, Inspeção, Adaptação',c:'#0F6E56',t:'O Scrum é empirismo: tomar decisões baseadas em evidências observadas, não em planos fictícios.',a:'Transparência: Planner visível (POP-005). Inspeção: Daily (POP-014) e Review (POP-027). Adaptação: Retrospectiva (POP-028) e ajuste de Velocity (POP-026).',ci:'"Scrum is founded on empiricism and lean thinking." — Scrum Guide 2020'},
+     ]},
+    {badge:'Kanban Method · David Anderson · 2010',bbg:'#FAECE7',bc:'#712B13',border:'#993C1D',title:'Kanban Method — David J. Anderson (2010)',sub:'Gestão de fluxo com WIP Limits e políticas explícitas',
+     prins:[
+       {l:'Práticas 1 e 2 — Visualizar e Limitar WIP',c:'#993C1D',t:'Visualizar TODO o trabalho e limitar o trabalho em andamento (WIP) para maximizar fluxo. "Stop starting, start finishing."',a:'POP-005: 6 buckets = sistema Kanban. POP-017: 2 cards × membros. Paula é a guardiã do WIP Limit — defende mesmo sob pressão do Coordenador.',ci:'"Limit work in progress — limiting WIP pull is fundamental to Kanban." — D. Anderson'},
+       {l:'Prática 4 — Políticas Explícitas',c:'#993C1D',t:'As regras do sistema devem ser explícitas e visíveis a todos. Sem políticas, cada pessoa interpreta diferente.',a:'DoR (POP-015) = política de entrada. DoD (POP-016) = política de saída. Ambas são não-negociáveis, sem exceções por senioridade.',ci:'"Make policies explicit." — Kanban Method'},
+     ]},
+  ];
+  document.getElementById('rf-area').innerHTML=data.map(r=>`
+    <div class="rf-c">
+      <div class="rf-h">
+        <span class="rf-badge" style="background:${r.bbg};color:${r.bc}">${r.badge}</span>
+        <div><div class="rf-t">${r.title}</div><div class="rf-s">${r.sub}</div></div>
+      </div>
+      <div class="rf-body">${r.prins.map(p=>`
+      <div class="prin" style="border-left-color:${p.c};background:${p.c}11">
+        <div class="prin-l" style="color:${p.c}">${p.l}</div>
+        <div class="prin-t">${p.t}</div>
+        <div class="prin-a" style="border-color:${p.c}66"><strong>Na Ambientare:</strong> ${p.a}</div>
+        <div class="prin-ci">${p.ci}</div>
+      </div>`).join('')}</div>
+    </div>`).join('');
+}
+
+// ═══════════════════════════════════════
+// TRAINING
+// ═══════════════════════════════════════
+function buildTraining(){
+  const withQ=DOCS.filter(d=>d.quizzes&&d.quizzes.length&&d.quizzes[0].q);
+  document.getElementById('tr-grid').innerHTML=withQ.map(d=>{
+    const f=FASES.find(x=>x.id===d.fase);
+    return`<div style="background:var(--c1);border-radius:8px;padding:12px;cursor:pointer;border:1.5px solid var(--c2);border-top:3px solid ${f?f.cor:'#888'};transition:all .2s" onclick="showDoc('${d.id}')" onmouseover="this.style.background='var(--az3)'" onmouseout="this.style.background='var(--c1)'">
+      <div style="font-family:monospace;font-size:10px;font-weight:700;color:${f?f.cor:'#888'};margin-bottom:4px">${d.cod}</div>
+      <div style="font-size:11.5px;font-weight:600;margin-bottom:5px;line-height:1.3">${d.titulo}</div>
+      <div style="font-size:10px;color:var(--c3)">${d.quizzes.length} quiz${d.quizzes.length>1?'zes':''}</div>
+    </div>`;
+  }).join('');
+}
+
+// ═══════════════════════════════════════
+// BPMN SVG GENERATOR
+// ═══════════════════════════════════════
+function buildBPMN(d){
+  const W=900, LABEL=80;
+  const ROLES=d.steps.reduce((acc,s)=>{if(!acc.includes(s.who))acc.push(s.who);return acc;},[]);
+  // also add resp pessoa
+  const rp=PESSOAS.find(p=>p.id===d.resp);
+  if(rp&&!ROLES.includes(rp.nome.split(' ')[0]))ROLES.unshift(rp.nome.split(' ')[0]);
+  const LH=Math.max(110, Math.round(700/Math.max(ROLES.length,2)));
+  const H=50+ROLES.length*LH;
+  const faseObj=FASES.find(f=>f.id===d.fase);
+  const fc=faseObj?faseObj.cor:'#1a6fa8';
+
+  // Lane colors by role keyword
+  function laneColor(who){
+    const w=who.toLowerCase();
+    if(w.includes('gerente')||w.includes('pmo'))return{bg:'#E6F1FB',sk:'#185FA5',tc:'#0C447C'};
+    if(w.includes('coord'))return{bg:'#EAF3DE',sk:'#3B6D11',tc:'#27500A'};
+    if(w.includes('ales'))return{bg:'#FAEEDA',sk:'#854F0B',tc:'#633806'};
+    if(w.includes('jord'))return{bg:'#EEEDFE',sk:'#534AB7',tc:'#3C3489'};
+    if(w.includes('paula'))return{bg:'#E1F5EE',sk:'#0F6E56',tc:'#085041'};
+    if(w.includes('kaue')||w.includes('sérgio')||w.includes('sergio'))return{bg:'#FAECE7',sk:'#993C1D',tc:'#712B13'};
+    if(w.includes('ti')||w.includes('juríd')||w.includes('jurid'))return{bg:'#F1EFE8',sk:'#5F5E5A',tc:'#444441'};
+    if(w.includes('aline'))return{bg:'#F1EFE8',sk:'#5F5E5A',tc:'#444441'};
+    if(w.includes('equipe'))return{bg:'#EAF3DE',sk:'#3B6D11',tc:'#27500A'};
+    if(w.includes('cliente'))return{bg:'#F3EEFF',sk:'#6d28d9',tc:'#4c1d95'};
+    return{bg:'#F4F6F4',sk:'#9aab98',tc:'#4a5a48'};
+  }
+
+  let svg=`<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" role="img">
+  <title>Fluxograma BPMN — ${d.cod} ${d.titulo}</title>
+  <desc>Swimlane com responsáveis por etapa do processo ${d.cod}</desc>
+  <defs>
+    <marker id="bparr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+      <path d="M2 1L8 5L2 9" fill="none" stroke="#888" stroke-width="1.5" stroke-linecap="round"/>
+    </marker>
+    <marker id="bparr-r" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+      <path d="M2 1L8 5L2 9" fill="none" stroke="${fc}" stroke-width="1.5" stroke-linecap="round"/>
+    </marker>
+  </defs>`;
+
+  // Title bar
+  svg+=`<rect x="0" y="0" width="${W}" height="50" fill="${fc}"/>
+  <text font-family="system-ui,sans-serif" font-size="13" font-weight="700" fill="#fff" x="${W/2}" y="32" text-anchor="middle">${d.cod} · ${d.titulo}</text>`;
+
+  // Lanes
+  ROLES.forEach((r,i)=>{
+    const y=50+i*LH;
+    const lc=laneColor(r);
+    svg+=`<rect x="0" y="${y}" width="${W}" height="${LH}" fill="${lc.bg}" stroke="${lc.sk}" stroke-width="0.5"/>`;
+    svg+=`<rect x="0" y="${y}" width="${LABEL}" height="${LH}" fill="${lc.bg}" stroke="${lc.sk}" stroke-width="1"/>`;
+    const words=r.split(/[\s/+]/);
+    if(words.length>2){
+      svg+=`<text font-family="system-ui,sans-serif" font-size="10" font-weight="600" fill="${lc.tc}" x="40" y="${y+LH/2-8}" text-anchor="middle">${words.slice(0,2).join(' ')}</text>`;
+      svg+=`<text font-family="system-ui,sans-serif" font-size="10" font-weight="600" fill="${lc.tc}" x="40" y="${y+LH/2+8}" text-anchor="middle">${words.slice(2).join(' ')}</text>`;
+    } else {
+      svg+=`<text font-family="system-ui,sans-serif" font-size="10" font-weight="600" fill="${lc.tc}" x="40" y="${y+LH/2}" text-anchor="middle" dominant-baseline="central">${r}</text>`;
+    }
+  });
+
+  // Start event
+  const startY=50+LH/2;
+  svg+=`<circle cx="${LABEL+30}" cy="${startY}" r="12" fill="#EAF3DE" stroke="#3B6D11" stroke-width="2"/>`;
+  svg+=`<text font-family="system-ui,sans-serif" font-size="9" fill="#3B6D11" x="${LABEL+30}" y="${startY+3}" text-anchor="middle">S</text>`;
+
+  // Steps as boxes, positioned per lane
+  const stepW=120, stepH=44, gap=20;
+  const startX=LABEL+60;
+  const stepsCount=d.steps.length;
+  const totalW=W-LABEL-80;
+  const stepSpacing=Math.min(stepW+gap, Math.floor(totalW/stepsCount));
+
+  d.steps.forEach((s,i)=>{
+    const roleIdx=ROLES.findIndex(r=>s.who.includes(r.split(' ')[0])||r.includes(s.who.split(' ')[0])||r.toLowerCase()===s.who.toLowerCase().split(' ')[0]);
+    const ri=roleIdx>=0?roleIdx:i%ROLES.length;
+    const lc=laneColor(ROLES[ri]);
+    const cx=startX+i*stepSpacing;
+    const cy=50+ri*LH+LH/2;
+    const bx=cx-stepW/2, by=cy-stepH/2;
+
+    // connector from previous
+    if(i===0){
+      svg+=`<line x1="${LABEL+42}" y1="${startY}" x2="${bx}" y2="${startY}" stroke="#888" stroke-width="0.8" marker-end="url(#bparr)"/>`;
+    } else {
+      const prevRoleIdx=ROLES.findIndex(r=>d.steps[i-1].who.includes(r.split(' ')[0])||r.includes(d.steps[i-1].who.split(' ')[0]));
+      const pri=prevRoleIdx>=0?prevRoleIdx:(i-1)%ROLES.length;
+      const pcx=startX+(i-1)*stepSpacing;
+      const pcy=50+pri*LH+LH/2;
+      if(pri===ri){
+        svg+=`<line x1="${pcx+stepW/2}" y1="${pcy}" x2="${bx}" y2="${cy}" stroke="#888" stroke-width="0.8" stroke-dasharray="${pri!==ri?'4 2':''}" marker-end="url(#bparr)"/>`;
+      } else {
+        svg+=`<path d="M${pcx+stepW/2} ${pcy} L${pcx+stepW/2+15} ${pcy} L${pcx+stepW/2+15} ${cy} L${bx} ${cy}" fill="none" stroke="#aaa" stroke-width="0.8" stroke-dasharray="4 2" marker-end="url(#bparr)"/>`;
+      }
+    }
+
+    // Decision diamond
+    if(s.type==='dec'){
+      svg+=`<polygon points="${cx},${by} ${cx+stepW/2},${cy} ${cx},${by+stepH} ${cx-stepW/2},${cy}" fill="#FEF3C7" stroke="#D97706" stroke-width="0.8"/>`;
+      const label=s.t.length>18?s.t.substring(0,16)+'…':s.t;
+      svg+=`<text font-family="system-ui,sans-serif" font-size="9" font-weight="600" fill="#92400E" x="${cx}" y="${cy-4}" text-anchor="middle" dominant-baseline="central">${label}</text>`;
+    } else if(s.type==='end'){
+      svg+=`<rect x="${bx}" y="${by}" width="${stepW}" height="${stepH}" rx="6" fill="${lc.bg}" stroke="${lc.sk}" stroke-width="1.5"/>`;
+      const label=s.t.length>20?s.t.substring(0,18)+'…':s.t;
+      svg+=`<text font-family="system-ui,sans-serif" font-size="10" font-weight="600" fill="${lc.tc}" x="${cx}" y="${cy-5}" text-anchor="middle" dominant-baseline="central">${label}</text>`;
+      svg+=`<text font-family="system-ui,sans-serif" font-size="9" fill="${lc.sk}" x="${cx}" y="${cy+9}" text-anchor="middle">${s.who.split(/[\s+/]/)[0]}</text>`;
+    } else {
+      svg+=`<rect x="${bx}" y="${by}" width="${stepW}" height="${stepH}" rx="6" fill="${lc.bg}" stroke="${lc.sk}" stroke-width="0.8"/>`;
+      const label=s.t.length>20?s.t.substring(0,18)+'…':s.t;
+      svg+=`<text font-family="system-ui,sans-serif" font-size="10" font-weight="600" fill="${lc.tc}" x="${cx}" y="${cy-5}" text-anchor="middle" dominant-baseline="central">${label}</text>`;
+      svg+=`<text font-family="system-ui,sans-serif" font-size="9" fill="${lc.sk}" x="${cx}" y="${cy+9}" text-anchor="middle">${s.who.split(/[\s+/]/)[0]}</text>`;
+    }
+
+    // End event after last step
+    if(i===stepsCount-1){
+      const ex=cx+stepW/2+30;
+      svg+=`<line x1="${cx+stepW/2}" y1="${cy}" x2="${ex-12}" y2="${cy}" stroke="${fc}" stroke-width="0.8" marker-end="url(#bparr-r)"/>`;
+      svg+=`<circle cx="${ex}" cy="${cy}" r="12" fill="#FCEBEB" stroke="#A32D2D" stroke-width="2.5"/>`;
+      svg+=`<text font-family="system-ui,sans-serif" font-size="9" fill="#A32D2D" x="${ex}" y="${cy+3}" text-anchor="middle">F</text>`;
+    }
+  });
+
+  // Horizontal lane dividers
+  ROLES.forEach((_,i)=>{
+    if(i>0)svg+=`<line x1="0" y1="${50+i*LH}" x2="${W}" y2="${50+i*LH}" stroke="#ccc" stroke-width="0.5"/>`;
+  });
+
+  svg+=`</svg>`;
+  return svg;
+}
+
+// ═══════════════════════════════════════
+// SEARCH
+// ═══════════════════════════════════════
+function bindSearch(){
+  document.getElementById('si').addEventListener('input',e=>{
+    const q=e.target.value.trim().toLowerCase();
+    if(!q){goHome();return;}
+    setPage('sr');
+    document.querySelectorAll('.hbtn').forEach(b=>b.classList.remove('on'));
+    const res=DOCS.filter(d=>d.titulo.toLowerCase().includes(q)||d.cod.toLowerCase().includes(q)||d.obj.toLowerCase().includes(q));
+    document.getElementById('sr-title').textContent=`${res.length} resultado(s) para "${q}"`;
+    document.getElementById('sr-res').innerHTML=res.length===0?'<p style="padding:28px;text-align:center;color:var(--c3)">Nenhum resultado encontrado.</p>':
+      res.map(d=>{const f=FASES.find(x=>x.id===d.fase);const p=PESSOAS.find(x=>x.id===d.resp);return`<div class="sr-it" onclick="showDoc('${d.id}')">
+        <span style="font-family:monospace;font-size:10px;font-weight:700;color:${f?f.cor:'#888'};flex-shrink:0;padding-top:2px">${d.cod}</span>
+        <div style="flex:1"><div style="font-size:13px;font-weight:600">${d.titulo}</div><div style="font-size:11px;color:var(--c3)">${f?f.label:''} · ${p?p.nome:'—'}</div></div>
+        ${spill(d.status)}</div>`;
+      }).join('');
+  });
+}
+
+// ═══════════════════════════════════════
+// NAVEGAÇÃO
+// ═══════════════════════════════════════
+function setPage(id){
+  document.querySelectorAll('.pg').forEach(p=>p.classList.remove('on'));
+  const el=document.getElementById('pg-'+id);
+  if(el)el.classList.add('on');
+}
+function goHome(){
+  renderHome();setPage('home');
+  document.querySelectorAll('.hbtn').forEach(b=>b.classList.remove('on'));
+  const candidates=['bn-home','bn-home-g'];
+  candidates.forEach(id=>{const el=document.getElementById(id);if(el)el.classList.add('on');});
+  document.querySelectorAll('.sb-it').forEach(x=>x.classList.remove('on'));
+  document.getElementById('si').value='';
+}
+function goPage(id){
+  setPage(id);
+  document.querySelectorAll('.hbtn').forEach(b=>b.classList.remove('on'));
+  // Atualizar sidebar de treino ao voltar
+  if(id==='trilhas'||id==='cert'||id==='tr'){
+    buildSidebar(APP.perfil);
+    renderCertArea();
+    if(id==='trilhas')buildTrilhasPage();
+  }
+}
+
+// ─── Resposta de quiz — atualiza progresso de treino automaticamente ───
+function ansQ(id,step,ch){
+  if(APP.qState[id].ans[step]!==undefined)return;
+  APP.qState[id].ans[step]=ch;
+  renderQuiz(id);
+  if(APP.perfil==='treino'){
+    buildSidebar('treino');
+    buildTrilhasPage();
+    renderCertArea();
+  }
+}
+
+// ═══════════════════════════════════════
+// EXPORTAR PDF — documento completo
+// ═══════════════════════════════════════
+function exportPDFDoc(id){
+  const d=DOCS.find(x=>x.id===id);
+  if(!d){showToast('Documento não encontrado.');return;}
+  const f=FASES.find(x=>x.id===d.fase);
+  const rp=PESSOAS.find(p=>p.id===d.resp);
+  const refs=getRefsForFase(d.fase);
+  const just=getJustificativa(d);
+  const hoje=new Date().toLocaleDateString('pt-BR',{day:'2-digit',month:'long',year:'numeric'});
+  const bpmnSvg=buildBPMN(d);
+
+  const win=window.open('','_blank');
+  win.document.write(`<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>${d.cod} — ${d.titulo} — Ambientare PMO</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Segoe UI',system-ui,sans-serif;background:#fff;color:#1e2a1c;font-size:13px;line-height:1.6}
+
+  /* ── CAPA ── */
+  .capa{min-height:100vh;display:flex;flex-direction:column;justify-content:space-between;padding:60px 70px;background:linear-gradient(160deg,#1256a0 0%,#1a5c32 100%);color:#fff;page-break-after:always}
+  .capa-top{display:flex;align-items:center;justify-content:space-between}
+  .capa-brand{font-size:28px;font-weight:800;letter-spacing:-1px}
+  .capa-brand span{color:#a8d8b8}
+  .capa-versao{font-size:11px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);border-radius:6px;padding:4px 12px;letter-spacing:1px;text-transform:uppercase}
+  .capa-mid{flex:1;display:flex;flex-direction:column;justify-content:center;padding:40px 0}
+  .capa-fase{font-size:12px;text-transform:uppercase;letter-spacing:2px;color:rgba(255,255,255,.6);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+  .capa-fase::before{content:'';width:32px;height:2px;background:rgba(255,255,255,.4);display:inline-block}
+  .capa-cod{font-size:15px;font-weight:700;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);border-radius:6px;padding:6px 16px;display:inline-block;margin-bottom:18px;font-family:monospace;letter-spacing:1px}
+  .capa-titulo{font-size:34px;font-weight:800;line-height:1.2;margin-bottom:20px;letter-spacing:-0.5px}
+  .capa-obj{font-size:14px;color:rgba(255,255,255,.75);max-width:600px;line-height:1.7}
+  .capa-pills{display:flex;gap:10px;margin-top:24px;flex-wrap:wrap}
+  .capa-pill{padding:5px 14px;border-radius:20px;font-size:11px;font-weight:700;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25)}
+  .capa-bot{display:flex;justify-content:space-between;align-items:flex-end;padding-top:30px;border-top:1px solid rgba(255,255,255,.2)}
+  .capa-meta{font-size:11px;color:rgba(255,255,255,.5)}
+  .capa-meta strong{color:rgba(255,255,255,.8);display:block;margin-bottom:3px}
+
+  /* ── CORPO ── */
+  .corpo{padding:50px 70px;max-width:900px;margin:0 auto}
+  h2.sec-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#9aab98;margin:32px 0 12px;padding-bottom:6px;border-bottom:1.5px solid #e4e8e4;display:flex;align-items:center;gap:8px}
+  h2.sec-title::before{content:'';width:3px;height:14px;border-radius:2px;background:#1a6fa8;display:inline-block}
+
+  /* ── RACI ── */
+  .raci-g{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:6px}
+  .raci-c{background:#f4f6f4;border-radius:8px;padding:12px;text-align:center;border:1px solid #e4e8e4}
+  .raci-r{font-size:22px;font-weight:800;line-height:1;margin-bottom:4px}
+  .raci-n{font-size:12px;color:#1e2a1c;font-weight:600;margin-bottom:2px}
+  .raci-l{font-size:10px;color:#9aab98;text-transform:uppercase;letter-spacing:.5px}
+
+  /* ── IO ── */
+  .io-g{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .io-box{background:#f4f6f4;border-radius:8px;padding:14px;border-left:3px solid}
+  .io-box h3{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;margin-bottom:10px}
+  .io-box ul{list-style:none}
+  .io-box li{font-size:12.5px;padding:5px 0;border-bottom:1px solid #e4e8e4;display:flex;align-items:flex-start;gap:7px;line-height:1.5}
+  .io-box li:last-child{border-bottom:none}
+  .io-box li::before{content:'›';font-weight:700;flex-shrink:0}
+
+  /* ── SISTEMAS ── */
+  .sis-g{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:6px}
+  .sis-tag{padding:4px 12px;background:#e8f4fd;border-radius:6px;font-size:11px;color:#1256a0;font-weight:600;border:1px solid #b3d9f5}
+
+  /* ── BPMN ── */
+  .bpmn-box{border:1px solid #e4e8e4;border-radius:8px;overflow:hidden;margin-bottom:8px;background:#fff}
+  .bpmn-box svg{width:100%;display:block}
+  .bpmn-legend{display:flex;gap:14px;flex-wrap:wrap;padding:8px 14px;background:#f4f6f4;border-top:1px solid #e4e8e4;font-size:10px;color:#9aab98}
+  .bleg{display:flex;align-items:center;gap:5px}
+  .bpmn-nota{font-size:11px;color:#9aab98;margin-top:6px;font-style:italic}
+
+  /* ── PASSOS ── */
+  .step{display:flex;gap:14px;padding:14px;background:#f4f6f4;border-radius:8px;border-left:3px solid #1a6fa8;margin-bottom:8px;page-break-inside:avoid}
+  .step.dec{border-left-color:#d97706;background:#fef9f0}
+  .step.end{border-left-color:#2e8b4a;background:#eaf5ee}
+  .step-n{width:26px;height:26px;border-radius:50%;background:linear-gradient(135deg,#1a6fa8,#2e8b4a);color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;flex-shrink:0}
+  .step.dec .step-n{background:#d97706}
+  .step.end .step-n{background:#2e8b4a}
+  .step-b strong{display:block;font-size:12.5px;font-weight:700;margin-bottom:4px;color:#1e2a1c}
+  .step-b p{font-size:12px;color:#4a5a48;line-height:1.6;margin-bottom:6px}
+  .step-tags{display:flex;gap:6px;flex-wrap:wrap}
+  .stag{padding:2px 8px;border-radius:4px;font-size:10px;font-weight:700;background:#e4e8e4;color:#4a5a48}
+
+  /* ── REFS ── */
+  .ref-it{display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:1px solid #e4e8e4;font-size:12px}
+  .ref-it:last-child{border-bottom:none}
+  .ref-it strong{font-size:11px;color:#1256a0;min-width:160px;flex-shrink:0}
+  .just-box{background:#e8f4fd;border-radius:8px;padding:14px 16px;border-left:4px solid #1a6fa8;margin-top:10px;font-size:12.5px;color:#4a5a48;line-height:1.7}
+
+  /* ── RODAPÉ ── */
+  .footer{margin-top:40px;padding-top:16px;border-top:1px solid #e4e8e4;display:flex;justify-content:space-between;align-items:center;font-size:10px;color:#9aab98}
+  .footer strong{color:#4a5a48}
+
+  /* ── PRINT ── */
+  @page{margin:0;size:A4}
+  @media print{
+    body{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    .no-print{display:none!important}
+    .capa{min-height:100vh}
+    h2.sec-title{page-break-after:avoid}
+    .step{page-break-inside:avoid}
+    .bpmn-box{page-break-inside:avoid}
+  }
+</style>
+</head>
+<body>
+
+<!-- ══ CAPA ══ -->
+<div class="capa">
+  <div class="capa-top">
+    <div class="capa-brand">AMBIEN<span>TARE</span></div>
+    <div class="capa-versao">Portal PMO · v1.0 · 2025</div>
+  </div>
+  <div class="capa-mid">
+    <div class="capa-fase">${f?f.label:'Procedimento PMO'}</div>
+    <div class="capa-cod">${d.cod}</div>
+    <div class="capa-titulo">${d.titulo}</div>
+    <div class="capa-obj">${d.obj}</div>
+    <div class="capa-pills">
+      <span class="capa-pill">${d.tipo}</span>
+      <span class="capa-pill">Versão 1.0</span>
+      <span class="capa-pill">${d.status}</span>
+      <span class="capa-pill">Resp.: ${rp?rp.nome:'—'}</span>
+    </div>
+  </div>
+  <div class="capa-bot">
+    <div>
+      <div class="capa-meta"><strong>Modelo de Referência</strong>PMBoK 7ª Ed. · PRINCE2 2023 · Scrum Guide 2020 · Kanban Method</div>
+    </div>
+    <div class="capa-meta" style="text-align:right">
+      <strong>Data de emissão</strong>${hoje}
+    </div>
+  </div>
+</div>
+
+<!-- ══ CORPO ══ -->
+<div class="corpo">
+
+  <!-- Botão de impressão (só aparece na tela, some no PDF) -->
+  <div class="no-print" style="display:flex;gap:10px;margin-bottom:28px">
+    <button onclick="window.print()" style="padding:10px 22px;background:#1a6fa8;color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer">🖨 Imprimir / Salvar como PDF</button>
+    <button onclick="window.close()" style="padding:10px 18px;background:#f4f6f4;color:#4a5a48;border:1.5px solid #e4e8e4;border-radius:8px;font-size:13px;cursor:pointer">✕ Fechar</button>
+  </div>
+
+  <!-- 1. RACI -->
+  <h2 class="sec-title">🎯 RACI — Papéis e Responsabilidades</h2>
+  <div class="raci-g">
+    ${[['R','Responsável',d.raci.R,'#2e8b4a'],['A','Aprovador',d.raci.A,'#d97706'],['C','Consultado',d.raci.C,'#1a6fa8'],['I','Informado',d.raci.I,'#6d28d9']].map(([r,l,n,c])=>`
+    <div class="raci-c">
+      <div class="raci-r" style="color:${c}">${r}</div>
+      <div class="raci-n">${n}</div>
+      <div class="raci-l">${l}</div>
+    </div>`).join('')}
+  </div>
+
+  <!-- 2. ENTRADAS E SAÍDAS -->
+  <h2 class="sec-title">📦 Entradas e Saídas</h2>
+  <div class="io-g">
+    <div class="io-box" style="border-color:#1a6fa8">
+      <h3 style="color:#1a6fa8">📥 Entradas</h3>
+      <ul>${d.ent.map(e=>`<li><span style="color:#1a6fa8">›</span> ${e}</li>`).join('')}</ul>
+    </div>
+    <div class="io-box" style="border-color:#2e8b4a">
+      <h3 style="color:#2e8b4a">📤 Saídas</h3>
+      <ul>${d.sai.map(s=>`<li><span style="color:#2e8b4a">›</span> ${s}</li>`).join('')}</ul>
+    </div>
+  </div>
+
+  <!-- 3. SISTEMAS -->
+  <h2 class="sec-title">🛠 Sistemas Utilizados</h2>
+  <div class="sis-g">${d.sis.map(s=>`<span class="sis-tag">${s}</span>`).join('')}</div>
+
+  <!-- 4. FLUXOGRAMA BPMN -->
+  <h2 class="sec-title">🔀 Fluxograma BPMN — Swimlane por Responsável</h2>
+  <div class="bpmn-box">${bpmnSvg}</div>
+  <div class="bpmn-legend">
+    <div class="bleg"><svg width="13" height="13"><circle cx="6" cy="6" r="5" fill="none" stroke="#3B6D11" stroke-width="1.5"/></svg> Início</div>
+    <div class="bleg"><svg width="13" height="13"><rect x="1" y="2" width="11" height="8" rx="2" fill="none" stroke="#888" stroke-width="1"/></svg> Tarefa</div>
+    <div class="bleg"><svg width="13" height="13"><polygon points="6,1 12,6 6,11 0,6" fill="none" stroke="#D97706" stroke-width="1"/></svg> Gateway/Decisão</div>
+    <div class="bleg"><svg width="13" height="13"><rect x="1" y="2" width="11" height="8" rx="2" fill="none" stroke="#2e8b4a" stroke-width="1.5"/></svg> Encerramento</div>
+    <div class="bleg"><svg width="13" height="13"><circle cx="6" cy="6" r="5" fill="none" stroke="#c0392b" stroke-width="2"/></svg> Fim</div>
+    <div class="bleg"><svg width="18" height="2" style="margin-top:5px"><line x1="0" y1="1" x2="18" y2="1" stroke="#aaa" stroke-width="1" stroke-dasharray="3 2"/></svg> Fluxo entre raias</div>
+  </div>
+  <p class="bpmn-nota">Fluxograma gerado automaticamente a partir dos passos do procedimento. Cada raia representa um responsável; as formas seguem a notação BPMN 2.0.</p>
+
+  <!-- 5. PASSO A PASSO -->
+  <h2 class="sec-title">🔢 Passo a Passo Detalhado</h2>
+  ${d.steps.map((s,i)=>`
+  <div class="step ${s.type==='dec'?'dec':s.type==='end'?'end':''}">
+    <div class="step-n">${i+1}</div>
+    <div class="step-b">
+      <strong>${s.t}</strong>
+      <p>${s.p}</p>
+      <div class="step-tags">
+        <span class="stag">👤 ${s.who}</span>
+        <span class="stag" style="background:#e8f4fd;color:#1256a0">🛠 ${s.sys}</span>
+        ${s.type==='dec'?'<span class="stag" style="background:#fef3c7;color:#92400e">⚡ Gateway / Decisão</span>':''}
+        ${s.type==='end'?'<span class="stag" style="background:#eaf5ee;color:#1a5c32">✅ Passo de Encerramento</span>':''}
+      </div>
+    </div>
+  </div>`).join('')}
+
+  <!-- 6. EMBASAMENTO TEÓRICO -->
+  <h2 class="sec-title">📚 Embasamento Teórico e Referências</h2>
+  ${refs.map(r=>`<div class="ref-it"><strong>${r.fw}</strong><span>${r.uso}</span></div>`).join('')}
+  <div class="just-box">${just}</div>
+
+  <!-- RODAPÉ -->
+  <div class="footer">
+    <div><strong>Ambientare · Portal PMO</strong> · Sistema de Gestão de Projetos Híbrido Preditivo-Ágil</div>
+    <div>${d.cod} · v1.0 · ${hoje}</div>
+  </div>
+</div>
+
+<script>
+  // Auto-foca no botão de imprimir para UX mais fluida
+  window.onload = function(){ document.querySelector('button')?.focus(); }
+<\/script>
+</body>
+</html>`);
+  win.document.close();
+}
+
+// ── PDF do Índice Completo ──────────────────────────────────────
+function exportPDFIndice(){
+  const hoje=new Date().toLocaleDateString('pt-BR',{day:'2-digit',month:'long',year:'numeric'});
+  const vigentes=DOCS.filter(d=>d.status==='Vigente').length;
+  const elab=DOCS.filter(d=>d.status==='Em Elaboração').length;
+  const criar=DOCS.filter(d=>d.status==='A Criar').length;
+
+  const win=window.open('','_blank');
+  win.document.write(`<!DOCTYPE html>
+<html lang="pt-BR"><head><meta charset="UTF-8">
+<title>Índice Mestre — Ambientare PMO</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Segoe UI',system-ui,sans-serif;background:#fff;color:#1e2a1c;font-size:12px}
+  .capa{height:100vh;display:flex;flex-direction:column;justify-content:space-between;padding:60px 70px;background:linear-gradient(160deg,#1256a0,#1a5c32);color:#fff;page-break-after:always}
+  .brand{font-size:26px;font-weight:800;letter-spacing:-1px}.brand span{color:#a8d8b8}
+  .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:30px 0}
+  .kpi{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);border-radius:10px;padding:16px;text-align:center}
+  .kpi-n{font-size:30px;font-weight:800;margin-bottom:4px}
+  .kpi-l{font-size:10px;text-transform:uppercase;letter-spacing:1px;opacity:.7}
+  .corpo{padding:40px 60px}
+  h2{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#9aab98;margin:24px 0 10px;padding-bottom:6px;border-bottom:2px solid;page-break-after:avoid}
+  table{width:100%;border-collapse:collapse;margin-bottom:8px;font-size:11.5px}
+  th{text-align:left;padding:7px 10px;background:#f4f6f4;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:#9aab98;border-bottom:1.5px solid #e4e8e4}
+  td{padding:8px 10px;border-bottom:1px solid #e4e8e4;vertical-align:middle}
+  tr:last-child td{border-bottom:none}
+  .cod{font-family:monospace;font-size:10px;font-weight:700}
+  .pill{display:inline-flex;padding:2px 7px;border-radius:8px;font-size:9px;font-weight:700}
+  .sv{background:#d1fae5;color:#065f46}
+  .se{background:#ffe8d3;color:#9a3412}
+  .sa{background:#fef9c3;color:#92400e}
+  .footer{margin-top:30px;padding-top:14px;border-top:1px solid #e4e8e4;display:flex;justify-content:space-between;font-size:10px;color:#9aab98}
+  .no-print{margin-bottom:24px}
+  @page{margin:0;size:A4}
+  @media print{body{-webkit-print-color-adjust:exact;print-color-adjust:exact}.no-print{display:none!important}.capa{height:100vh}}
+</style></head><body>
+<div class="capa">
+  <div class="brand">AMBIEN<span>TARE</span></div>
+  <div>
+    <div style="font-size:12px;text-transform:uppercase;letter-spacing:2px;color:rgba(255,255,255,.6);margin-bottom:12px">Índice Mestre de Documentos</div>
+    <div style="font-size:32px;font-weight:800;margin-bottom:10px;letter-spacing:-.5px">Portal PMO</div>
+    <div style="font-size:14px;color:rgba(255,255,255,.7)">Sistema de Gestão de Projetos Híbrido Preditivo-Ágil<br>Modelo: PMBoK 7 · PRINCE2 2023 · Scrum · Kanban</div>
+    <div class="kpis">
+      <div class="kpi"><div class="kpi-n">${DOCS.length}</div><div class="kpi-l">Total Docs</div></div>
+      <div class="kpi"><div class="kpi-n" style="color:#a8d8b8">${vigentes}</div><div class="kpi-l">✅ Vigentes</div></div>
+      <div class="kpi"><div class="kpi-n" style="color:#fcd34d">${elab}</div><div class="kpi-l">🔄 Em Elab.</div></div>
+      <div class="kpi"><div class="kpi-n" style="color:#fca5a5">${criar}</div><div class="kpi-l">📋 A Criar</div></div>
+    </div>
+  </div>
+  <div style="font-size:11px;color:rgba(255,255,255,.4)">Emitido em ${hoje} · v1.0</div>
+</div>
+<div class="corpo">
+  <div class="no-print" style="display:flex;gap:10px">
+    <button onclick="window.print()" style="padding:9px 20px;background:#1a6fa8;color:#fff;border:none;border-radius:7px;font-size:12px;font-weight:700;cursor:pointer">🖨 Imprimir / Salvar como PDF</button>
+    <button onclick="window.close()" style="padding:9px 16px;background:#f4f6f4;color:#4a5a48;border:1.5px solid #e4e8e4;border-radius:7px;font-size:12px;cursor:pointer">✕ Fechar</button>
+  </div>
+  ${FASES.map(f=>{
+    const docs=DOCS.filter(d=>d.fase===f.id);
+    if(!docs.length)return'';
+    return`<h2 style="border-color:${f.cor};color:${f.cor}">${f.label} <span style="font-size:10px;font-weight:400;color:#9aab98">(${docs.length} documentos)</span></h2>
+    <table>
+      <thead><tr><th>Código</th><th>Título</th><th>Tipo</th><th>Responsável</th><th>Status</th></tr></thead>
+      <tbody>${docs.map(d=>{
+        const rp=PESSOAS.find(p=>p.id===d.resp);
+        const sc={Vigente:'sv','Em Elaboração':'se','A Criar':'sa'};
+        return`<tr>
+          <td><span class="cod" style="color:${f.cor}">${d.cod}</span></td>
+          <td>${d.titulo}</td>
+          <td><span class="pill" style="background:${f.cor}15;color:${f.cor}">${d.tipo}</span></td>
+          <td>${rp?rp.nome.split(' ')[0]:'—'}</td>
+          <td><span class="pill ${sc[d.status]||''}">${d.status}</span></td>
+        </tr>`;
+      }).join('')}</tbody>
+    </table>`;
+  }).join('')}
+  <div class="footer">
+    <span>Ambientare · Portal PMO · Sistema de Gestão de Projetos</span>
+    <span>Índice Mestre · v1.0 · ${hoje}</span>
+  </div>
+</div>
+</body></html>`);
+  win.document.close();
+}
+function tpill(t){
+  if(t==='POP')return'<span class="pill p-pop">POP</span>';
+  if(t.includes('Manual'))return'<span class="pill p-man">Manual</span>';
+  if(t.includes('Template'))return'<span class="pill p-tpl">Template</span>';
+  return`<span class="pill">${t}</span>`;
+}
+function spill(s){
+  const m={'A Criar':'s-a','Em Elaboração':'s-e','Vigente':'s-v'};
+  return`<span class="pill ${m[s]||''}">${s}</span>`;
+}
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.style.display='block';
+  setTimeout(()=>t.style.display='none',3000);
+}
+
+// ═══════════════════════════════════════
+// BOOT
+// ═══════════════════════════════════════
+['lip-c','lip-t','lip-g'].forEach(id=>{
+  const el=document.getElementById(id);
+  if(el)el.addEventListener('keydown',e=>{
+    if(e.key==='Enter'){
+      const map={c:'consulta',t:'treino',g:'gerente'};
+      const k=id.split('-')[1];
+      doLoginPerfil(map[k]);
+    }
+  });
+});
+
+// ── MODO TELA CHEIA ─────────────────────────────────────────
+function toggleFS(){
+  const isFS=document.body.classList.toggle('fs');
+  const btn=document.getElementById('btn-fs');
+  if(btn)btn.title=isFS?'Sair da tela cheia (F)':'Modo tela cheia (F)';
+  if(btn)btn.textContent=isFS?'⛶':'⛶';
+  // Mostrar botão de PDF na barra flutuante se houver doc aberto
+  const pdfBtn=document.getElementById('fs-pdf-btn');
+  if(pdfBtn)pdfBtn.style.display=(isFS&&APP.docAtual)?'flex':'none';
+  // Scroll to top para não ficar deslocado
+  if(isFS)window.scrollTo(0,0);
+}
+
+function fsExportPDF(){
+  if(APP.docAtual)exportPDFDoc(APP.docAtual);
+}
+
+// Atalho de teclado: F = toggle fullscreen, Esc = sair do fullscreen
+document.addEventListener('keydown',e=>{
+  // Não ativar se estiver em campo de texto
+  if(e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA')return;
+  if(e.key==='f'||e.key==='F'){
+    // Só ativa se o portal já estiver aberto (não na tela de login)
+    if(!document.getElementById('lo').classList.contains('hidden'))return;
+    toggleFS();
+  }
+  if(e.key==='Escape'&&document.body.classList.contains('fs')){
+    toggleFS();
+  }
+});
+</script>
+</body>
+</html>
