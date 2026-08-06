@@ -528,6 +528,14 @@
     }
 
     /* ── ANIMATIONS ─────────────────────────────────────── */
+
+    .card-4 .card-top { background: linear-gradient(90deg, var(--verde-medio), var(--azul-vivo)); }
+    .card-4 .card-num { background: var(--verde-palido); color: var(--verde-medio); }
+    .card-4 .card-icon { background: var(--verde-palido); }
+    .card-4 .card-icon svg { stroke: var(--verde-medio); }
+    .card-4 .card-cta { color: var(--verde-medio); }
+    .card-4 { animation-delay: .40s; }
+
     @keyframes fadeUp {
       from { opacity: 0; transform: translateY(20px); }
       to   { opacity: 1; transform: translateY(0); }
@@ -607,7 +615,7 @@
       <div class="section-eyebrow">Acesso rápido</div>
       <h2 class="section-title">Módulos Disponíveis</h2>
     </div>
-    <div class="section-count">3 módulos ativos</div>
+    <div class="section-count">4 módulos ativos</div>
   </div>
 
   <div class="cards">
@@ -700,6 +708,35 @@
       </div>
     </a>
 
+    <!-- Card 4 — Dashboard Portfolio -->
+    <a class="card card-4" href="dashboard_portfolio_ambientare.html" aria-label="Dashboard – Portfolio Ambientare">
+      <div class="card-top"></div>
+      <div class="card-body">
+        <div class="card-header-row">
+          <span class="card-num">04 · Dashboard</span>
+          <div class="card-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24">
+              <rect x="2" y="2" width="9" height="11" rx="2"/>
+              <rect x="13" y="2" width="9" height="5" rx="2"/>
+              <rect x="13" y="9" width="9" height="11" rx="2"/>
+              <rect x="2" y="15" width="9" height="5" rx="2"/>
+            </svg>
+          </div>
+        </div>
+        <h3 class="card-title">Dashboard<br/>Portfolio</h3>
+        <p class="card-desc">
+          Visão consolidada do portfólio de projetos da Ambientare. Indicadores de desempenho, status e progresso de todos os projetos em andamento.
+        </p>
+      </div>
+      <div class="card-footer">
+        <span class="card-filename">dashboard_portfolio_ambientare.html</span>
+        <span class="card-cta" aria-hidden="true">
+          Acessar
+          <svg viewBox="0 0 14 14"><line x1="2" y1="7" x2="12" y2="7"/><polyline points="8,3 12,7 8,11"/></svg>
+        </span>
+      </div>
+    </a>
+
   </div>
 </main>
 
@@ -724,6 +761,7 @@
         <li><a href="portal-pmo-standalone.html">Gerenciamento de Projetos</a></li>
         <li><a href="mural_ambientare_R05.html">Mural · Sprint</a></li>
         <li><a href="Painel_iniciativas.html">Iniciativas Estratégicas</a></li>
+        <li><a href="dashboard_portfolio_ambientare.html">Dashboard · Portfolio</a></li>
       </ul>
     </div>
   </div>
